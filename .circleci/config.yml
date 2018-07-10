@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: adobe/commerce-cif-ci-env:v0.0.1
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: node ci/build.js
+      - store_test_results:
+          path: test/results
+      - store_artifacts:
+          path: test/results

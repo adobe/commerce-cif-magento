@@ -1,0 +1,233 @@
+service: my-custom-service
+
+package:
+  individually: true
+  exclude:
+    - ./**
+
+provider:
+  name: openwhisk
+  runtime: nodejs:default
+  ignore_certs: true
+
+custom:
+  customer-namespace: ${opt:customer-namespace, file(package.json):customer-namespace}
+  customer-package: ${opt:customer-package, file(package.json):customer-package}
+  bindings-namespace: ${opt:bindings-namespace, file(package.json):bindings-namespace}
+  common-actions: /${self:custom.customer-namespace}/commerce-cif-magento-common@latest
+  carts-actions: /${self:custom.customer-namespace}/commerce-cif-magento-cart@latest
+  orders-actions: /${self:custom.customer-namespace}/commerce-cif-magento-order@latest
+  categories-actions: /${self:custom.customer-namespace}/commerce-cif-magento-category@latest
+  customers-actions: /${self:custom.customer-namespace}/commerce-cif-magento-customer@latest
+  products-actions: /${self:custom.customer-namespace}/commerce-cif-magento-product@latest
+
+plugins:
+  - '@cruglobal/serverless-merge-config'
+  - serverless-openwhisk
+
+resources:
+  packages:
+    magento:
+      parameters:
+    commerce-cif-magento-cart@latest:
+      binding: /${self:custom.bindings-namespace}/commerce-cif-magento-cart@latest
+      parameters:
+        default_method: flatrate
+        default_carrier: flatrate
+        $<<: ${file(credentials.json)}
+    commerce-cif-magento-order@latest:
+      binding: /${self:custom.bindings-namespace}/commerce-cif-magento-order@latest
+      parameters: ${file(credentials.json)}
+    commerce-cif-magento-category@latest:
+      binding: /${self:custom.bindings-namespace}/commerce-cif-magento-category@latest
+      parameters:
+        cachetime: 300
+        $<<: ${file(credentials.json)}
+    commerce-cif-magento-customer@latest:
+      binding: /${self:custom.bindings-namespace}/commerce-cif-magento-customer@latest
+      parameters: ${file(credentials.json)}
+    commerce-cif-magento-product@latest:
+      binding: /${self:custom.bindings-namespace}/commerce-cif-magento-product@latest
+      parameters:
+        cachetime: 300
+        $<<: ${file(credentials.json)}
+    commerce-cif-magento-common@latest:
+      binding: /${self:custom.bindings-namespace}/commerce-cif-magento-common@latest
+
+functions:
+
+  getCart:
+    name: ${self:custom.customer-package}/getCart
+    sequence:
+      - ${self:custom.carts-actions}/getCartService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  postCart:
+    name: ${self:custom.customer-package}/postCart
+    sequence:
+      - ${self:custom.carts-actions}/postCartService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  postCartEntry:
+    name: ${self:custom.customer-package}/postCartEntry
+    sequence:
+      - ${self:custom.carts-actions}/postCartEntryService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  putCartEntry:
+    name: ${self:custom.customer-package}/putCartEntry
+    sequence:
+      - ${self:custom.carts-actions}/putCartEntryService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  deleteCartEntry:
+    name: ${self:custom.customer-package}/deleteCartEntry
+    sequence:
+      - ${self:custom.carts-actions}/deleteCartEntryService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  postBillingAddress:
+    name: ${self:custom.customer-package}/postBillingAddress
+    sequence:
+      - ${self:custom.carts-actions}/postBillingAddressService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  deleteBillingAddress:
+    name: ${self:custom.customer-package}/deleteBillingAddress
+    sequence:
+      - ${self:custom.carts-actions}/deleteBillingAddressService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  postShippingAddress:
+    name: ${self:custom.customer-package}/postShippingAddress
+    sequence:
+      - ${self:custom.carts-actions}/postShippingAddressService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  deleteShippingAddress:
+    name: ${self:custom.customer-package}/deleteShippingAddress
+    sequence:
+      - ${self:custom.carts-actions}/deleteShippingAddressService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  postShippingMethod:
+    name: ${self:custom.customer-package}/postShippingMethod
+    sequence:
+      - ${self:custom.carts-actions}/postShippingMethodService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  deleteShippingMethod:
+    name: ${self:custom.customer-package}/deleteShippingMethod
+    sequence:
+      - ${self:custom.carts-actions}/deleteShippingMethodService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  getShippingMethods:
+    name: ${self:custom.customer-package}/getShippingMethods
+    sequence:
+      - ${self:custom.carts-actions}/getShippingMethodsService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  postPayment:
+    name: ${self:custom.customer-package}/postPayment
+    sequence:
+      - ${self:custom.carts-actions}/postPaymentService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  deletePayment:
+    name: ${self:custom.customer-package}/deletePayment
+    sequence:
+      - ${self:custom.carts-actions}/deletePaymentService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  postCoupons:
+    name: ${self:custom.customer-package}/postCoupons
+    sequence:
+      - ${self:custom.carts-actions}/postCouponService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  deleteCoupons:
+    name: ${self:custom.customer-package}/deleteCoupons
+    sequence:
+      - ${self:custom.carts-actions}/deleteCouponService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  postOrder:
+    name: ${self:custom.customer-package}/postOrder
+    sequence:
+      - ${self:custom.orders-actions}/postOrderService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  getCategories:
+    name: ${self:custom.customer-package}/getCategories
+    sequence:
+      - ${self:custom.categories-actions}/getCategoriesService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  getCategoryById:
+    name: ${self:custom.customer-package}/getCategoryById
+    sequence:
+      - ${self:custom.categories-actions}/getCategoriesService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  getCustomerById:
+    name: ${self:custom.customer-package}/getCustomerById
+    sequence:
+      - ${self:custom.customers-actions}/getCustomerByIdService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  postCustomerLogin:
+    name: ${self:custom.customer-package}/postCustomerLogin
+    sequence:
+      - ${self:custom.customers-actions}/postCustomerLoginService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  searchProducts:
+    name: ${self:custom.customer-package}/searchProducts
+    sequence:
+      - ${self:custom.products-actions}/searchProductsService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true

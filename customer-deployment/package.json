@@ -1,0 +1,21 @@
+{
+  "name": "customer-deployment",
+  "private": true,
+  "version": "0.0.1",
+  "description": "A simple customer deployment example",
+  "author": "Adobe Systems Inc.",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@cruglobal/serverless-merge-config": "git+https://github.com/CruGlobal/serverless-merge-config.git",
+    "serverless": "1.27.3",
+    "serverless-openwhisk": "0.13.0"
+  },
+  "customer-namespace": "cif-customer",
+  "customer-package": "magento",
+  "bindings-namespace": "cif-core",
+  "scripts": {
+    "postinstall": "node ./postinstall.js",
+    "deploy": "$(npm bin)/serverless deploy",
+    "clean": "$(npm bin)/serverless remove"
+  }
+}

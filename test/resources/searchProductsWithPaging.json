@@ -1,0 +1,347 @@
+{
+  "data": {
+    "products": {
+      "total_count": 5,
+      "page_info": {
+        "page_size": 2,
+        "current_page": 2
+      },
+      "items": [
+        {
+          "id": 153,
+          "sku": "meotwipot",
+          "name": "Portland Hooded Jacket",
+          "description": "<p>The Portland Hooded Jacket takes you from the office to the airport in style. \"features=</p>\n<ul>\n<li>Cotton canvas exterior is lined with warm polyester fleece to take the chill out of a winter day</li>\n<li>Flip up the hood for protection against cool temperatures</li>\n<li>Full-zip front allows easy on and off; chin guard protects your skin</li>\n</ul>\n<p>\"</p>",
+          "created_at": "2018-06-05 10:58:17",
+          "updated_at": "2018-06-05 10:58:17",
+          "categories": [
+            {
+              "id": 18
+            }
+          ],
+          "price": {
+            "regularPrice": {
+              "amount": {
+                "value": 75,
+                "currency": "USD"
+              }
+            }
+          },
+          "image": "/p/o/portland.jpg",
+          "configurable_options": [
+            {
+              "attribute_code": "size",
+              "label": "Size",
+              "values": [
+                {
+                  "value_index": 13,
+                  "label": "L"
+                },
+                {
+                  "value_index": 14,
+                  "label": "M"
+                },
+                {
+                  "value_index": 15,
+                  "label": "S"
+                },
+                {
+                  "value_index": 16,
+                  "label": "XL"
+                }
+              ]
+            }
+          ],
+          "variants": [
+            {
+              "product": {
+                "id": 156,
+                "sku": "meotwipot-S",
+                "name": "meotwipot-S",
+                "description": "<p>The Portland Hooded Jacket takes you from the office to the airport in style. \"features=</p>\n<ul>\n<li>Cotton canvas exterior is lined with warm polyester fleece to take the chill out of a winter day</li>\n<li>Flip up the hood for protection against cool temperatures</li>\n<li>Full-zip front allows easy on and off; chin guard protects your skin</li>\n</ul>\n<p>\"</p>",
+                "created_at": "2018-06-05 10:58:17",
+                "updated_at": "2018-06-05 10:58:17",
+                "categories": [
+                  {
+                    "id": 18
+                  }
+                ],
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "value": 75,
+                      "currency": "USD"
+                    }
+                  }
+                },
+                "image": "/p/o/portland.jpg",
+                "color": 5,
+                "size": 15
+              }
+            },
+            {
+              "product": {
+                "id": 157,
+                "sku": "meotwipot-XL",
+                "name": "meotwipot-XL",
+                "description": "<p>The Portland Hooded Jacket takes you from the office to the airport in style. \"features=</p>\n<ul>\n<li>Cotton canvas exterior is lined with warm polyester fleece to take the chill out of a winter day</li>\n<li>Flip up the hood for protection against cool temperatures</li>\n<li>Full-zip front allows easy on and off; chin guard protects your skin</li>\n</ul>\n<p>\"</p>",
+                "created_at": "2018-06-05 10:58:17",
+                "updated_at": "2018-06-05 10:58:17",
+                "categories": [
+                  {
+                    "id": 18
+                  }
+                ],
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "value": 75,
+                      "currency": "USD"
+                    }
+                  }
+                },
+                "image": "/p/o/portland.jpg",
+                "color": 5,
+                "size": 16
+              }
+            },
+            {
+              "product": {
+                "id": 154,
+                "sku": "meotwipot-L",
+                "name": "meotwipot-L",
+                "description": "<p>The Portland Hooded Jacket takes you from the office to the airport in style. \"features=</p>\n<ul>\n<li>Cotton canvas exterior is lined with warm polyester fleece to take the chill out of a winter day</li>\n<li>Flip up the hood for protection against cool temperatures</li>\n<li>Full-zip front allows easy on and off; chin guard protects your skin</li>\n</ul>\n<p>\"</p>",
+                "created_at": "2018-06-05 10:58:17",
+                "updated_at": "2018-06-05 10:58:17",
+                "categories": [
+                  {
+                    "id": 18
+                  }
+                ],
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "value": 75,
+                      "currency": "USD"
+                    }
+                  }
+                },
+                "image": "/p/o/portland.jpg",
+                "color": 5,
+                "size": 13
+              }
+            },
+            {
+              "product": {
+                "id": 155,
+                "sku": "meotwipot-M",
+                "name": "meotwipot-M",
+                "description": "<p>The Portland Hooded Jacket takes you from the office to the airport in style. \"features=</p>\n<ul>\n<li>Cotton canvas exterior is lined with warm polyester fleece to take the chill out of a winter day</li>\n<li>Flip up the hood for protection against cool temperatures</li>\n<li>Full-zip front allows easy on and off; chin guard protects your skin</li>\n</ul>\n<p>\"</p>",
+                "created_at": "2018-06-05 10:58:17",
+                "updated_at": "2018-06-05 10:58:17",
+                "categories": [
+                  {
+                    "id": 18
+                  }
+                ],
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "value": 75,
+                      "currency": "USD"
+                    }
+                  }
+                },
+                "image": "/p/o/portland.jpg",
+                "color": 5,
+                "size": 14
+              }
+            }
+          ]
+        },
+        {
+          "id": 158,
+          "sku": "meotwislt",
+          "name": "Slopeside Coat",
+          "description": "<p>4-in-1 jacket creates options for changing conditions. Jacket sports a waterproof, breathable shell and an insulated, reversible liner jacket. \"features=</p>\n<ul>\n<li>Wear the shell jacket and zip-in liner jacket together for maximum protection or wear either piece on its own as weather conditions warrant; liner is reversible</li>\n<li>Quilted liner jacket uses polyfiber insulation to keep you warm without inhibiting mobility</li>\n<li>Liner jacket features zippered handwarmer pockets and an internal security pocket\"</li>\n</ul>",
+          "created_at": "2018-06-05 10:58:17",
+          "updated_at": "2018-06-05 10:58:17",
+          "categories": [
+            {
+              "id": 18
+            }
+          ],
+          "price": {
+            "regularPrice": {
+              "amount": {
+                "value": 139,
+                "currency": "USD"
+              }
+            }
+          },
+          "image": "/s/l/slopeside.jpg",
+          "configurable_options": [
+            {
+              "attribute_code": "size",
+              "label": "Size",
+              "values": [
+                {
+                  "value_index": 13,
+                  "label": "L"
+                },
+                {
+                  "value_index": 14,
+                  "label": "M"
+                },
+                {
+                  "value_index": 15,
+                  "label": "S"
+                },
+                {
+                  "value_index": 16,
+                  "label": "XL"
+                },
+                {
+                  "value_index": 17,
+                  "label": "XS"
+                }
+              ]
+            }
+          ],
+          "variants": [
+            {
+              "product": {
+                "id": 163,
+                "sku": "meotwislt-XS",
+                "name": "meotwislt-XS",
+                "description": "<p>4-in-1 jacket creates options for changing conditions. Jacket sports a waterproof, breathable shell and an insulated, reversible liner jacket. \"features=</p>\n<ul>\n<li>Wear the shell jacket and zip-in liner jacket together for maximum protection or wear either piece on its own as weather conditions warrant; liner is reversible</li>\n<li>Quilted liner jacket uses polyfiber insulation to keep you warm without inhibiting mobility</li>\n<li>Liner jacket features zippered handwarmer pockets and an internal security pocket\"</li>\n</ul>",
+                "created_at": "2018-06-05 10:58:17",
+                "updated_at": "2018-06-05 10:58:17",
+                "categories": [
+                  {
+                    "id": 18
+                  }
+                ],
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "value": 139,
+                      "currency": "USD"
+                    }
+                  }
+                },
+                "image": "/s/l/slopeside.jpg",
+                "color": 5,
+                "size": 17
+              }
+            },
+            {
+              "product": {
+                "id": 161,
+                "sku": "meotwislt-S",
+                "name": "meotwislt-S",
+                "description": "<p>4-in-1 jacket creates options for changing conditions. Jacket sports a waterproof, breathable shell and an insulated, reversible liner jacket. \"features=</p>\n<ul>\n<li>Wear the shell jacket and zip-in liner jacket together for maximum protection or wear either piece on its own as weather conditions warrant; liner is reversible</li>\n<li>Quilted liner jacket uses polyfiber insulation to keep you warm without inhibiting mobility</li>\n<li>Liner jacket features zippered handwarmer pockets and an internal security pocket\"</li>\n</ul>",
+                "created_at": "2018-06-05 10:58:17",
+                "updated_at": "2018-06-05 10:58:17",
+                "categories": [
+                  {
+                    "id": 18
+                  }
+                ],
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "value": 139,
+                      "currency": "USD"
+                    }
+                  }
+                },
+                "image": "/s/l/slopeside.jpg",
+                "color": 5,
+                "size": 15
+              }
+            },
+            {
+              "product": {
+                "id": 162,
+                "sku": "meotwislt-XL",
+                "name": "meotwislt-XL",
+                "description": "<p>4-in-1 jacket creates options for changing conditions. Jacket sports a waterproof, breathable shell and an insulated, reversible liner jacket. \"features=</p>\n<ul>\n<li>Wear the shell jacket and zip-in liner jacket together for maximum protection or wear either piece on its own as weather conditions warrant; liner is reversible</li>\n<li>Quilted liner jacket uses polyfiber insulation to keep you warm without inhibiting mobility</li>\n<li>Liner jacket features zippered handwarmer pockets and an internal security pocket\"</li>\n</ul>",
+                "created_at": "2018-06-05 10:58:17",
+                "updated_at": "2018-06-05 10:58:17",
+                "categories": [
+                  {
+                    "id": 18
+                  }
+                ],
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "value": 139,
+                      "currency": "USD"
+                    }
+                  }
+                },
+                "image": "/s/l/slopeside.jpg",
+                "color": 5,
+                "size": 16
+              }
+            },
+            {
+              "product": {
+                "id": 159,
+                "sku": "meotwislt-L",
+                "name": "meotwislt-L",
+                "description": "<p>4-in-1 jacket creates options for changing conditions. Jacket sports a waterproof, breathable shell and an insulated, reversible liner jacket. \"features=</p>\n<ul>\n<li>Wear the shell jacket and zip-in liner jacket together for maximum protection or wear either piece on its own as weather conditions warrant; liner is reversible</li>\n<li>Quilted liner jacket uses polyfiber insulation to keep you warm without inhibiting mobility</li>\n<li>Liner jacket features zippered handwarmer pockets and an internal security pocket\"</li>\n</ul>",
+                "created_at": "2018-06-05 10:58:17",
+                "updated_at": "2018-06-05 10:58:17",
+                "categories": [
+                  {
+                    "id": 18
+                  }
+                ],
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "value": 139,
+                      "currency": "USD"
+                    }
+                  }
+                },
+                "image": "/s/l/slopeside.jpg",
+                "color": 5,
+                "size": 13
+              }
+            },
+            {
+              "product": {
+                "id": 160,
+                "sku": "meotwislt-M",
+                "name": "meotwislt-M",
+                "description": "<p>4-in-1 jacket creates options for changing conditions. Jacket sports a waterproof, breathable shell and an insulated, reversible liner jacket. \"features=</p>\n<ul>\n<li>Wear the shell jacket and zip-in liner jacket together for maximum protection or wear either piece on its own as weather conditions warrant; liner is reversible</li>\n<li>Quilted liner jacket uses polyfiber insulation to keep you warm without inhibiting mobility</li>\n<li>Liner jacket features zippered handwarmer pockets and an internal security pocket\"</li>\n</ul>",
+                "created_at": "2018-06-05 10:58:17",
+                "updated_at": "2018-06-05 10:58:17",
+                "categories": [
+                  {
+                    "id": 18
+                  }
+                ],
+                "price": {
+                  "regularPrice": {
+                    "amount": {
+                      "value": 139,
+                      "currency": "USD"
+                    }
+                  }
+                },
+                "image": "/s/l/slopeside.jpg",
+                "color": 5,
+                "size": 14
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

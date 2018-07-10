@@ -1,0 +1,28 @@
+{
+  "name": "@adobe/commerce-cif-magento-test",
+  "version": "0.0.1",
+  "description": "Adobe Commerce Integration Framework (CIF) Magento Integration Test Project",
+  "author": "Adobe Systems Inc.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/commerce-cif-magento.git"
+  },
+  "dependencies": {
+    "@adobe/commerce-cif-common": "0.1.15",
+    "@adobe/commerce-cif-model": "0.1.119",
+    "request": "2.87.0",
+    "request-promise-native": "1.0.5",
+    "proxyquire": "v2.0.0"
+  },
+  "devDependencies": {
+    "eslint": "3.19.0",
+    "eslint-plugin-header": "1.2.0"
+  },
+  "eslintConfig": {
+    "extends": "../.eslintrc.js"
+  },
+  "scripts": {
+    "lint": "$(npm bin)/eslint -f table --ignore-path ../.eslintignore ."
+  }
+}

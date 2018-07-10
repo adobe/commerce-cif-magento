@@ -1,0 +1,87 @@
+{
+    products(
+        filter: {
+            {{#each filter}}
+            {{field}}: {
+                eq: "{{value}}"
+            }
+            {{/each}}
+        }
+        {{#if sort}}
+        sort: {
+            {{#each sort}}
+            {{field}}: {{direction}}
+            {{/each}}
+        }
+        {{/if}}
+        {{#if search}}
+        search: "{{search}}"
+        {{/if}}
+        pageSize: {{pageSize}}
+        currentPage: {{currentPage}}
+    ) {
+        total_count
+        page_info {
+          page_size
+          current_page
+        }
+        items {
+          id
+          sku
+          name
+          description
+          created_at
+          updated_at
+          {{#each attributes}}
+          {{this}}
+          {{/each}}
+          categories {
+            id
+          }
+          price {
+            regularPrice {
+              amount {
+                value
+                currency
+              }
+            }
+          }
+          image
+          ... on ConfigurableProduct {
+            configurable_options {
+              attribute_code
+              label
+              values {
+                value_index
+                label
+              }
+            }
+            variants {
+              product {
+                id
+                sku
+                name
+                description
+                created_at
+                updated_at
+                categories {
+                  id
+                }
+                price {
+                  regularPrice {
+                    amount {
+                      value
+                      currency
+                    }
+                  }
+                }
+                image
+                {{#each attributes}}
+                {{this}}
+                {{/each}}
+              }
+            }
+          }
+        }
+    }
+}

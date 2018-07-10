@@ -1,0 +1,56 @@
+{
+  "name": "@adobe/commerce-cif-magento-umbrella",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Adobe Commerce Integration Framework (CIF) Magento Integration Umbrella Project",
+  "author": "Adobe Systems Inc.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/commerce-cif-magento.git"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "devDependencies": {
+    "lerna": "2.9.0",
+    "chai": "4.0.2",
+    "chai-http": "^3.0.0",
+    "chai-sorted": "0.1.2",
+    "chai-as-promised": "7.1.1",
+    "http-status-codes": "^1.2.0",
+    "mocha": "5.2.0",
+    "mocha-jenkins-reporter": "0.3.7",
+    "mock-require": "2.0.2",
+    "sinon": "5.1.0",
+    "nyc": "11.1.0",
+    "xunit-file": "1.0.0"
+  },
+  "nyc": {
+    "include": [
+      "src/**"
+    ],
+    "exclude": [
+      "src/**/@adobe*",
+      "**/webpack.config.js"
+    ],
+    "check-coverage": false,
+    "per-file": false,
+    "lines": 80,
+    "all": true
+  },
+  "scripts": {
+    "pack": "$(npm bin)/lerna exec -- npm pack",
+    "remove-pack": "find . -name \"*.tgz\" | grep -v node_modules | xargs rm -v",
+    "clean": "$(npm bin)/lerna clean",
+    "postinstall": "$(npm bin)/lerna bootstrap",
+    "deploy": "$(npm bin)/lerna run deploy-package --concurrency 1",
+    "remove": "$(npm bin)/lerna run remove-package --concurrency 1",
+    "globalinstall": "npm install -g lerna@2.0.0-rc.5",
+    "generate-cov-html": "$(npm bin)/nyc report --reporter=html",
+    "test": "$(npm bin)/lerna run lint && npm run test-cov && npm run generate-cov-html",
+    "test-cov": "XUNIT_FILE=test-results-xunit.xml $(npm bin)/nyc $(npm bin)/mocha test/**/*Test.js -R xunit-file && $(npm bin)/nyc report --reporter=lcov",
+    "unit": "$(npm bin)/mocha test/**/*Test.js",
+    "test-it": "XUNIT_FILE=test-results-it-xunit.xml $(npm bin)/mocha test/**/*IT.js -R xunit-file"
+  }
+}

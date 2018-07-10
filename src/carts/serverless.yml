@@ -1,0 +1,89 @@
+service: magento
+
+package:
+  individually: true
+  exclude:
+    - ./**
+
+provider:
+  name: openwhisk
+  runtime: nodejs:default
+  ignore_certs: true
+  defaultService: magento
+  service: ${opt:service, self:provider.defaultService}
+
+custom:
+  npm-version: ${file(package.json):name}@${file(package.json):version}
+  ow-package: ${opt:ow-package, self:custom.npm-version}
+
+plugins:
+  - serverless-openwhisk
+  - serverless-webpack
+
+resources:
+  packages: ${file(../common/serverlessPackageConfig.js)}
+
+functions:
+  getCartService:
+    name: ${self:custom.ow-package}/getCartService
+    handler: getCart.main
+
+  postCartService:
+    name: ${self:custom.ow-package}/postCartService
+    handler: postCartEntry.main
+
+  postCartEntryService:
+    name: ${self:custom.ow-package}/postCartEntryService
+    handler: postCartEntry.main
+
+  putCartEntryService:
+    name: ${self:custom.ow-package}/putCartEntryService
+    handler: putCartEntry.main
+
+  deleteCartEntryService:
+    name: ${self:custom.ow-package}/deleteCartEntryService
+    handler: deleteCartEntry.main
+
+  postBillingAddressService:
+    name: ${self:custom.ow-package}/postBillingAddressService
+    handler: postBillingAddress.main
+
+  deleteBillingAddressService:
+    name: ${self:custom.ow-package}/deleteBillingAddressService
+    handler: deleteBillingAddress.main
+
+  postShippingAddressService:
+    name: ${self:custom.ow-package}/postShippingAddressService
+    handler: postShippingAddress.main
+
+  deleteShippingAddressService:
+    name: ${self:custom.ow-package}/deleteShippingAddressService
+    handler: deleteShippingAddress.main
+
+  postShippingMethodService:
+    name: ${self:custom.ow-package}/postShippingMethodService
+    handler: postShippingMethod.main
+
+  deleteShippingMethodService:
+    name: ${self:custom.ow-package}/deleteShippingMethodService
+    handler: deleteShippingMethod.main
+
+  getShippingMethodsService:
+    name: ${self:custom.ow-package}/getShippingMethodsService
+    handler: getShippingMethods.main
+
+  postPaymentService:
+    name: ${self:custom.ow-package}/postPaymentService
+    handler: postPayment.main
+
+  deletePaymentService:
+    name: ${self:custom.ow-package}/deletePaymentService
+    handler: deletePayment.main
+
+  postCouponService:
+    name: ${self:custom.ow-package}/postCouponService
+    handler: postCoupon.main
+
+  deleteCouponService:
+    name: ${self:custom.ow-package}/deleteCouponService
+    handler: deleteCoupon.main

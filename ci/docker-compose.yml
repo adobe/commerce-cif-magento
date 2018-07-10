@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  build:
+    image: adobe/commerce-cif-ci-env:v0.0.1
+    volumes:
+      - ..:/home/circleci
+    command: "node ci/build.js"
+    environment:
+      BRANCH_NAME: "master"
+      NPM_CONFIG_ALWAYS_AUTH: "true"
+      NPM_CONFIG_EMAIL: ""
+      NPM_CONFIG_REGISTRY: ""
+      NPM_CONFIG__AUTH: ""
+      OW_ENDPOINT: ""
+      CORE_WSK_AUTH_STRING: ""
+      CORE_WSK_NAMESPACE: ""
+      CUSTOMER_WSK_AUTH_STRING: ""
+      CUSTOMER_WSK_NAMESPACE: ""
+      WSK_API_HOST: ""
+      DEPLOY_CUSTOMER: "false"
+
+  release:
+    image: adobe/commerce-cif-ci-env:v0.0.1
+    volumes:
+      - ..:/home/circleci
+    command: "node ci/release.js"
+    environment:
+      BRANCH_NAME: "master"
+      NPM_CONFIG_ALWAYS_AUTH: "true"
+      NPM_CONFIG_EMAIL: ""
+      NPM_CONFIG_REGISTRY: ""
+      NPM_CONFIG__AUTH: ""
+      RELEASE_MODULES: ""
+      RELEASE_USER: ""
+      GIT_USERNAME: ""
+      GIT_PASSWORD: ""
