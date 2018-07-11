@@ -12,3 +12,28 @@ jobs:
           path: test/results
       - store_artifacts:
           path: test/results
+  release:
+    docker:
+      - image: adobe/commerce-cif-ci-env:v0.0.1
+    steps:
+      - checkout
+      - run:
+          name: Release
+          command: node ci/release.js
+
+workflows:
+  version: 2
+  build-and-release:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - release:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^@(.+)@release-(major|minor|patch)$/ 

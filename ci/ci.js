@@ -54,7 +54,7 @@ module.exports = class CI {
      */
     sh(command) {
         console.log(command);
-        return e.execSync(command, {stdio: 'inherit'});
+        return e.execSync(command);
     };
 
     /**
@@ -150,12 +150,7 @@ module.exports = class CI {
      * with module to path mappings.
      */
     parseReleaseModule(tag, mappings) {
-        Object.keys(mappings).forEach((key) => {
-            if (tag.startsWith(`@${key}@`)) {
-                return key;
-            }
-        });
-        return null;
+        return Object.keys(mappings).filter(key => tag.startsWith(`@${key}@`));
     };
 
 };
