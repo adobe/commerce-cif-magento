@@ -150,12 +150,7 @@ module.exports = class CI {
      * with module to path mappings.
      */
     parseReleaseModule(tag, mappings) {
-        Object.keys(mappings).forEach((key) => {
-            if (tag.startsWith(`@${key}@`)) {
-                return key;
-            }
-        });
-        return null;
+        return Object.keys(mappings).find(key => tag.startsWith(`@${key}@`));
     };
 
 };
