@@ -168,16 +168,16 @@ functions:
     annotations:
       web-export: true
 
-  postCoupons:
-    name: ${self:custom.customer-package}/postCoupons
+  postCoupon:
+    name: ${self:custom.customer-package}/postCoupon
     sequence:
       - ${self:custom.carts-actions}/postCouponService
       - ${self:custom.common-actions}/webActionTransformer
     annotations:
       web-export: true
 
-  deleteCoupons:
-    name: ${self:custom.customer-package}/deleteCoupons
+  deleteCoupon:
+    name: ${self:custom.customer-package}/deleteCoupon
     sequence:
       - ${self:custom.carts-actions}/deleteCouponService
       - ${self:custom.common-actions}/webActionTransformer
