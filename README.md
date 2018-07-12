@@ -36,8 +36,8 @@ The project also has dependencies/relationships to the following sub projects:
 ### Tools
 
 To get started with CIF on Cloud, first make sure you have the following tools installed:
-* Node 7.x
-* NPM 4.x
+* Node 7.x or 8.x
+* NPM 4.x or 5.x
 * [OpenWhisk CLI](https://github.com/apache/incubator-openwhisk-cli/releases)
 
 OpenWhisk CLI must be available in your systems PATH and set up correctly to either use a local OpenWhisk installation or an Adobe I/O account. Try `wsk --help` to make sure it is working.
