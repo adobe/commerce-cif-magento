@@ -14,6 +14,7 @@
 
 'use strict';
 
+const cp = require('child_process');
 const CI = require('./ci.js');
 const ci = new CI();
 
@@ -63,7 +64,7 @@ try {
             ci.sh('echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc');
 
             // Increase version, remove the v prefix
-            let newVersion = ci.sh(`npm --no-git-tag-version version ${bump}`).toString().trim().substr(1);
+            let newVersion = cp.execSync(`npm --no-git-tag-version version ${bump}`).toString().trim().substr(1);
 
             // Stage package.json
             ci.sh('git add -A package.json');

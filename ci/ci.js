@@ -54,7 +54,7 @@ module.exports = class CI {
      */
     sh(command) {
         console.log(command);
-        return e.execSync(command);
+        return e.execSync(command, {stdio: 'inherit'});
     };
 
     /**
