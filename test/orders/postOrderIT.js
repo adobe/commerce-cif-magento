@@ -61,7 +61,7 @@ describe('Magento postOrder', function () {
         };
 
         let cartId;
-        const productVariantId = '30941863';
+        const productVariantId = 'eqbisumas-10';
 
         /** Create empty cart. */
         beforeEach(function () {

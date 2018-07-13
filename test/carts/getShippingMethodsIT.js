@@ -35,7 +35,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         this.timeout(env.timeout);
 
         let cartId;
-        const productVariantId = '30941863';
+        const productVariantId = 'eqbisumas-10';
 
         /** Create cart. */
         before(function () {
