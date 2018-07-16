@@ -60,7 +60,7 @@ describe('magento deleteCoupon', function () {
                            cartEntryId = res.body.cartEntries[0].id;
 
                            return chai.request(env.openwhiskEndpoint)
-                           .post(env.cartsPackage + 'postCoupons')
+                           .post(env.cartsPackage + 'postCoupon')
                            .query({
                                id: cartId,
                                code: couponCode
@@ -103,7 +103,7 @@ describe('magento deleteCoupon', function () {
                 code: couponCode
             };
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCoupons')
+                .post(env.cartsPackage + 'deleteCoupon')
                 .query(args)
                 .then(function(res) {
                     expect(res).to.be.json;
@@ -114,7 +114,7 @@ describe('magento deleteCoupon', function () {
 
         it('returns 404 for deleting a coupon code from a non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'deleteCoupons')
+                       .post(env.cartsPackage + 'deleteCoupon')
                        .query({
                            id: 'non-existing-cart-id',
                            code: couponCode
@@ -126,7 +126,7 @@ describe('magento deleteCoupon', function () {
 
         it('returns 400 for a missing coupon code', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'deleteCoupons')
+                       .post(env.cartsPackage + 'deleteCoupon')
                        .query({
                            id: cartId
                        })

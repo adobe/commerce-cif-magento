@@ -67,7 +67,7 @@ describe('magento postCoupon', function () {
         /** Delete cart. */
         after(function () {
             return chai.request(env.openwhiskEndpoint)
-                .delete(env.cartsPackage + 'deleteCoupons')
+                .delete(env.cartsPackage + 'deleteCoupon')
                 .query({
                     id: cartId,
                     code: couponCode
@@ -96,7 +96,7 @@ describe('magento postCoupon', function () {
 
         it('returns 404 for adding a coupon to an non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCoupons')
+                       .post(env.cartsPackage + 'postCoupon')
                        .query({
                            id: 'non-existing-cart-id',
                            code: couponCode
@@ -108,7 +108,7 @@ describe('magento postCoupon', function () {
 
         it('returns 400 for a missing coupon code', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCoupons')
+                       .post(env.cartsPackage + 'postCoupon')
                        .query({
                            id: cartId
                        })
@@ -119,7 +119,7 @@ describe('magento postCoupon', function () {
 
         it('returns 404 for an invalid coupon code', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCoupons')
+                       .post(env.cartsPackage + 'postCoupon')
                        .query({
                            id: cartId,
                            code: 'non-existing-coupon-code'
@@ -135,7 +135,7 @@ describe('magento postCoupon', function () {
                 code: couponCode
             };
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCoupons')
+                       .post(env.cartsPackage + 'postCoupon')
                        .query(args)
                        .then(function(res) {
                            expect(res).to.be.json;
