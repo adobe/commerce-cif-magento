@@ -110,9 +110,7 @@ class CategoryMapper {
 
     static mapCategory(magentoCategory, ignoreCategoresWithLevelLowerThan) {
         let category = new Category(magentoCategory.id + '');
-        category.name = {
-            en: magentoCategory.name
-        };
+        category.name = magentoCategory.name;
         category.description = undefined; // This is unavailable in magento response.
         // TODO: Check if it is supported and the info is missing, or it just does not exist
 

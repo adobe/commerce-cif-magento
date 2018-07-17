@@ -143,9 +143,7 @@ class CartMapper {
         const discountValue = Math.abs(magentoDiscount.value);
         const price = new Price(discountValue * 100, currency);
         const discount = new Discount(price, "discount", "discount");
-        discount.message = {
-            en: magentoDiscount.title
-        };
+        discount.message = magentoDiscount.title;
         return discount;
     }
 
@@ -233,11 +231,11 @@ class CartMapper {
         let productVariant = cartEntry.productVariant;
         if (item) {
             productVariant.id = item.sku; // not a mistake, we use the SKU for the ID
-            productVariant.name = {en: item.name};
+            productVariant.name = item.name;
 
             let desc = CartMapper._getCustomAttributeValue(item.custom_attributes, 'description');
             if (desc) {
-                productVariant.description = {en: desc};
+                productVariant.description = desc;
             }
 
             productVariant.prices = [cartEntry.unitPrice];
@@ -255,7 +253,7 @@ class CartMapper {
                             let attributeCodeValue = CartMapper._getCustomAttributeValue(item.custom_attributes, attributeCode);
                             if (attributeCodeValue) {
                                 let [name, value] = CartMapper._getNameValueForAttributeCode(attributeCode, attributeCodeValue, magentoAttributes);
-                                let customAttribute = new Attribute(attributeCode, {en: name}, {en: value});
+                                let customAttribute = new Attribute(attributeCode, name, value);
                                 customAttribute.variantAttribute = true;
                                 return customAttribute;
                             }

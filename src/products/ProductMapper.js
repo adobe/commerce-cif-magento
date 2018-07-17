@@ -73,15 +73,11 @@ class ProductMapper {
         p.sku = product.sku;
 
         if (product.name) {
-            p.name = {
-                en: product.name
-            };
+            p.name = product.name;
         }
         
         if (product.description) {
-            p.description = {
-                en: product.description
-            };
+            p.description = product.description;
         }
         
         if (product.price && product.price.regularPrice) {
@@ -164,7 +160,7 @@ class ProductMapper {
             if (variant[opt.attribute_code] != null) {
                 let value = opt.values.find(v => v.value_index == variant[opt.attribute_code]);
                 if (value != null) {
-                    let attr = new Attribute(opt.attribute_code, {en: opt.label}, {en: value.label});
+                    let attr = new Attribute(opt.attribute_code, opt.label, value.label);
                     attr.variantAttribute = true;
                     return attr;
                 }
@@ -186,7 +182,7 @@ class ProductMapper {
             }
 
             if (product[id]) {
-                let attr = new Attribute(id, {en: id}, {en: product[id]});
+                let attr = new Attribute(id, id, product[id]);
                 attr.variantAttribute = false;
                 p.attributes.push(attr);
             }
