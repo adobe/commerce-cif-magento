@@ -41,7 +41,7 @@ describe('Magento CategoriesMapper', () => {
             assert.strictEqual(mappedCategory.id, "3");
 
             assert.isNotNull(mappedCategory.name);
-            assert.strictEqual(mappedCategory.name.en, "Equipment");
+            assert.strictEqual(mappedCategory.name, "Equipment");
 
             assert.strictEqual(mappedCategory.createdDate, formatDate(magentoCategory.created_at));
             assert.strictEqual(mappedCategory.lastModifiedDate, formatDate(magentoCategory.updated_at));
@@ -57,7 +57,7 @@ describe('Magento CategoriesMapper', () => {
             assert.strictEqual(mappedCategory.id, "4");
 
             assert.isNotNull(mappedCategory.name);
-            assert.strictEqual(mappedCategory.name.en, "Running");
+            assert.strictEqual(mappedCategory.name, "Running");
 
             assert.strictEqual(mappedCategory.createdDate, formatDate(magentoCategory.created_at));
             assert.strictEqual(mappedCategory.lastModifiedDate, formatDate(magentoCategory.updated_at));
@@ -77,7 +77,7 @@ describe('Magento CategoriesMapper', () => {
             assert.strictEqual(mappedCategories.results.length, 21);
 
             mappedCategories.results.forEach(mappedCategory => {
-                assert.isNotEmpty(mappedCategory.name.en);
+                assert.isNotEmpty(mappedCategory.name);
                 assert.isNotEmpty(mappedCategory.id);
             });
         });

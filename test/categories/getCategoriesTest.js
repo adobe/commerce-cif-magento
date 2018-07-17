@@ -75,7 +75,7 @@ describe('Magento getCategories', () => {
                 assert.isNotEmpty(result);
                 assert.isNotEmpty(result.response);
                 assert.strictEqual(result.response.statusCode, 200);
-                assert.strictEqual(result.response.body.name.en, 'Equipment');
+                assert.strictEqual(result.response.body.name, 'Equipment');
             });
         });
 
@@ -92,7 +92,7 @@ describe('Magento getCategories', () => {
             const expectedArgs = [
                 requestConfig('http://does.not.exist/rest/V1/categories/list?searchCriteria[filterGroups][0][filters][0][field]=level&searchCriteria[filterGroups][0][filters][0][value]=1&searchCriteria[filterGroups][0][filters][0][conditionType]=gt&searchCriteria[pageSize]=50&searchCriteria[currentPage]=0&searchCriteria[sortOrders][0][field]=name&searchCriteria[sortOrders][0][direction]=asc', 'GET'),
             ];
-            args.sort = 'name.en.asc';
+            args.sort = 'name.asc';
             return this.prepareResolve(sampleCategoriesSorted, expectedArgs).execute(args).then(result => {
                 checkNamesAreSorted(result);
             });
@@ -141,7 +141,7 @@ describe('Magento getCategories', () => {
 
         function checkNamesAreSorted(result) {
             assert.isNotEmpty(result.response.body.results);
-            const names = result.response.body.results.map(category => category.name.en);
+            const names = result.response.body.results.map(category => category.name);
             const sortedNames = JSON.parse(JSON.stringify(names));
             sortedNames.sort();
             assert.deepEqual(names, sortedNames);

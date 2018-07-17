@@ -47,12 +47,12 @@ describe('magento searchProducts', function() {
                     })
                     .then(function (res) {
                         MEN_CATEGORY_ID = parseInt(res.body.results.find(o => {
-                            return o.name.en === categoriesConfig.MEN.name
+                            return o.name === categoriesConfig.MEN.name
                         }).id);
                         WOMENSHORTS_CATEGORY_ID = parseInt(res.body.results.find(o => {
-                            return o.name.en === categoriesConfig.WOMEN.name
+                            return o.name === categoriesConfig.WOMEN.name
                         }).subCategories.find(o => {
-                            return o.name.en === categoriesConfig.WOMEN.SHORTS.name;
+                            return o.name === categoriesConfig.WOMEN.SHORTS.name;
                         }).id);
                     });
         });
@@ -121,7 +121,7 @@ describe('magento searchProducts', function() {
                     // Verify structure
                     const product = res.body.results[0];
                     expect(product).to.have.own.property('name');
-                    expect(product.name.en).to.equal('El Gordo Down Jacket');
+                    expect(product.name).to.equal('El Gordo Down Jacket');
                     expect(product).to.have.own.property('masterVariantId');
                     expect(product).to.have.own.property('id');
                     expect(product).to.have.own.property('categories');
@@ -164,7 +164,7 @@ describe('magento searchProducts', function() {
                 .get(env.productsPackage + 'searchProducts')
                 .query({
                     filter: `categories.id:"${WOMENSHORTS_CATEGORY_ID}"`,
-                    sort: 'name.en.desc',
+                    sort: 'name.desc',
                     limit: 5
                 })
                 .then(function (res) {
@@ -174,7 +174,7 @@ describe('magento searchProducts', function() {
                     expect(res.body.results).to.have.lengthOf(4);
 
                     // Verfiy sorting
-                    const names = res.body.results.map(r => r.name.en);
+                    const names = res.body.results.map(r => r.name);
                     expect(names).to.be.descending;
                 })
                 .catch(function(err) {

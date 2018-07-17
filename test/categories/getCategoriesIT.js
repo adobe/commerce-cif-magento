@@ -45,7 +45,7 @@ describe('magento getCategories', function() {
                 })
                 .then(function (res) {
                     MEN_CATEGORY_ID = parseInt(res.body.results.find(o => {
-                        return o.name.en === categoriesConfig.MEN.name
+                        return o.name === categoriesConfig.MEN.name
                     }).id);
                 });
         });
@@ -106,7 +106,7 @@ describe('magento getCategories', function() {
                     // Verify structure
                     const category = res.body;
                     expect(category).to.have.own.property('name');
-                    expect(category.name.en).to.equal('Men');
+                    expect(category.name).to.equal('Men');
                     expect(category).to.have.own.property('id');
                     expect(category).to.have.own.property('lastModifiedDate');
                     expect(category).to.have.own.property('createdDate');
@@ -139,14 +139,14 @@ describe('magento getCategories', function() {
                 .get(env.categoriesPackage + 'getCategories')
                 .query({
                     type: 'tree',
-                    sort: 'name.en.desc'
+                    sort: 'name.desc'
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
 
                     // Verfiy sorting
-                    const names = res.body.results.map(r => r.name.en);
+                    const names = res.body.results.map(r => r.name);
                     expect(names).to.be.descending;
                 });
         });
@@ -157,7 +157,7 @@ describe('magento getCategories', function() {
                 .get(env.categoriesPackage + 'getCategories')
                 .query({
                     type: 'tree',
-                    sort: 'name.en.desc'
+                    sort: 'name.desc'
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -165,7 +165,7 @@ describe('magento getCategories', function() {
 
                     // Verify sorting of subcategories
                     for(let category of res.body.results) {
-                        const subnames = category.subCategories.map(r => r.name.en);
+                        const subnames = category.subCategories.map(r => r.name);
                         expect(subnames).to.be.descending;
                     }
                 });
@@ -177,12 +177,12 @@ describe('magento getCategories', function() {
                 .get(env.categoriesPackage + 'getCategories')
                 .query({
                     type: 'flat',
-                    sort: 'name.en.desc'
+                    sort: 'name.desc'
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
-                    const names = res.body.results.map(r => r.name.en);
+                    const names = res.body.results.map(r => r.name);
                     // Verfiy sorting
                     expect(names).to.be.descending;
                 });
