@@ -80,16 +80,14 @@ function splitSortParameter(sortString) {
     let field;
     let direction;
 
-    if (sortString.endsWith('.asc')) {
-        direction = 'asc';
-    } else if (sortString.endsWith('.desc')) {
+    if (sortString.endsWith('.desc')) {
         direction = 'desc';
     } else {
         direction = 'asc';
     }
 
     // Strip everything after the first dot since the sorting fields in Magento are top level and nesting does not work.
-    // This means that if the sorting field from the client is for example 'name.en' it will become 'name'.
+    // This means that if the sorting field from the client is for example 'name.asc' it will become 'name'.
     let index = sortString.indexOf('.');
     field = index === -1 ? sortString : sortString.substring(0, index);
 

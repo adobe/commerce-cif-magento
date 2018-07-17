@@ -36,7 +36,7 @@ class ProductGraphQlRequestBuilder {
         this._parseAttributes();
 
         if (this.context.filter.length == 0 && !('search' in this.context)) {
-            throw new InvalidArgumentError("The request did't include any valid search filter or text argument");
+            throw new InvalidArgumentError("The request didn't include any valid search filter or text argument");
         }
 
         // Generate query

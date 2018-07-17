@@ -81,7 +81,7 @@ describe('Magento ProductGraphQlRequestBuilder', () => {
 
         it('parses one sorting parameter', () => {
             let b = new ProductGraphQlRequestBuilder('', '', {
-                sort: 'name.en.desc|'
+                sort: 'name.desc|'
             });
             b._parseSorting();
 
@@ -97,7 +97,7 @@ describe('Magento ProductGraphQlRequestBuilder', () => {
 
         it('parses two sorting parameters', () => {
             let b = new ProductGraphQlRequestBuilder('', '', {
-                sort: 'name.en|price.asc'
+                sort: 'name|price.asc'
                 //categories.id:"14"|variants.sku:"abc"
             });
             b._parseSorting();
@@ -118,7 +118,7 @@ describe('Magento ProductGraphQlRequestBuilder', () => {
 
         it('ignores an unknown sort parameter', () => {
             let b = new ProductGraphQlRequestBuilder('', '', {
-                sort: 'description.fr'
+                sort: 'description'
             });
             b._parseSorting();
 

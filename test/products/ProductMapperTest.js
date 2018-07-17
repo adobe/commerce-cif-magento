@@ -53,7 +53,7 @@ describe('Magento ProductMapper', () => {
             assert.strictEqual(product.id, magentoProduct.sku);
             assert.strictEqual(product.sku, magentoProduct.sku);
             assert.strictEqual(product.masterVariantId, magentoFirstVariant.sku);
-            assert.strictEqual(product.name.en, magentoProduct.name);
+            assert.strictEqual(product.name, magentoProduct.name);
             assert.strictEqual(product.createdDate, formatDate(magentoProduct.created_at));
             assert.strictEqual(product.lastModifiedDate, formatDate(magentoProduct.updated_at));
             assert.lengthOf(product.variants, magentoProduct.variants.length);
@@ -62,7 +62,7 @@ describe('Magento ProductMapper', () => {
             assert.strictEqual(product.attributes.length, 2);
             product.attributes.forEach(attr => {
                 assert.isFalse(attr.variantAttribute);
-                assert.strictEqual(attr.value.en, magentoProduct[attr.id]);
+                assert.strictEqual(attr.value, magentoProduct[attr.id]);
             });
         });
         
@@ -75,7 +75,7 @@ describe('Magento ProductMapper', () => {
                 let magentoVariant = magentoProduct.variants.find(v => v.product.sku == variant.sku).product;
                 assert.strictEqual(variant.id, magentoVariant.sku);
                 assert.strictEqual(variant.sku, magentoVariant.sku);
-                assert.strictEqual(variant.name.en, magentoVariant.name);
+                assert.strictEqual(variant.name, magentoVariant.name);
                 assert.strictEqual(variant.createdDate, formatDate(magentoVariant.created_at));
                 assert.strictEqual(variant.lastModifiedDate, formatDate(magentoVariant.updated_at));
                 assert.lengthOf(product.categories, magentoProduct.categories.length);
@@ -84,11 +84,11 @@ describe('Magento ProductMapper', () => {
                 variant.attributes.forEach(attr => {
                     if (attr.variantAttribute) {
                         let option = magentoProduct.configurable_options.find(opt => opt.attribute_code == attr.id);
-                        assert.strictEqual(attr.name.en, option.label);
+                        assert.strictEqual(attr.name, option.label);
                         let index = magentoVariant[attr.id];
-                        assert.strictEqual(attr.value.en, option.values.find(v => v.value_index == index).label);
+                        assert.strictEqual(attr.value, option.values.find(v => v.value_index == index).label);
                     } else {
-                        assert.strictEqual(attr.value.en, magentoProduct[attr.id]);
+                        assert.strictEqual(attr.value, magentoProduct[attr.id]);
                     }
                 });
             });
@@ -148,8 +148,8 @@ describe('Magento ProductMapper', () => {
                 
                 assert.strictEqual(product.id, magentoProduct.sku);
                 assert.strictEqual(product.masterVariantId, magentoFirstVariant.sku);
-                assert.strictEqual(product.name.en, magentoProduct.name);
-                assert.strictEqual(product.description.en, magentoFirstVariant.description);
+                assert.strictEqual(product.name, magentoProduct.name);
+                assert.strictEqual(product.description, magentoFirstVariant.description);
                 assert.strictEqual(product.createdDate, formatDate(magentoProduct.created_at));
                 assert.strictEqual(product.lastModifiedDate, formatDate(magentoProduct.updated_at));
                 assert.lengthOf(product.variants, magentoProduct.variants.length);

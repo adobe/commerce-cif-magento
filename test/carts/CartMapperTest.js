@@ -73,7 +73,7 @@ describe('Magento CartMapper', () => {
 
             assert.isDefined(mappedCart.discounts);
             assert.lengthOf(mappedCart.discounts, 1);
-            assert.strictEqual(mappedCart.discounts[0].message.en, sampleCartTotals.total_segments[3].title);
+            assert.strictEqual(mappedCart.discounts[0].message, sampleCartTotals.total_segments[3].title);
             assertPrice(mappedCart.discounts[0].discountedAmount, -sampleCartTotals.total_segments[3].value * 100, sampleCartTotals.quote_currency_code);
 
             assert.isDefined(mappedCart.coupons);
@@ -116,8 +116,8 @@ describe('Magento CartMapper', () => {
 
                 assert.strictEqual(cartEntry.productVariant.sku, sampleCartProduct.sku);
                 assert.strictEqual(cartEntry.productVariant.id, sampleCartProduct.sku);
-                assert.strictEqual(cartEntry.productVariant.name.en, sampleCartProduct.name);
-                assert.strictEqual(cartEntry.productVariant.description.en, cartMapper._getCustomAttributeValue(sampleCartProduct.custom_attributes, 'description'));
+                assert.strictEqual(cartEntry.productVariant.name, sampleCartProduct.name);
+                assert.strictEqual(cartEntry.productVariant.description, cartMapper._getCustomAttributeValue(sampleCartProduct.custom_attributes, 'description'));
                 cartEntry.productVariant.prices.forEach(price => {
                     assertPrice(price, cartEntry.unitPrice.centAmount, mappedCart.currency);
                 });
@@ -129,8 +129,8 @@ describe('Magento CartMapper', () => {
                 cartEntry.productVariant.attributes.forEach(attribute => {
                     let attributeCodeValue = cartMapper._getCustomAttributeValue(sampleCartProduct.custom_attributes, attribute.id);
                     let [name, value] = cartMapper._getNameValueForAttributeCode(attribute.id, attributeCodeValue, sampleCartAttributes);
-                    assert.strictEqual(attribute.value.en, value);
-                    assert.strictEqual(attribute.name.en, name);
+                    assert.strictEqual(attribute.value, value);
+                    assert.strictEqual(attribute.name, name);
                     assert.strictEqual(attribute.variantAttribute, true);
                 });
             });

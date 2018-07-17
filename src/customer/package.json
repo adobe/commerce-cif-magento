@@ -11,7 +11,7 @@
   "dependencies": {
     "@adobe/commerce-cif-common": "0.1.15",
     "@adobe/commerce-cif-magento-common": "0.0.1",
-    "@adobe/commerce-cif-model": "0.1.119"
+    "@adobe/commerce-cif-model": "0.1.123"
   },
   "devDependencies": {
     "eslint": "3.19.0",
