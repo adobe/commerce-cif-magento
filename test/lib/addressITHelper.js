@@ -63,7 +63,7 @@ module.exports.tests = function (ctx, addressType) {
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res).to.have.status(HttpStatus.CREATED);
                     // Store cart id
                     cartId = res.body.id;
                     cartEntryId = res.body.cartEntries[0].id;

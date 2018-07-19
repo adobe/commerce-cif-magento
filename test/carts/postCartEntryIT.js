@@ -51,7 +51,7 @@ describe('magento postCartEntry', function() {
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res).to.have.status(HttpStatus.CREATED);
                     expect(res.body.id).to.not.be.empty;
 
                     // Store cart id
@@ -96,7 +96,9 @@ describe('magento postCartEntry', function() {
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res).to.have.status(HttpStatus.CREATED);
+                    expect(res).to.have.property('headers');
+                    expect(res.headers).to.have.property('location');
 
                     // Verify structure
                     expect(res.body).to.have.own.property('id');
@@ -123,7 +125,10 @@ describe('magento postCartEntry', function() {
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res).to.have.status(HttpStatus.CREATED);
+                    expect(res).to.have.property('headers');
+                    expect(res.headers).to.have.property('location');
+
                     // Verify structure
                     expect(res.body).to.have.own.property('id');
                     expect(res.body.id).to.equal(cartId);
@@ -157,7 +162,9 @@ describe('magento postCartEntry', function() {
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res).to.have.status(HttpStatus.CREATED);
+                    expect(res).to.have.property('headers');
+                    expect(res.headers).to.have.property('location');
 
                     // Verify structure
                     expect(res.body).to.have.own.property('id');

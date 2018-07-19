@@ -74,7 +74,7 @@ describe('Magento postOrder', function () {
                        })
                        .then(function (res) {
                            expect(res).to.be.json;
-                           expect(res).to.have.status(HttpStatus.OK);
+                           expect(res).to.have.status(HttpStatus.CREATED);
 
                            // Store cart id
                            cartId = res.body.id;
@@ -116,7 +116,7 @@ describe('Magento postOrder', function () {
                        });
         });
 
-        it('returns 200 for creating an order', function () {
+        it('returns 201 for creating an order', function () {
             // Set billing address
             return chai.request(env.openwhiskEndpoint)
                        .post(env.cartsPackage + 'postBillingAddress')
@@ -157,9 +157,11 @@ describe('Magento postOrder', function () {
                                           cartId: cartId
                                       });
                         }).then(function (res) {
-                            // Verify order
                             expect(res).to.be.json;
-                            expect(res).to.have.status(HttpStatus.OK);
+                            expect(res).to.have.status(HttpStatus.CREATED);
+                            expect(res).to.have.property('headers');
+                            expect(res.headers).to.have.property('location');
+                            // Verify order
                             expect(res.body).to.have.property('id');
                         });
         });

@@ -49,7 +49,7 @@ describe('magento postCoupon', () => {
             return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
                     .then(result => {
                         assert.isDefined(result.response);
-                        assert.isDefined(result.response.statusCode);
+                        assert.strictEqual(result.response.statusCode, 200);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
                         assert.isDefined(result.response.body.coupons);
