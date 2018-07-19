@@ -36,7 +36,7 @@ describe('magento postCoupon', () => {
             let args = {
                 id: 'dummy-id',
                 code: 'coupon1',
-            }
+            };
             const expectedArgs = [
                 requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/coupons/${args.code}`), 'PUT'),
                 requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
@@ -68,7 +68,7 @@ describe('magento postCoupon', () => {
         it('returns missing property error when no coupon code is provided', () => {
             let args = {
                 id: 'dummy-id',
-            }
+            };
             return this.prepareReject(null).execute(args).then(result => {
                 assert.strictEqual(result.response.error.name, 'MissingPropertyError');
                 assert.strictEqual(result.response.error.message, "Parameter 'code' is missing.");
@@ -79,7 +79,7 @@ describe('magento postCoupon', () => {
             let args = {
                 id: 'dummy-id',
                 code: 'anycoupon',
-            }
+            };
             return this.prepareReject(samplecart404)
                     .execute(args)
                     .then(result => {
@@ -93,7 +93,7 @@ describe('magento postCoupon', () => {
             let args = {
                 id: 'dummy-id',
                 code: 'dummy-coupon',
-            }
+            };
             return this.prepareReject(samplecart404nocounpon)
                 .execute(args)
                 .then(result => {
@@ -107,7 +107,7 @@ describe('magento postCoupon', () => {
             let args = {
                 id: 'dummy-id',
                 code: 'dummy-coupon',
-            }
+            };
             return this.prepareReject(samplecart404noproduct)
                 .execute(args)
                 .then(result => {
