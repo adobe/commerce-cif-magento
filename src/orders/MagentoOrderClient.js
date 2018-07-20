@@ -40,7 +40,8 @@ class MagentoOrderClient extends MagentoClientBase {
         this.baseEndpoint = 'guest-carts';
         return this.withEndpoint(`${cartId}/order`)._execute('PUT').then(result => {
             let ccifOrder = this.mapper(result);
-            return this._handleSuccess(ccifOrder);
+            let headers = {'Location': `orders/${ccifOrder.id}`};
+            return this._handleSuccess(ccifOrder, headers, 201);
         }).catch(error => {
             return this.handleError(error);
         });
