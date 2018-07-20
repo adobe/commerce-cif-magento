@@ -11,8 +11,10 @@
   "dependencies": {
     "@adobe/commerce-cif-common": "0.1.15",
     "@adobe/commerce-cif-model": "0.1.123",
+    "mkdirp": "^0.5.1",
     "request": "2.87.0",
-    "request-promise-native": "1.0.5"
+    "request-promise-native": "1.0.5",
+    "tar": "^4.4.4"
   },
   "devDependencies": {
     "eslint": "3.19.0",

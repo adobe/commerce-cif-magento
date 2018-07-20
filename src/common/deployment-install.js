@@ -17,6 +17,8 @@
 const yaml = require('js-yaml');
 const fs = require('fs');
 const child_process = require('child_process');
+const mkdirp = require('mkdirp');
+const tar = require('tar');
 
 /**
  * This script downloads additional dependencies specified in serverless.yml
@@ -30,13 +32,14 @@ const serverless = yaml.safeLoad(fs.readFileSync('serverless.yml', 'utf8'));
 // Parse module dependencies
 let dependencies = new Set();
 for(let action in serverless.functions) {
-    const a = serverless.functions[action]
+    const a = serverless.functions[action];
     if(a.hasOwnProperty('ccif_dependency')) {
         dependencies.add(a.ccif_dependency);
     }
 }
 
 // Provision dependencies
+/*
 for(let dependency of dependencies) {
     // Download dependencies, unpack them and install their production dependencies
     child_process.execSync(`TARBALL=$(npm pack '${dependency}')` +
@@ -45,4 +48,20 @@ for(let dependency of dependencies) {
         ` && rm $TARBALL` +
         ` && cd '${dependency}'` +
         ` && npm install --only=production`, {stdio: 'inherit'});
+}
+*/
+for(let dependency of dependencies) {
+    // Download dependencies, unpack them and install their production dependencies
+    child_process.execSync(`npm pack ` + dependency + ` > tarname.tmp`);
+    mkdirp.sync(dependency);
+    process.env.TARBALL = fs.readFileSync('tarname.tmp', 'utf8').toString().replace(/\n/, '');
+    tar.x({
+        file: process.env.TARBALL,
+        C: dependency,
+        strip: 1,
+        sync: true
+    });
+    fs.unlinkSync(process.env.TARBALL);
+    fs.unlinkSync('tarname.tmp');
+    child_process.execSync(`cd ` + dependency + ` && npm install --only=production`);
 }
