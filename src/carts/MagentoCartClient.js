@@ -36,6 +36,11 @@ class MagentoCartClient extends MagentoClientBase {
 
     /**
      * Gets a CCIF cart by id.
+     * This method accepts optional HTTP headers and status code which can be used when returning the cart after
+     * a POST and DELETE operation.
+     *
+     * @param headers optional HTTP response headers
+     * @param statusCode optional HTTP status code
      *
      * @return {Promise}   Promise with CCIF cart Object.
      */
