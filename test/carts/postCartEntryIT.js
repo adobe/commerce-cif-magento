@@ -65,27 +65,27 @@ describe('magento postCartEntry', function() {
 
         /** Delete cart entry. */
         after(function() {
-            return Promise.all([chai.request(env.openwhiskEndpoint)
+            return chai.request(env.openwhiskEndpoint)
                     .post(env.cartsPackage + 'deleteCartEntry')
                     .query({
                         id: cartId,
                         cartEntryId: cartEntryId
-                    }),chai.request(env.openwhiskEndpoint)
-                    .post(env.cartsPackage + 'deleteCartEntry')
-                    .query({
-                        id: cartId,
-                        cartEntryId: cartEntryIdSecond
-                    })])
-                    .then(function (res) {
-                        expect(res[0]).to.be.json;
-                        expect(res[0]).to.have.status(HttpStatus.OK);
+                    }).then(res => {
+                        expect(res).to.be.json;
+                        expect(res).to.have.status(HttpStatus.OK);
+                        expect(res.body.cartEntries).to.have.lengthOf(1);
 
-                        expect(res[1]).to.be.json;
-                        expect(res[1]).to.have.status(HttpStatus.OK);
-
-                        expect(res[1].body.cartEntries).to.have.lengthOf(0);
+                        return chai.request(env.openwhiskEndpoint)
+                            .post(env.cartsPackage + 'deleteCartEntry')
+                            .query({
+                                id: cartId,
+                                cartEntryId: cartEntryIdSecond
+                            })
+                    }).then(function (res) {
+                        expect(res).to.be.json;
+                        expect(res).to.have.status(HttpStatus.OK);
+                        expect(res.body.cartEntries).to.have.lengthOf(0);
                     });
-
         });
 
         it('creates an empty cart', function() {
