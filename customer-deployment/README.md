@@ -20,7 +20,7 @@ To remove all the customer packages and actions, just run `npm run clean`.
 
 ## The serverless.yml file
 
-The `serverless.yml` file contains a list of all the package `bindings` and actions that will be deployed. The packages names and actions names are defined with variables so that the same serverless deployment file can be used to automate real deployments but also automated CI/CD test deployments (CI/CD is the recommended approach for "real deployments").
+The `serverless.yml` file contains a list of all the package `bindings` and actions that will be deployed. The names of all the packages and actions are defined with variables so that the same serverless deployment file can be reused for CI/CD automation.
 
 When running the deployment, it is possible to override the following parameters:
 * the customer namespace with the parameter `--customer-namespace`
