@@ -71,7 +71,9 @@ function postCartEntry(args) {
     switch (actionState) {
         case ActionStateEnum.NEW_EMPTY_CART:
             return cart.create().then(function (result) {
-                return cart.byId(result.response.body).get();
+                let id = result.response.body;
+                let headers = {'Location': `carts/${id}`};
+                return cart.byId(id).get(headers, 201);
             }).catch(error => {
                 return cart.handleError(error);
             });
@@ -81,8 +83,9 @@ function postCartEntry(args) {
                 sku: productVariantId,
                 qty: quantity
             };
-            return cart.byId(id).addItem(data).then(() => {
-                return cart.byId(id).get();
+            return cart.byId(id).addItem(data).then((result) => {
+                let headers = {'Location': `carts/${id}/entries/${result.response.body.item_id}`};
+                return cart.byId(id).get(headers, 201);
             }).catch(error => {
                 return cart.handleError(error);
             });
@@ -93,8 +96,9 @@ function postCartEntry(args) {
             };
             return cart.create().then(function (result) {
                 id = data.cartItem.quote_id = result.response.body;
-                return cart.byId(id).addItem(data).then(() => {
-                    return cart.byId(id).get();
+                return cart.byId(id).addItem(data).then((result) => {
+                    let headers = {'Location': `carts/${id}/entries/${result.response.body.item_id}`};
+                    return cart.byId(id).get(headers, 201);
                 });
             }).catch(error => {
                 return cart.handleError(error);

@@ -73,6 +73,7 @@ describe('Magento postShippingAddress', () => {
                     .then(result => {
                         assert.isUndefined(result.response.error, JSON.stringify(result.response.error));
                         assert.isDefined(result.response);
+                        assert.strictEqual(result.response.statusCode, 200);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.shippingAddress);
                     });

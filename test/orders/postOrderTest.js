@@ -39,7 +39,9 @@ describe('Magento postOrder', () => {
                 .execute(Object.assign(args, config))
                 .then(result => {
                     assert.isDefined(result.response);
-                    assert.isDefined(result.response.statusCode);
+                    assert.strictEqual(result.response.statusCode, 201);
+                    assert.isDefined(result.response.headers);
+                    assert.strictEqual(result.response.headers.Location, 'orders/12');
                     assert.isDefined(result.response.body);
                     assert.isObject(result.response.body);
                     assert.strictEqual(result.response.body.id, 12);
