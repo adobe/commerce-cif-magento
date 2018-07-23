@@ -10,6 +10,10 @@ This project contains the OpenWhisk actions implementation for [Magento](https:/
 
 ## Getting Started
 
+### Magento GraphQL and aggregated cart extension
+
+The CIF Cloud Magento integration relies on the new [Magento graphQL implementation](https://github.com/magento/graphql-ce) for the products integration, and on a dedicated Magento extension for the carts integration. This extension will be released very soon on a separate Github repository.
+
 ### Project structure
 
 This project is organized around commerce microservices. Each microservice domain lives in a separate folder and is developed and released independently. All code is organized in the `src` folder.
@@ -61,7 +65,7 @@ The packages and actions developed in this repository are meant to be deployed a
 $ lerna run deploy-package
 ```
 
-to create all the shared packages and deploy all the actions in the `provider` namespace. By default, the consumer/customer deployment part (see next section) expects that the provider namespace is called `ccif-core`, but this is not mandatory.
+to create all the shared packages and deploy all the actions in the `provider` namespace. By default, the consumer/customer deployment part (see next section) expects that the provider namespace is called `cif-core`, but this is not mandatory.
 
 Note that `lerna run deploy-package` will simply call `npm run deploy-package` in all the subfolders under `src`.
 
@@ -116,7 +120,7 @@ $ npm test
 The same command is also available for each individual package. Running individual ITs is also possible:
 
 ```
-$ NODE_TLS_REJECT_UNAUTHORIZED=0 OW_ENDPOINT='https://hostname/api/v1/web/ccif-customer' npm run test-it
+$ NODE_TLS_REJECT_UNAUTHORIZED=0 OW_ENDPOINT='https://hostname/api/v1/web/cif-customer' npm run test-it
 ```
 System environment variables, like OW_ENDPOINT can be adapted to use a custom OpenWhisk environment or namespace.
 

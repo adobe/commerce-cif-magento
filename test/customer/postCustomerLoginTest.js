@@ -55,6 +55,7 @@ describe('Magento postCustomerLogin', () => {
                         password: 'password'
                     })
                 ).then(result => {
+                    assert.strictEqual(result.response.statusCode, 200);
                     assert.isDefined(result.response.body.customer);
                     assert.isDefined(result.response.headers['Set-Cookie']);
                     assert.isTrue(result.response.headers['Set-Cookie'].includes(customerToken));

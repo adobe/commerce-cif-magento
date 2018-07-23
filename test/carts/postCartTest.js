@@ -50,7 +50,9 @@ describe('Magento postCart', () => {
             return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(config))
                     .then(result => {
                         assert.isDefined(result.response);
-                        assert.isDefined(result.response.statusCode);
+                        assert.strictEqual(result.response.statusCode, 201);
+                        assert.isDefined(result.response.headers);
+                        assert.strictEqual(result.response.headers.Location, `carts/${args.id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
                         assert.isEmpty(result.response.body.cartEntries);
@@ -86,7 +88,9 @@ describe('Magento postCart', () => {
             return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
                     .then(result => {
                         assert.isDefined(result.response);
-                        assert.isDefined(result.response.statusCode);
+                        assert.strictEqual(result.response.statusCode, 201);
+                        assert.isDefined(result.response.headers);
+                        assert.strictEqual(result.response.headers.Location, `carts/${args.id}/entries/${samplecartentry.item_id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
                         assert.isNotEmpty(result.response.body.cartEntries);
@@ -124,7 +128,9 @@ describe('Magento postCart', () => {
             return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
                     .then(result => {
                         assert.isDefined(result.response);
-                        assert.isDefined(result.response.statusCode);
+                        assert.strictEqual(result.response.statusCode, 201);
+                        assert.isDefined(result.response.headers);
+                        assert.strictEqual(result.response.headers.Location, `carts/${args.id}/entries/${samplecartentry.item_id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
                         assert.isNotEmpty(result.response.body.cartEntries);

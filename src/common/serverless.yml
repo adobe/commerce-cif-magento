@@ -26,5 +26,5 @@ resources:
 functions:
   webActionTransformer:
     name: ${self:custom.ow-package}/webActionTransformer
-    handler: "@adobe/commerce-cif-web-action-transformer@0.1.18/index.main"
-    ccif_dependency: "@adobe/commerce-cif-web-action-transformer@0.1.18"
+    handler: "@adobe/commerce-cif-web-action-transformer@0.1.19/index.main"
+    ccif_dependency: "@adobe/commerce-cif-web-action-transformer@0.1.19"

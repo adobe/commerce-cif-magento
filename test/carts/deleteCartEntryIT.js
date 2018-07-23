@@ -51,7 +51,7 @@ describe('magento deleteCartEntry', function() {
                 })
                 .then(function(res) {
                     expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res).to.have.status(HttpStatus.CREATED);
 
                     // Store cart id
                     cartId = res.body.id;
@@ -81,7 +81,7 @@ describe('magento deleteCartEntry', function() {
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res).to.have.status(HttpStatus.CREATED);
                     // Verify that two products are in the cart
                     expect(res.body.cartEntries).to.have.lengthOf(2);
                 
