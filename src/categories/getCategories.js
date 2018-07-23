@@ -26,18 +26,18 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * While the parameters 'limit', 'offset', and 'depth' are integers, they should be passed as strings because they are
  * typically parsed from HTTP query parameters.
  *
- * @param   {string} args.MAGENTO_SCHEMA       Schema to use when calling magento. http/https
- * @param   {string} args.MAGENTO_API_VERSION  The version of REST API
- * @param   {string} args.MAGENTO_HOST         Hostname of the magento instance
- * @param   {string} args.MAGENTO_AUTH_TOKEN   Authentication token to use when calling magento REST API.
+ * @param   {string} args.MAGENTO_SCHEMA            Schema to use when calling magento. http/https
+ * @param   {string} args.MAGENTO_API_VERSION       The version of REST API
+ * @param   {string} args.MAGENTO_HOST              Hostname of the magento instance
+ * @param   {string} args.MAGENTO_AUTH_ADMIN_TOKEN  Authentication token to use when calling magento REST API.
  *
- * @param   {string} args.id                   an optional category id
- * @param   {string} args.type                 defines if the request should return either a flat or tree category structure
- * @param   {string} args.limit                the maximum number of results that should be returned
- * @param   {string} args.offset               the number of categories to skip when returning the result
- * @param   {string} args.sort                 a string of sort directives separated by the ',' (comma) character
- * @param   {string} args.depth                defines the maximum depth of the returned categories
- * @return  {Promise.<PagedResponse>}          a paged response object or Category if a category id was set in the request
+ * @param   {string} args.id                        an optional category id
+ * @param   {string} args.type                      defines if the request should return either a flat or tree category structure
+ * @param   {string} args.limit                     the maximum number of results that should be returned
+ * @param   {string} args.offset                    the number of categories to skip when returning the result
+ * @param   {string} args.sort                      a string of sort directives separated by the ',' (comma) character
+ * @param   {string} args.depth                     defines the maximum depth of the returned categories
+ * @return  {Promise.<PagedResponse>}               a paged response object or Category if a category id was set in the request
  */
 function getCategories(args) {
     const validator = new InputValidator(args, ERROR_TYPE);

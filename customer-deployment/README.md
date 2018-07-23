@@ -31,7 +31,7 @@ These parameters can be passed to the deployment file via npm, like for example 
 
 ## The credentials.json file
 
-This file contains the Magento credentials of the customer's project. Simply copy the file `credentials-example.json` and name it `credentials.json`, and add your Magento credentials to the file. The field `MAGENTO_AUTH_TOKEN` should contain a Magento token (integration or user token) that has the permissions to access the Magento catalog, cart, and order endpoints.
+This file contains the Magento credentials of the customer's project. Simply copy the file `credentials-example.json` and name it `credentials.json`, and add your Magento credentials to the file. The field `MAGENTO_AUTH_ADMIN_TOKEN` should contain a Magento token (integration or user token) that has the permissions to access the Magento catalog, cart, and order endpoints.
  
 ## Deployment
 
