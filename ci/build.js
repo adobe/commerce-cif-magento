@@ -33,8 +33,8 @@ if ("test" in pkg.scripts) {
     ci.sh('npm test');
 
     // Upload coverage to Codecov
-    ci.sh('npm install -g codecov');
-    ci.sh('codecov');
+    ci.sh('npm install codecov');
+    ci.sh('$(npm bin)/codecov');
 }
 
 if ("test-it" in pkg.scripts) {
