@@ -31,6 +31,10 @@ if ("test" in pkg.scripts) {
     ci.stage('UNIT TESTS');
     ci.sh('mkdir -p test/results/unit');
     ci.sh('npm test');
+
+    // Upload coverage to Codecov
+    ci.sh('npm install -g codecov');
+    ci.sh('codecov');
 }
 
 if ("test-it" in pkg.scripts) {
