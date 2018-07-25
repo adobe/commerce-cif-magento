@@ -28,7 +28,6 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * @param   {string} args.MAGENTO_API_VERSION    magento client id
  *
  * @param   {string} args.id                     the if of a cart
- * @param   {string} args.customerId             an optional customer id that is checked against the cart's customer id.
  */
 function getCart(args) {
     const validator = new InputValidator(args, ERROR_TYPE);
