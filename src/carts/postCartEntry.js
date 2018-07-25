@@ -29,7 +29,6 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * @param   {string} args.id                     cart id; when empty a new cart will be created
  * @param   {string} args.productVariantId       id of the product variant
  * @param   {string} args.quantity               quantity for the product variant
- * @param   {string} args.customerId             an optional customer id to either create a customer cart or check that cart operations are permitted
  */
 // TODO for now we do not support configurable products, a single product variant must be added to the cart
 function postCartEntry(args) {
