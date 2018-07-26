@@ -18,6 +18,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
 
@@ -67,78 +68,82 @@ describe('Magento postPayment', function () {
             };
 
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCartEntry')
-                       .query({
-                            currency: 'USD',
-                            quantity: 5,
-                            productVariantId: productVariantId
-                        })
-                       .then(function (res) {
-                           expect(res).to.be.json;
-                           expect(res).to.have.status(HttpStatus.CREATED);
+                .post(env.cartsPackage + 'postCartEntry')
+                .query({
+                    currency: 'USD',
+                    quantity: 5,
+                    productVariantId: productVariantId
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.CREATED);
 
-                           // Store cart id
-                           cartId = res.body.id;
-                           cartEntryId = res.body.cartEntries[0].id;
-                           // Set shipping address
-                           return chai.request(env.openwhiskEndpoint)
-                                      .post(env.cartsPackage + 'postShippingAddress')
-                                      .query({
-                                            id: cartId,
-                                            default_method: 'flatrate',
-                                            default_carrier: 'flatrate'
-                                      })
-                                      .send({
-                                          address: addr
-                                      });
-                       })
-                       .catch(function (err) {
-                           throw err;
-                       });
+                    // Store cart id
+                    cartId = res.body.id;
+                    cartEntryId = res.body.cartEntries[0].id;
+                    // Set shipping address
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postShippingAddress')
+                        .query({
+                            id: cartId,
+                            default_method: 'flatrate',
+                            default_carrier: 'flatrate'
+                        })
+                        .send({
+                            address: addr
+                        });
+                })
+                .catch(function (err) {
+                    throw err;
+                });
         });
 
         /** Delete cart. */
         after(function () {
             return chai.request(env.openwhiskEndpoint)
-                    .post(env.cartsPackage + 'deleteCartEntry')
-                    .query({
-                        id: cartId,
-                        cartEntryId: cartEntryId
-                    })
-                    .then(function (res) {
-                        expect(res).to.be.json;
-                        expect(res).to.have.status(HttpStatus.OK);
+                .post(env.cartsPackage + 'deleteCartEntry')
+                .query({
+                    id: cartId,
+                    cartEntryId: cartEntryId
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
 
-                        expect(res.body.cartEntries).to.have.lengthOf(0);
-                    })
-                    .catch(function (err) {
-                        throw err;
-                    });
+                    expect(res.body.cartEntries).to.have.lengthOf(0);
+                })
+                .catch(function (err) {
+                    throw err;
+                });
         });
 
         it('returns 400 for posting the payment to an non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postPayment')
-                       .query({
-                           id: 'non-existing-cart-id',
-                       })
-                       .send({
-                           payment: ccifPayment
-                       })
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                       });
+                .post(env.cartsPackage + 'postPayment')
+                .query({
+                    id: 'non-existing-cart-id',
+                })
+                .send({
+                    payment: ccifPayment
+                })
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('returns 400 for posting to payment without payment', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postPayment')
-                       .query({
-                           id: cartId
-                       })
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                       });
+                .post(env.cartsPackage + 'postPayment')
+                .query({
+                    id: cartId
+                })
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('sets payment method', function () {
@@ -146,18 +151,19 @@ describe('Magento postPayment', function () {
                 id: cartId,
             };
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postPayment')
-                       .query(args)
-                       .send({
-                           payment: ccifPayment
-                       })
-                       .then(function(res) {
-                           let payment = res.body.payment;
-                           expect(res).to.be.json;
-                           expect(res).to.have.status(HttpStatus.OK);
-                           expect(payment).to.have.property('method');
-                           expect(payment.method).to.equal('checkmo');
-                       });
+                .post(env.cartsPackage + 'postPayment')
+                .query(args)
+                .send({
+                    payment: ccifPayment
+                })
+                .then(function(res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyCart(res.body);
+                    let payment = res.body.payment;
+                    requiredFields.verifyPayment(payment);
+                    expect(payment.method).to.equal('checkmo');
+                });
         });
     });
 });

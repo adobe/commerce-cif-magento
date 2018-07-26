@@ -19,6 +19,7 @@ const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
 const expect = chai.expect;
+const requiredFields = require('../lib/requiredFields');
 
 chai.use(chaiHttp);
 
@@ -80,7 +81,7 @@ describe('magento postCartEntry', function() {
                             .query({
                                 id: cartId,
                                 cartEntryId: cartEntryIdSecond
-                            })
+                            });
                     }).then(function (res) {
                         expect(res).to.be.json;
                         expect(res).to.have.status(HttpStatus.OK);
@@ -101,13 +102,10 @@ describe('magento postCartEntry', function() {
                     expect(res.headers).to.have.property('location');
 
                     // Verify structure
-                    expect(res.body).to.have.own.property('id');
+                    requiredFields.verifyCart(res.body);
                     expect(res.body.id).to.not.be.empty;
                     expect(res.body).to.have.own.property('lastModifiedDate');
-                    //an empty cart should have no price
-                    expect(res.body).to.not.have.property('totalProductPrice');
                     expect(res.body).to.have.own.property('createdDate');
-                    expect(res.body).to.have.own.property('cartEntries');
                     expect(res.body.cartEntries).to.have.lengthOf(0);
                 })
                 .catch(function(err) {
@@ -130,12 +128,10 @@ describe('magento postCartEntry', function() {
                     expect(res.headers).to.have.property('location');
 
                     // Verify structure
-                    expect(res.body).to.have.own.property('id');
+                    requiredFields.verifyCart(res.body);
                     expect(res.body.id).to.equal(cartId);
                     expect(res.body).to.have.own.property('lastModifiedDate');
-                    expect(res.body).to.have.own.property('totalProductPrice');
                     expect(res.body).to.have.own.property('createdDate');
-                    expect(res.body).to.have.own.property('cartEntries');
                     expect(res.body.cartEntries).to.have.lengthOf(2);
                     cartEntryIdSecond = res.body.cartEntries[1].id;
                     // Verify that product was added
@@ -167,23 +163,16 @@ describe('magento postCartEntry', function() {
                     expect(res.headers).to.have.property('location');
 
                     // Verify structure
-                    expect(res.body).to.have.own.property('id');
+                    requiredFields.verifyCart(res.body);
                     expect(res.body.id).to.not.be.empty;
                     expect(res.body).to.have.own.property('lastModifiedDate');
-                    expect(res.body).to.have.own.property('totalProductPrice');
                     expect(res.body).to.have.own.property('createdDate');
-                    expect(res.body).to.have.own.property('cartEntries');
                     expect(res.body.cartEntries).to.have.lengthOf(1);
 
                     // Verify entry structure
                     const entry = res.body.cartEntries[0];
-                    expect(entry).to.have.own.property('id');
-                    expect(entry).to.have.own.property('quantity');
                     expect(entry.quantity).to.equal(2);
-                    expect(entry).to.have.own.property('productVariant');
                     expect(entry.productVariant.sku).to.equal(productVariantId);
-                    expect(entry).to.have.own.property('cartEntryPrice');
-                    
                 })
                 .catch(function(err) {
                     throw err;
@@ -198,6 +187,8 @@ describe('magento postCartEntry', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -211,6 +202,8 @@ describe('magento postCartEntry', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -224,6 +217,8 @@ describe('magento postCartEntry', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         })
 
@@ -237,6 +232,8 @@ describe('magento postCartEntry', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -245,6 +242,8 @@ describe('magento postCartEntry', function() {
                 .post(env.cartsPackage + 'postCartEntry')
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 

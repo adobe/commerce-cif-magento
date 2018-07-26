@@ -19,6 +19,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const expect = chai.expect;
+const requiredFields = require('../lib/requiredFields');
 
 chai.use(chaiHttp);
 
@@ -97,13 +98,14 @@ module.exports.tests = function (ctx, addressType) {
      * @param path  post URI path. Passed as parameter to be reused from any address IT (post or delete).
      */
     that.missingCart = function (path) {
-        return chai
-                .request(env.openwhiskEndpoint)
-                .post(path)
-                .query({})
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                });
+        return chai.request(env.openwhiskEndpoint)
+            .post(path)
+            .query({})
+            .catch(function (err) {
+                expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                expect(err.response).to.be.json;
+                requiredFields.verifyErrorResponse(err.response.body);
+            });
     };
     /**
      * Verifies that a not found is returned when the cart id does not exists. Used only from post and deletes
@@ -112,25 +114,27 @@ module.exports.tests = function (ctx, addressType) {
      * @param path  post URI path. Passed as parameter to be reused from any address IT (post or delete).
      */
     that.nonExistingCart = function (path) {
-        return chai
-                .request(env.openwhiskEndpoint)
-                .post(path)
-                .query({id: 'non-existing-cart-id'})
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                });
+        return chai.request(env.openwhiskEndpoint)
+            .post(path)
+            .query({id: 'non-existing-cart-id'})
+            .catch(function (err) {
+                expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                expect(err.response).to.be.json;
+                requiredFields.verifyErrorResponse(err.response.body);
+            });
     };
     /**
      * Verifies that a bad request is returned when country is empty. Used only from post address ITs.
      */
     that.postAddressWithNoCountry = function () {
-        return chai
-                .request(env.openwhiskEndpoint)
-                .post(that.postAddressPath)
-                .query({id: cartId, title: 'Home'})
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                });
+        return chai.request(env.openwhiskEndpoint)
+            .post(that.postAddressPath)
+            .query({id: cartId, title: 'Home'})
+            .catch(function (err) {
+                expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                expect(err.response).to.be.json;
+                requiredFields.verifyErrorResponse(err.response.body);
+            });
     };
     
     /**
@@ -159,54 +163,48 @@ module.exports.tests = function (ctx, addressType) {
             id: cartId
         };
         
-        return chai
-                .request(env.openwhiskEndpoint)
-                .post(that.postAddressPath)
-                .query(args)
-                .send({
-                    address: addr
-                })
-                .then(function (res) {
-                    let addressBodyPropertyName = res.body[that.addressPropertyName];
-                    expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
-                    expect(res.body).to.have.property(that.addressPropertyName);
-                    expect(addressBodyPropertyName).to.have.property('title');
-                    expect(addressBodyPropertyName.title).to.equal(`${addr.salutation} ${addr.title}`);
-                    expect(addressBodyPropertyName).to.have.property('firstName');
-                    expect(addressBodyPropertyName.firstName).to.equal(addr.firstName);
-                    expect(addressBodyPropertyName).to.have.property('lastName');
-                    expect(addressBodyPropertyName.lastName).to.equal(addr.lastName);
-                    expect(addressBodyPropertyName).to.have.property('streetName');
-                    expect(addressBodyPropertyName.streetName).to.equal(addr.streetName);
-                    expect(addressBodyPropertyName).to.have.property('streetNumber');
-                    expect(addressBodyPropertyName.streetNumber).to.equal(addr.streetNumber);
-                    expect(addressBodyPropertyName).to.have.property('additionalStreetInfo');
-                    expect(addressBodyPropertyName.additionalStreetInfo).to.equal(addr.additionalStreetInfo);
-                    expect(addressBodyPropertyName).to.have.property('postalCode');
-                    expect(addressBodyPropertyName.postalCode).to.equal(addr.postalCode);
-                    expect(addressBodyPropertyName).to.have.property('city');
-                    expect(addressBodyPropertyName.city).to.equal(addr.city);
-                    expect(addressBodyPropertyName).to.have.property('region');
-                    expect(addressBodyPropertyName.region).to.equal(addr.region);
-                    expect(addressBodyPropertyName).to.have.property('country');
-                    expect(addressBodyPropertyName.country).to.equal(addr.country);
-                    expect(addressBodyPropertyName).to.have.property('organizationName');
-                    expect(addressBodyPropertyName.organizationName).to.equal(addr.organizationName);
-                    expect(addressBodyPropertyName).to.have.property('phone');
-                    expect(addressBodyPropertyName.phone).to.equal(addr.phone);
-                    expect(addressBodyPropertyName).to.have.property('email');
-                    expect(addressBodyPropertyName.email).to.equal(addr.email);
-                    expect(addressBodyPropertyName).to.have.property('fax');
-                    expect(addressBodyPropertyName.fax).to.equal(addr.fax);
-                    expect(addressBodyPropertyName).to.have.property('additionalAddressInfo');
-                    expect(addressBodyPropertyName.additionalAddressInfo).to.equal(addr.additionalAddressInfo);
-                    
-                    if (that.addressPropertyName === 'shippingAddress') {
-                        expect(res.body).to.have.property('netTotalPrice');
-                        expect(res.body).to.have.property('grossTotalPrice');
-                    }
-                });
+        return chai.request(env.openwhiskEndpoint)
+            .post(that.postAddressPath)
+            .query(args)
+            .send({
+                address: addr
+            })
+            .then(function (res) {
+                let addressBodyPropertyName = res.body[that.addressPropertyName];
+                expect(res).to.be.json;
+                expect(res).to.have.status(HttpStatus.OK);
+                requiredFields.verifyAddress(addressBodyPropertyName);
+                expect(res.body).to.have.property(that.addressPropertyName);
+                expect(addressBodyPropertyName).to.have.property('title');
+                expect(addressBodyPropertyName.title).to.equal(`${addr.salutation} ${addr.title}`);
+                expect(addressBodyPropertyName.firstName).to.equal(addr.firstName);
+                expect(addressBodyPropertyName.lastName).to.equal(addr.lastName);
+                expect(addressBodyPropertyName.streetName).to.equal(addr.streetName);
+                expect(addressBodyPropertyName).to.have.property('streetNumber');
+                expect(addressBodyPropertyName.streetNumber).to.equal(addr.streetNumber);
+                expect(addressBodyPropertyName).to.have.property('additionalStreetInfo');
+                expect(addressBodyPropertyName.additionalStreetInfo).to.equal(addr.additionalStreetInfo);
+                expect(addressBodyPropertyName.postalCode).to.equal(addr.postalCode);
+                expect(addressBodyPropertyName.city).to.equal(addr.city);
+                expect(addressBodyPropertyName).to.have.property('region');
+                expect(addressBodyPropertyName.region).to.equal(addr.region);
+                expect(addressBodyPropertyName.country).to.equal(addr.country);
+                expect(addressBodyPropertyName).to.have.property('organizationName');
+                expect(addressBodyPropertyName.organizationName).to.equal(addr.organizationName);
+                expect(addressBodyPropertyName).to.have.property('phone');
+                expect(addressBodyPropertyName.phone).to.equal(addr.phone);
+                expect(addressBodyPropertyName).to.have.property('email');
+                expect(addressBodyPropertyName.email).to.equal(addr.email);
+                expect(addressBodyPropertyName).to.have.property('fax');
+                expect(addressBodyPropertyName.fax).to.equal(addr.fax);
+                expect(addressBodyPropertyName).to.have.property('additionalAddressInfo');
+                expect(addressBodyPropertyName.additionalAddressInfo).to.equal(addr.additionalAddressInfo);
+                
+                if (that.addressPropertyName === 'shippingAddress') {
+                    expect(res.body).to.have.property('netTotalPrice');
+                    expect(res.body).to.have.property('grossTotalPrice');
+                }
+            });
     };
     
     /**
@@ -234,34 +232,34 @@ module.exports.tests = function (ctx, addressType) {
             fax: '6666666666',
             additionalAddressInfo: 'Diameter: ~4.5 Light Years, 26,453,814,179,326 Miles'
         };
-        return chai
-                .request(env.openwhiskEndpoint)
-                .post(that.postAddressPath)
-                .query(args)
-                .send({
-                    address: addr
-                })
-                .then(function (res) {
-                    expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
-                    expect(res.body).to.have.property(that.addressPropertyName);
-                    return chai.request(env.openwhiskEndpoint)
-                            .post(that.deleteAddressPath)
-                            .query({id: cartId})
-                            .then(function (res) {
-                                expect(res).to.be.json;
-                                expect(res).to.have.status(HttpStatus.OK);
-                                let billingAddress = res.body.billingAddress;
-                                expect(billingAddress.city).to.be.undefined;
-                                expect(billingAddress.email).to.be.undefined;
-                                expect(billingAddress.country).to.be.undefined;
-                                expect(billingAddress.postalCode).to.be.undefined;
-                                expect(billingAddress.lastName).to.be.undefined;
-                                expect(billingAddress.firstName).to.be.undefined;
-                                expect(billingAddress.region).to.be.undefined;
-                                expect(billingAddress.phone).to.be.undefined;
-                            });
-                });
+        return chai.request(env.openwhiskEndpoint)
+            .post(that.postAddressPath)
+            .query(args)
+            .send({
+                address: addr
+            })
+            .then(function (res) {
+                expect(res).to.be.json;
+                expect(res).to.have.status(HttpStatus.OK);
+                expect(res.body).to.have.property(that.addressPropertyName);
+                return chai.request(env.openwhiskEndpoint)
+                    .post(that.deleteAddressPath)
+                    .query({id: cartId});
+            })
+            .then(function (res) {
+                expect(res).to.be.json;
+                expect(res).to.have.status(HttpStatus.OK);
+                requiredFields.verifyCart(res.body);
+                let billingAddress = res.body.billingAddress;
+                expect(billingAddress.city).to.be.undefined;
+                expect(billingAddress.email).to.be.undefined;
+                expect(billingAddress.country).to.be.undefined;
+                expect(billingAddress.postalCode).to.be.undefined;
+                expect(billingAddress.lastName).to.be.undefined;
+                expect(billingAddress.firstName).to.be.undefined;
+                expect(billingAddress.region).to.be.undefined;
+                expect(billingAddress.phone).to.be.undefined;
+            });;
     };
     
     return that;

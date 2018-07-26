@@ -77,14 +77,11 @@ describe('magento searchProducts', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(4);
                     expect(res.body.results).to.have.lengthOf(4);
                     for (let result of res.body.results) {
                         requiredFields.verifyProduct(result);
-                        for (let variant of result.variants) {
-                            requiredFields.verifyProductVariant(variant);
-                        }
-
                         expect(result.categories).to.deep.include({"id": WOMENSHORTS_CATEGORY_ID});
                     }
                 })
@@ -103,14 +100,12 @@ describe('magento searchProducts', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(25);
                     expect(res.body.results).to.have.lengthOf(25);
                     for(let result of res.body.results) {
                         expect(result.categories).to.have.lengthOf.at.least(1);
                         requiredFields.verifyProduct(result);
-                        for (let variant of result.variants) {
-                            requiredFields.verifyProductVariant(variant);
-                        }
                     }
                 })
                 .catch(function(err) {
@@ -128,6 +123,7 @@ describe('magento searchProducts', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(1);
 
                     // Verify structure
@@ -139,9 +135,6 @@ describe('magento searchProducts', function() {
                     expect(product).to.have.own.property('createdDate');
 
                     expect(product.variants).to.have.lengthOf(15);
-                    for (let variant of product.variants) {
-                        requiredFields.verifyProductVariant(variant);
-                    }
                     expect(product.attributes).to.have.lengthOf(2);
                     expect(product.attributes.find(o => {return o.id === 'summary'})).to.be.an('object');
                     expect(product.attributes.find(o => {return o.id === 'features'})).to.be.an('object');
@@ -165,14 +158,12 @@ describe('magento searchProducts', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(5);
                     expect(res.body.results).to.have.lengthOf(5);
                     expect(res.text.split(searchTerm)).to.have.lengthOf.at.least(5);
                     for(let result of res.body.results) {
                         requiredFields.verifyProduct(result);
-                        for (let variant of result.variants) {
-                            requiredFields.verifyProductVariant(variant);
-                        }
                     }
                 })
                 .catch(function(err) {
@@ -191,13 +182,11 @@ describe('magento searchProducts', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(4);
                     expect(res.body.results).to.have.lengthOf(4);
                     for(let result of res.body.results) {
                         requiredFields.verifyProduct(result);
-                        for (let variant of result.variants) {
-                            requiredFields.verifyProductVariant(variant);
-                        }
                     }
 
                     // Verfiy sorting
@@ -219,6 +208,7 @@ describe('magento searchProducts', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
                     requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
@@ -235,15 +225,13 @@ describe('magento searchProducts', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.offset).to.equal(20);
                     expect(res.body.count).to.equal(4);
                     expect(res.body.total).to.equal(100);
                     expect(res.body.results).to.have.lengthOf(4);
                     for(let result of res.body.results) {
                         requiredFields.verifyProduct(result);
-                        for (let variant of result.variants) {
-                            requiredFields.verifyProductVariant(variant);
-                        }
                     }
                 })
                 .catch(function(err) {
@@ -261,6 +249,7 @@ describe('magento searchProducts', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
                     requiredFields.verifyErrorResponse(err.response.body);
                 });
         });

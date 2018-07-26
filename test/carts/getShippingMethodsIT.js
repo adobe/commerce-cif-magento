@@ -17,6 +17,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
 
@@ -91,8 +92,8 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                     // Verify shipping methods structure
                     expect(res.body).to.be.an('array');
                     res.body.forEach(shippingMethod => {
-                        expect(shippingMethod).to.have.all
-                            .keys('id', 'name', 'description', 'price');
+                        requiredFields.verifyShippingMethod(shippingMethod);
+                        expect(shippingMethod).to.have.own.property('description');
                     });
                 })
                 .catch(function (err) {
@@ -114,6 +115,8 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                 .get(env.cartsPackage + 'getShippingMethods')
                 .catch(function (err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -123,6 +126,8 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                 .query({ id: 'does-not-exist' })
                 .catch(function (err) {
                     expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
     });

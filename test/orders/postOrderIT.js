@@ -18,6 +18,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
 
@@ -95,6 +96,8 @@ describe('Magento postOrder', function () {
                        .query({})
                        .catch(function (err) {
                            expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                           expect(err.response).to.be.json;
+                           requiredFields.verifyErrorResponse(err.response.body);
                        });
         });
 
@@ -104,6 +107,8 @@ describe('Magento postOrder', function () {
                        .query({cartId: 'non-existing-cart-id-1'})
                        .catch(function (err) {
                            expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                           expect(err.response).to.be.json;
+                           requiredFields.verifyErrorResponse(err.response.body);
                        });
         });
 
@@ -113,6 +118,8 @@ describe('Magento postOrder', function () {
                        .query({cartId: cartId})
                        .catch(function (err) {
                            expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                           expect(err.response).to.be.json;
+                           requiredFields.verifyErrorResponse(err.response.body);
                        });
         });
 
@@ -161,8 +168,7 @@ describe('Magento postOrder', function () {
                             expect(res).to.have.status(HttpStatus.CREATED);
                             expect(res).to.have.property('headers');
                             expect(res.headers).to.have.property('location');
-                            // Verify order
-                            expect(res.body).to.have.property('id');
+                            requiredFields.verifyOrder(res.body);
                         });
         });
 
