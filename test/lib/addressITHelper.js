@@ -259,7 +259,7 @@ module.exports.tests = function (ctx, addressType) {
                 expect(billingAddress.firstName).to.be.undefined;
                 expect(billingAddress.region).to.be.undefined;
                 expect(billingAddress.phone).to.be.undefined;
-            });;
+            });
     };
     
     return that;
