@@ -19,6 +19,7 @@ const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
 const categoriesConfig = require('../lib/config').categoriesConfig;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
 chai.use(require("chai-sorted"));
@@ -41,20 +42,20 @@ describe('magento searchProducts', function() {
 
         before(function () {
             return chai.request(env.openwhiskEndpoint)
-                    .get(env.categoriesPackage + 'getCategories')
-                    .query({
-                        type: 'tree'
-                    })
-                    .then(function (res) {
-                        MEN_CATEGORY_ID = parseInt(res.body.results.find(o => {
-                            return o.name === categoriesConfig.MEN.name
-                        }).id);
-                        WOMENSHORTS_CATEGORY_ID = parseInt(res.body.results.find(o => {
-                            return o.name === categoriesConfig.WOMEN.name
-                        }).subCategories.find(o => {
-                            return o.name === categoriesConfig.WOMEN.SHORTS.name;
-                        }).id);
-                    });
+                .get(env.categoriesPackage + 'getCategories')
+                .query({
+                    type: 'tree'
+                })
+                .then(function (res) {
+                    MEN_CATEGORY_ID = parseInt(res.body.results.find(o => {
+                        return o.name === categoriesConfig.MEN.name
+                    }).id);
+                    WOMENSHORTS_CATEGORY_ID = parseInt(res.body.results.find(o => {
+                        return o.name === categoriesConfig.WOMEN.name
+                    }).subCategories.find(o => {
+                        return o.name === categoriesConfig.WOMEN.SHORTS.name;
+                    }).id);
+                });
         });
 
         it('returns a 500 error if parameters are missing', function() {
@@ -62,6 +63,8 @@ describe('magento searchProducts', function() {
                 .get(env.productsPackage + 'searchProducts')
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -76,7 +79,12 @@ describe('magento searchProducts', function() {
                     expect(res).to.have.status(HttpStatus.OK);
                     expect(res.body.count).to.equal(4);
                     expect(res.body.results).to.have.lengthOf(4);
-                    for(let result of res.body.results) {
+                    for (let result of res.body.results) {
+                        requiredFields.verifyProduct(result);
+                        for (let variant of result.variants) {
+                            requiredFields.verifyProductVariant(variant);
+                        }
+
                         expect(result.categories).to.deep.include({"id": WOMENSHORTS_CATEGORY_ID});
                     }
                 })
@@ -99,6 +107,10 @@ describe('magento searchProducts', function() {
                     expect(res.body.results).to.have.lengthOf(25);
                     for(let result of res.body.results) {
                         expect(result.categories).to.have.lengthOf.at.least(1);
+                        requiredFields.verifyProduct(result);
+                        for (let variant of result.variants) {
+                            requiredFields.verifyProductVariant(variant);
+                        }
                     }
                 })
                 .catch(function(err) {
@@ -120,17 +132,20 @@ describe('magento searchProducts', function() {
 
                     // Verify structure
                     const product = res.body.results[0];
-                    expect(product).to.have.own.property('name');
+
+                    requiredFields.verifyProduct(product);
                     expect(product.name).to.equal('El Gordo Down Jacket');
-                    expect(product).to.have.own.property('masterVariantId');
-                    expect(product).to.have.own.property('id');
                     expect(product).to.have.own.property('categories');
-                    expect(product).to.have.own.property('variants');
                     expect(product).to.have.own.property('createdDate');
+
                     expect(product.variants).to.have.lengthOf(15);
+                    for (let variant of product.variants) {
+                        requiredFields.verifyProductVariant(variant);
+                    }
                     expect(product.attributes).to.have.lengthOf(2);
                     expect(product.attributes.find(o => {return o.id === 'summary'})).to.be.an('object');
                     expect(product.attributes.find(o => {return o.id === 'features'})).to.be.an('object');
+
                     //only product variant contains variants attributes
                     expect(product.variants[0].attributes.find(o => {return o.id === 'color'})).to.be.an('object');
                     expect(product.variants[0].attributes.find(o => {return o.id === 'size'})).to.be.an('object');
@@ -153,6 +168,12 @@ describe('magento searchProducts', function() {
                     expect(res.body.count).to.equal(5);
                     expect(res.body.results).to.have.lengthOf(5);
                     expect(res.text.split(searchTerm)).to.have.lengthOf.at.least(5);
+                    for(let result of res.body.results) {
+                        requiredFields.verifyProduct(result);
+                        for (let variant of result.variants) {
+                            requiredFields.verifyProductVariant(variant);
+                        }
+                    }
                 })
                 .catch(function(err) {
                     throw err;
@@ -172,6 +193,12 @@ describe('magento searchProducts', function() {
                     expect(res).to.have.status(HttpStatus.OK);
                     expect(res.body.count).to.equal(4);
                     expect(res.body.results).to.have.lengthOf(4);
+                    for(let result of res.body.results) {
+                        requiredFields.verifyProduct(result);
+                        for (let variant of result.variants) {
+                            requiredFields.verifyProductVariant(variant);
+                        }
+                    }
 
                     // Verfiy sorting
                     const names = res.body.results.map(r => r.name);
@@ -192,6 +219,7 @@ describe('magento searchProducts', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -211,6 +239,12 @@ describe('magento searchProducts', function() {
                     expect(res.body.count).to.equal(4);
                     expect(res.body.total).to.equal(100);
                     expect(res.body.results).to.have.lengthOf(4);
+                    for(let result of res.body.results) {
+                        requiredFields.verifyProduct(result);
+                        for (let variant of result.variants) {
+                            requiredFields.verifyProductVariant(variant);
+                        }
+                    }
                 })
                 .catch(function(err) {
                     throw err;
@@ -227,6 +261,7 @@ describe('magento searchProducts', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 

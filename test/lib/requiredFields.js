@@ -14,18 +14,27 @@
 
 'use strict';
 
-const fs = require('fs');
+const chai = require('chai');
+const expect = chai.expect;
 
 module.exports = {
-    getPathForAction: function (testDirName, action) {
-        return testDirName.replace('/test/', '/src/').concat('/').concat(action);
+    verifyErrorResponse: function(err) {
+        expect(err).to.have.own.property("type");
+        expect(err).to.have.own.property("reason");
+        expect(err).to.have.own.property("message");
     },
-
-    parseJsonFile: function(path) {
-        return JSON.parse(fs.readFileSync(path, 'utf8'))
+    verifyProduct: function(p) {
+        expect(p).to.have.own.property("id");
+        expect(p).to.have.own.property("name");
+        expect(p).to.have.own.property("prices");
+        expect(p).to.have.own.property("masterVariantId");
+        expect(p).to.have.own.property("variants");
     },
-
-    clone: function(object) {
-        return JSON.parse(JSON.stringify(object));
+    verifyProductVariant: function(p) {
+        expect(p).to.have.own.property("id");
+        expect(p).to.have.own.property("name");
+        expect(p).to.have.own.property("prices");
+        expect(p).to.have.own.property("sku");
+        expect(p).to.have.own.property("available");
     }
 };
