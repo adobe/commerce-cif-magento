@@ -27,7 +27,7 @@
   },
   "scripts": {
     "lint": "$(npm bin)/eslint -f table --ignore-path ../../.eslintignore .",
-    "postinstall": "node ./deployment-install.js",
+    "postinstall": "node ./deployment-install.js && chmod +x $(npm bin)/serverless",
     "deploy": "$(npm bin)/serverless deploy",
     "remove": "$(npm bin)/serverless remove",
     "deploy-current": "npm run deploy -- --ow-package commerce-cif-magento-common@$npm_package_version --shared",
