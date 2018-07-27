@@ -41,7 +41,7 @@ describe('magento getCategories', function() {
         before(function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree'
                 })
@@ -55,7 +55,7 @@ describe('magento getCategories', function() {
         it('returns all categories in tree structure', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree'
                 })
@@ -80,7 +80,7 @@ describe('magento getCategories', function() {
         it('returns all categories in flat structure', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'flat'
                 })
@@ -103,7 +103,7 @@ describe('magento getCategories', function() {
             const categoryId = MEN_CATEGORY_ID;
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     id: categoryId
                 })
@@ -124,7 +124,7 @@ describe('magento getCategories', function() {
         it('returns all categories in a tree structure with only root nodes', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
                     depth: '0'
@@ -148,7 +148,7 @@ describe('magento getCategories', function() {
         it.skip('returns all categories in tree structure sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
                     sort: 'name.desc'
@@ -171,7 +171,7 @@ describe('magento getCategories', function() {
         it.skip('returns all categories in tree structure with subcategories sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
                     sort: 'name.desc'
@@ -194,7 +194,7 @@ describe('magento getCategories', function() {
         it.skip('returns all categories in flat structure sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'flat',
                     sort: 'name.desc'
@@ -217,7 +217,7 @@ describe('magento getCategories', function() {
         it.skip('returns a subset of categories in tree structure as defined by paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
                     limit: 5,
@@ -241,7 +241,7 @@ describe('magento getCategories', function() {
         it.skip('returns a subset of categories in flat structure as defined by paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'flat',
                     limit: 7,
@@ -264,7 +264,7 @@ describe('magento getCategories', function() {
         it('returns a 400 error for invalid paging parameters', function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(`${env.categoriesPackage}getCategories`)
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({ limit: -7 })
                 .then(function() {
                     chai.assert.fail();
@@ -279,7 +279,7 @@ describe('magento getCategories', function() {
         it('returns a 404 error for a non existent category', function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(`${env.categoriesPackage}getCategories`)
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({ id: '999999999999999' })
                 .then(function() {
                     chai.assert.fail();

@@ -67,7 +67,7 @@ describe('magento getCart', function() {
         it('returns a cart for a valid cart id', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getCart')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({id: cartId})
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -94,7 +94,7 @@ describe('magento getCart', function() {
         it('returns a 400 error for a missing id parameter', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getCart')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(err.response).to.be.json;
@@ -105,7 +105,7 @@ describe('magento getCart', function() {
         it('returns a 404 error for a non existent cart', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getCart')
-                .set({'Cache-Control': 'no-cache'})
+                .set('Cache-Control', 'no-cache')
                 .query({id: 'does-not-exist'})
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
