@@ -19,6 +19,7 @@ const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
 const expect = chai.expect;
+const requiredFields = require('../lib/requiredFields');
 
 chai.use(chaiHttp);
 
@@ -45,23 +46,23 @@ describe('magento postCoupon', function () {
         /** Create cart. */
         beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCartEntry')
-                       .query({
-                            currency: 'USD',
-                            quantity: 1,
-                            productVariantId: productVariantId
-                        })
-                       .then(function (res) {
-                           expect(res).to.be.json;
-                           expect(res).to.have.status(HttpStatus.CREATED);
+                .post(env.cartsPackage + 'postCartEntry')
+                .query({
+                    currency: 'USD',
+                    quantity: 1,
+                    productVariantId: productVariantId
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.CREATED);
 
-                           // Store cart id
-                           cartId = res.body.id;
-                           cartEntryId = res.body.cartEntries[0].id;
-                       })
-                       .catch(function (err) {
-                           throw err;
-                       });
+                    // Store cart id
+                    cartId = res.body.id;
+                    cartEntryId = res.body.cartEntries[0].id;
+                })
+                .catch(function (err) {
+                    throw err;
+                });
         });
 
         /** Delete cart. */
@@ -96,37 +97,43 @@ describe('magento postCoupon', function () {
 
         it('returns 404 for adding a coupon to an non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCoupon')
-                       .query({
-                           id: 'non-existing-cart-id',
-                           code: couponCode
-                       })
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                       });
+                .post(env.cartsPackage + 'postCoupon')
+                .query({
+                    id: 'non-existing-cart-id',
+                    code: couponCode
+                })
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('returns 400 for a missing coupon code', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCoupon')
-                       .query({
-                           id: cartId
-                       })
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                       });
+                .post(env.cartsPackage + 'postCoupon')
+                .query({
+                    id: cartId
+                })
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('returns 404 for an invalid coupon code', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCoupon')
-                       .query({
-                           id: cartId,
-                           code: 'non-existing-coupon-code'
-                       })
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                       });
+                .post(env.cartsPackage + 'postCoupon')
+                .query({
+                    id: cartId,
+                    code: 'non-existing-coupon-code'
+                })
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('adds a coupon code to an existing cart', function () {   
@@ -135,19 +142,19 @@ describe('magento postCoupon', function () {
                 code: couponCode
             };
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCoupon')
-                       .query(args)
-                       .then(function(res) {
-                           expect(res).to.be.json;
-                           expect(res).to.have.status(HttpStatus.OK);
-                           expect(res.body).to.have.property('coupons');
-                           expect(res.body.coupons).to.have.lengthOf(1);
+                .post(env.cartsPackage + 'postCoupon')
+                .query(args)
+                .then(function(res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res.body).to.have.property('coupons');
+                    requiredFields.verifyCart(res.body);
+                    expect(res.body.coupons).to.have.lengthOf(1);
 
-                           let coupon = res.body.coupons[0];
-                           expect(coupon).to.have.property('id');
-                           expect(coupon).to.have.property('code');
-                           expect(coupon.code).to.equal(couponCode);
-                       });
+                    let coupon = res.body.coupons[0];
+                    requiredFields.verifyCoupon(coupon);
+                    expect(coupon.code).to.equal(couponCode);
+                });
         });
 
     });

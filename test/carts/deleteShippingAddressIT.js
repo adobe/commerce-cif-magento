@@ -18,6 +18,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
 
@@ -36,10 +37,12 @@ describe('Magento deleteShippingAddress', function () {
 
         it('returns 501 error', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'deleteShippingAddress')
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.NOT_IMPLEMENTED);
-                       });
+                .post(env.cartsPackage + 'deleteShippingAddress')
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.NOT_IMPLEMENTED);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
     });
 });
