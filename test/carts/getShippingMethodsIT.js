@@ -83,6 +83,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
 
                     return chai.request(env.openwhiskEndpoint)
                         .get(env.cartsPackage + 'getShippingMethods')
+                        .set({'Cache-Control': 'no-cache'})
                         .query({ id: cartId });
                 })
                 .then(function (res) {
@@ -104,6 +105,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         it('returns a 400 error for a cart without shipping address', function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getShippingMethods')
+                .set({'Cache-Control': 'no-cache'})
                 .query({ id: cartId })
                 .catch(function (err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
@@ -113,6 +115,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         it('returns a 400 error for a missing id parameter', function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getShippingMethods')
+                .set({'Cache-Control': 'no-cache'})
                 .catch(function (err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(err.response).to.be.json;
@@ -123,6 +126,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         it('returns a 404 error for a non existent shopping cart', function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getShippingMethods')
+                .set({'Cache-Control': 'no-cache'})
                 .query({ id: 'does-not-exist' })
                 .catch(function (err) {
                     expect(err.response).to.have.status(HttpStatus.NOT_FOUND);

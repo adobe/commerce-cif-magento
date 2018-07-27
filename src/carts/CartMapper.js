@@ -96,10 +96,13 @@ class CartMapper {
             if (Math.abs(magentoCart.totals.base_grand_total) > 0) {
                 cart.grossTotalPrice = new Price(magentoCart.totals.base_grand_total * 100, magentoCart.totals.quote_currency_code);
             }
-            //do not map when 0
+            // Required field
             if (Math.abs(magentoCart.totals.subtotal_incl_tax) > 0) {
                 cart.totalProductPrice = new Price(magentoCart.totals.subtotal_incl_tax * 100, magentoCart.totals.quote_currency_code);
+            } else {
+                cart.totalProductPrice = new Price(0, magentoCart.totals.quote_currency_code);
             }
+
             //do not map when 0
             if (Math.abs(magentoCart.totals.tax_amount) > 0) {
                 cart.cartTaxInfo = new TaxInfo(magentoCart.totals.tax_amount * 100);
@@ -201,6 +204,10 @@ class CartMapper {
         let v = new ProductVariant();
         //variant name is the sku so will fill it from the chained action
         v.sku = item.sku;
+
+        // TODO: Get actual value from backend
+        v.available = true;
+
         return v;
     }
 

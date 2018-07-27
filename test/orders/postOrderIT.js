@@ -92,84 +92,86 @@ describe('Magento postOrder', function () {
 
         it('returns 400 for updating the order when the cart id is missing', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.ordersPackage + 'postOrder')
-                       .query({})
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                           expect(err.response).to.be.json;
-                           requiredFields.verifyErrorResponse(err.response.body);
-                       });
+                .post(env.ordersPackage + 'postOrder')
+                .query({})
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('returns 404 for creating an order from a non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.ordersPackage + 'postOrder')
-                       .query({cartId: 'non-existing-cart-id-1'})
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                           expect(err.response).to.be.json;
-                           requiredFields.verifyErrorResponse(err.response.body);
-                       });
+                .post(env.ordersPackage + 'postOrder')
+                .query({cartId: 'non-existing-cart-id-1'})
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('returns 400 for creating an order from a cart without shipping address', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.ordersPackage + 'postOrder')
-                       .query({cartId: cartId})
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                           expect(err.response).to.be.json;
-                           requiredFields.verifyErrorResponse(err.response.body);
-                       });
+                .post(env.ordersPackage + 'postOrder')
+                .query({cartId: cartId})
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('returns 201 for creating an order', function () {
             // Set billing address
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postBillingAddress')
-                       .query({
-                            id: cartId
+                .post(env.cartsPackage + 'postBillingAddress')
+                .query({
+                    id: cartId
+                })
+                .send({
+                    address: addr
+                })
+                .then(function() {
+                    // Set shipping address
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postShippingAddress')
+                        .query({
+                            id: cartId,
+                            default_method: 'flatrate',
+                            default_carrier: 'flatrate'
                         })
                         .send({
                             address: addr
-                        })
-                        .then(function() {
-                            // Set shipping address
-                            return chai.request(env.openwhiskEndpoint)
-                                       .post(env.cartsPackage + 'postShippingAddress')
-                                       .query({
-                                           id: cartId,
-                                           default_method: 'flatrate',
-                                           default_carrier: 'flatrate'
-                                       })
-                                       .send({
-                                           address: addr
-                                       });
-                        })
-                        .then(function () {
-                            // Set payment
-                            return chai.request(env.openwhiskEndpoint)
-                                       .post(env.cartsPackage + 'postPayment')
-                                       .query({
-                                           id: cartId
-                                       })
-                                       .send({
-                                           payment: ccifPayment
-                                       });
-                        }).then(function () {
-                            // Submit order
-                           return chai.request(env.openwhiskEndpoint)
-                                      .post(env.ordersPackage + 'postOrder')
-                                      .query({
-                                          cartId: cartId
-                                      });
-                        }).then(function (res) {
-                            expect(res).to.be.json;
-                            expect(res).to.have.status(HttpStatus.CREATED);
-                            expect(res).to.have.property('headers');
-                            expect(res.headers).to.have.property('location');
-                            requiredFields.verifyOrder(res.body);
                         });
+                })
+                .then(function () {
+                    // Set payment
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postPayment')
+                        .query({
+                            id: cartId
+                        })
+                        .send({
+                            payment: ccifPayment
+                        });
+                })
+                .then(function () {
+                    // Submit order
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.ordersPackage + 'postOrder')
+                        .query({
+                            cartId: cartId
+                        });
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.CREATED);
+                    expect(res).to.have.property('headers');
+                    expect(res.headers).to.have.property('location');
+                    requiredFields.verifyOrder(res.body);
+                });
         });
 
     });
