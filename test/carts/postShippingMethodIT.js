@@ -18,6 +18,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
 
@@ -63,20 +64,20 @@ describe('Magento postShippingMethod', function () {
 
         after(function () {
             return chai.request(env.openwhiskEndpoint)
-                    .post(env.cartsPackage + 'deleteCartEntry')
-                    .query({
-                        id: cartId,
-                        cartEntryId: cartEntryId
-                    })
-                    .then(function (res) {
-                        expect(res).to.be.json;
-                        expect(res).to.have.status(HttpStatus.OK);
+                .post(env.cartsPackage + 'deleteCartEntry')
+                .query({
+                    id: cartId,
+                    cartEntryId: cartEntryId
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
 
-                        expect(res.body.cartEntries).to.have.lengthOf(0);
-                    })
-                    .catch(function (err) {
-                        throw err;
-                    });
+                    expect(res.body.cartEntries).to.have.lengthOf(0);
+                })
+                .catch(function (err) {
+                    throw err;
+                });
         });
 
         it('returns 404 for updating the shipping method of non existing cart', function () {
@@ -88,6 +89,8 @@ describe('Magento postShippingMethod', function () {
                 })
                 .catch(function (err) {
                     expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -99,6 +102,8 @@ describe('Magento postShippingMethod', function () {
                 })
                 .catch(function (err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -111,6 +116,8 @@ describe('Magento postShippingMethod', function () {
                 })
                 .catch(function (err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -140,10 +147,9 @@ describe('Magento postShippingMethod', function () {
                     // Verify cart shipping info
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyCart(res.body);
                     expect(res.body).to.have.property('shippingInfo');
-                    expect(res.body.shippingInfo).to.have.property('id');
-                    expect(res.body.shippingInfo).to.have.property('name');
-                    expect(res.body.shippingInfo).to.have.property('price');
+                    requiredFields.verifyShippingInfo(res.body.shippingInfo);
                 });
         });
     });

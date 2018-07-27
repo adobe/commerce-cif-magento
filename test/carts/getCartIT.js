@@ -18,6 +18,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
 
@@ -66,30 +67,24 @@ describe('magento getCart', function() {
         it('returns a cart for a valid cart id', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getCart')
+                .set('Cache-Control', 'no-cache')
                 .query({id: cartId})
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
 
                     // Verify structure
+                    requiredFields.verifyCart(res.body);
                     expect(res.body).to.have.own.property('lastModifiedDate');
                     //TODO update when TOTAL is added
-                    expect(res.body).to.have.own.property('totalProductPrice');
-                    expect(res.body).to.have.own.property('id');
                     expect(res.body.id).to.equal(cartId);
                     expect(res.body).to.have.own.property('createdDate');
-                    expect(res.body).to.have.own.property('cartEntries');
                     expect(res.body.cartEntries).to.have.lengthOf(1);
 
                     const entry = res.body.cartEntries[0];
-                    expect(entry).to.have.own.property('quantity');
                     expect(entry.quantity).to.equal(2);
-                    expect(entry).to.have.own.property('unitPrice');
-                    expect(entry).to.have.own.property('productVariant');
                     expect(entry.productVariant).to.have.own.property('id');
                     expect(entry.productVariant.sku).to.equal(productVariantId);
-                    expect(entry).to.have.own.property('id');
-                    expect(entry).to.have.own.property('cartEntryPrice');
                 })
                 .catch(function(err) {
                     throw err;
@@ -99,17 +94,23 @@ describe('magento getCart', function() {
         it('returns a 400 error for a missing id parameter', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getCart')
+                .set('Cache-Control', 'no-cache')
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
         it('returns a 404 error for a non existent cart', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getCart')
+                .set('Cache-Control', 'no-cache')
                 .query({id: 'does-not-exist'})
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
         

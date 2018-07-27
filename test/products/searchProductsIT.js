@@ -19,6 +19,7 @@ const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
 const categoriesConfig = require('../lib/config').categoriesConfig;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
 chai.use(require("chai-sorted"));
@@ -41,42 +42,49 @@ describe('magento searchProducts', function() {
 
         before(function () {
             return chai.request(env.openwhiskEndpoint)
-                    .get(env.categoriesPackage + 'getCategories')
-                    .query({
-                        type: 'tree'
-                    })
-                    .then(function (res) {
-                        MEN_CATEGORY_ID = parseInt(res.body.results.find(o => {
-                            return o.name === categoriesConfig.MEN.name
-                        }).id);
-                        WOMENSHORTS_CATEGORY_ID = parseInt(res.body.results.find(o => {
-                            return o.name === categoriesConfig.WOMEN.name
-                        }).subCategories.find(o => {
-                            return o.name === categoriesConfig.WOMEN.SHORTS.name;
-                        }).id);
-                    });
+                .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
+                .query({
+                    type: 'tree'
+                })
+                .then(function (res) {
+                    MEN_CATEGORY_ID = parseInt(res.body.results.find(o => {
+                        return o.name === categoriesConfig.MEN.name
+                    }).id);
+                    WOMENSHORTS_CATEGORY_ID = parseInt(res.body.results.find(o => {
+                        return o.name === categoriesConfig.WOMEN.name
+                    }).subCategories.find(o => {
+                        return o.name === categoriesConfig.WOMEN.SHORTS.name;
+                    }).id);
+                });
         });
 
         it('returns a 500 error if parameters are missing', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
         it('returns products in a category', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:"${WOMENSHORTS_CATEGORY_ID}"`
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(4);
                     expect(res.body.results).to.have.lengthOf(4);
-                    for(let result of res.body.results) {
+                    for (let result of res.body.results) {
+                        requiredFields.verifyProduct(result);
                         expect(result.categories).to.deep.include({"id": WOMENSHORTS_CATEGORY_ID});
                     }
                 })
@@ -89,16 +97,19 @@ describe('magento searchProducts', function() {
         it.skip('returns products in a category and all its subcategories', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:subtree("${MEN_CATEGORY_ID}")`
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(25);
                     expect(res.body.results).to.have.lengthOf(25);
                     for(let result of res.body.results) {
                         expect(result.categories).to.have.lengthOf.at.least(1);
+                        requiredFields.verifyProduct(result);
                     }
                 })
                 .catch(function(err) {
@@ -110,27 +121,29 @@ describe('magento searchProducts', function() {
             const sku = 'meskwielt';
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `variants.sku:"${sku}"`
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(1);
 
                     // Verify structure
                     const product = res.body.results[0];
-                    expect(product).to.have.own.property('name');
+
+                    requiredFields.verifyProduct(product);
                     expect(product.name).to.equal('El Gordo Down Jacket');
-                    expect(product).to.have.own.property('masterVariantId');
-                    expect(product).to.have.own.property('id');
                     expect(product).to.have.own.property('categories');
-                    expect(product).to.have.own.property('variants');
                     expect(product).to.have.own.property('createdDate');
+
                     expect(product.variants).to.have.lengthOf(15);
                     expect(product.attributes).to.have.lengthOf(2);
                     expect(product.attributes.find(o => {return o.id === 'summary'})).to.be.an('object');
                     expect(product.attributes.find(o => {return o.id === 'features'})).to.be.an('object');
+
                     //only product variant contains variants attributes
                     expect(product.variants[0].attributes.find(o => {return o.id === 'color'})).to.be.an('object');
                     expect(product.variants[0].attributes.find(o => {return o.id === 'size'})).to.be.an('object');
@@ -144,15 +157,20 @@ describe('magento searchProducts', function() {
             const searchTerm = 'jacket';
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     text: searchTerm
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(5);
                     expect(res.body.results).to.have.lengthOf(5);
                     expect(res.text.split(searchTerm)).to.have.lengthOf.at.least(5);
+                    for(let result of res.body.results) {
+                        requiredFields.verifyProduct(result);
+                    }
                 })
                 .catch(function(err) {
                     throw err;
@@ -162,6 +180,7 @@ describe('magento searchProducts', function() {
         it('returns products sorted by their name', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:"${WOMENSHORTS_CATEGORY_ID}"`,
                     sort: 'name.desc',
@@ -170,8 +189,12 @@ describe('magento searchProducts', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(4);
                     expect(res.body.results).to.have.lengthOf(4);
+                    for(let result of res.body.results) {
+                        requiredFields.verifyProduct(result);
+                    }
 
                     // Verfiy sorting
                     const names = res.body.results.map(r => r.name);
@@ -186,12 +209,15 @@ describe('magento searchProducts', function() {
         it.skip('returns a 500 error for invalid sorting parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:"${WOMENSHORTS_CATEGORY_ID}"`,
                     sort: 'abc.asc'
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -199,6 +225,7 @@ describe('magento searchProducts', function() {
         it.skip('returns a subset of products as defined by paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:subtree("${MEN_CATEGORY_ID}")`,
                     limit: 4,
@@ -207,10 +234,14 @@ describe('magento searchProducts', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.offset).to.equal(20);
                     expect(res.body.count).to.equal(4);
                     expect(res.body.total).to.equal(100);
                     expect(res.body.results).to.have.lengthOf(4);
+                    for(let result of res.body.results) {
+                        requiredFields.verifyProduct(result);
+                    }
                 })
                 .catch(function(err) {
                     throw err;
@@ -221,12 +252,15 @@ describe('magento searchProducts', function() {
         it.skip('returns a 500 error for invalid paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:subtree:"${MEN_CATEGORY_ID}"`,
                     limit: -1
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 

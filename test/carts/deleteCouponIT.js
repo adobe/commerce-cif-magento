@@ -19,6 +19,7 @@ const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
 const expect = chai.expect;
+const requiredFields = require('../lib/requiredFields');
 
 chai.use(chaiHttp);
 
@@ -45,41 +46,41 @@ describe('magento deleteCoupon', function () {
         /** Create cart and add coupon code to cart. */
         beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCartEntry')
-                       .query({
-                            currency: 'USD',
-                            quantity: 1,
-                            productVariantId: productVariantId
-                        })
-                       .then(function (res) {
-                           expect(res).to.be.json;
-                           expect(res).to.have.status(HttpStatus.CREATED);
+                .post(env.cartsPackage + 'postCartEntry')
+                .query({
+                    currency: 'USD',
+                    quantity: 1,
+                    productVariantId: productVariantId
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.CREATED);
 
-                           // Store cart id
-                           cartId = res.body.id;
-                           cartEntryId = res.body.cartEntries[0].id;
+                    // Store cart id
+                    cartId = res.body.id;
+                    cartEntryId = res.body.cartEntries[0].id;
 
-                           return chai.request(env.openwhiskEndpoint)
-                           .post(env.cartsPackage + 'postCoupon')
-                           .query({
-                               id: cartId,
-                               code: couponCode
-                           })
-                       })
-                       .then(function (res) {
-                            expect(res).to.be.json;
-                            expect(res).to.have.status(HttpStatus.OK);
-                            expect(res.body).to.have.property('coupons');
-                            expect(res.body.coupons).to.have.lengthOf(1);
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postCoupon')
+                        .query({
+                            id: cartId,
+                            code: couponCode
+                        });
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res.body).to.have.property('coupons');
+                    expect(res.body.coupons).to.have.lengthOf(1);
 
-                            let coupon = res.body.coupons[0];
-                            expect(coupon).to.have.property('id');
-                            expect(coupon).to.have.property('code');
-                            expect(coupon.code).to.equal(couponCode);
-                        })
-                       .catch(function (err) {
-                           throw err;
-                       });
+                    let coupon = res.body.coupons[0];
+                    expect(coupon).to.have.property('id');
+                    expect(coupon).to.have.property('code');
+                    expect(coupon.code).to.equal(couponCode);
+                })
+                .catch(function (err) {
+                    throw err;
+                });
         });
 
         /** Delete cart. */
@@ -108,31 +109,36 @@ describe('magento deleteCoupon', function () {
                 .then(function(res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyCart(res.body);
                     expect(res.body).to.not.have.property('coupons');
                 });
         });
 
         it('returns 404 for deleting a coupon code from a non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'deleteCoupon')
-                       .query({
-                           id: 'non-existing-cart-id',
-                           code: couponCode
-                       })
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                       });
+                .post(env.cartsPackage + 'deleteCoupon')
+                .query({
+                    id: 'non-existing-cart-id',
+                    code: couponCode
+                })
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('returns 400 for a missing coupon code', function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'deleteCoupon')
-                       .query({
-                           id: cartId
-                       })
-                       .catch(function (err) {
-                           expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                       });
+                .post(env.cartsPackage + 'deleteCoupon')
+                .query({
+                    id: cartId
+                })
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
     });
 });

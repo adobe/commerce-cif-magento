@@ -16,14 +16,16 @@
 
 const fs = require('fs');
 
-module.exports.getPathForAction = function (testDirName, action) {
-    return testDirName.replace('/test/', '/src/').concat('/').concat(action);
-};
+module.exports = {
+    getPathForAction: function (testDirName, action) {
+        return testDirName.replace('/test/', '/src/').concat('/').concat(action);
+    },
 
-module.exports.parseJsonFile = function(path) {
-    return JSON.parse(fs.readFileSync(path, 'utf8'))
-};
+    parseJsonFile: function(path) {
+        return JSON.parse(fs.readFileSync(path, 'utf8'))
+    },
 
-module.exports.clone = function(object) {
-    return JSON.parse(JSON.stringify(object));
-}
+    clone: function(object) {
+        return JSON.parse(JSON.stringify(object));
+    }
+};

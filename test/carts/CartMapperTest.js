@@ -156,9 +156,11 @@ describe('Magento CartMapper', () => {
 
             assert.isUndefined(mappedCart.netTotalPrice);
             assert.isUndefined(mappedCart.grossTotalPrice);
-            assert.isUndefined(mappedCart.totalProductPrice);
             assert.isUndefined(mappedCart.cartTaxInfo);
             assert.isUndefined(mappedCart.shippingInfo);
+
+            // Required field
+            assert.isDefined(mappedCart.totalProductPrice);
         });
 
         it('succeeds if cart has no billingAddress', () => {
