@@ -39,17 +39,6 @@ for(let action in serverless.functions) {
 }
 
 // Provision dependencies
-/*
-for(let dependency of dependencies) {
-    // Download dependencies, unpack them and install their production dependencies
-    child_process.execSync(`TARBALL=$(npm pack '${dependency}')` +
-        ` && mkdir -p '${dependency}'` +
-        ` && tar xvf $TARBALL -C '${dependency}' --strip 1` +
-        ` && rm $TARBALL` +
-        ` && cd '${dependency}'` +
-        ` && npm install --only=production`, {stdio: 'inherit'});
-}
-*/
 for(let dependency of dependencies) {
     // Download dependencies, unpack them and install their production dependencies
     child_process.execSync(`npm pack ` + dependency + ` > tarname.tmp`);
