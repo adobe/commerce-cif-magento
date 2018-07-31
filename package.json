@@ -49,7 +49,7 @@
     "globalinstall": "npm install -g lerna@2.0.0-rc.5",
     "generate-cov-html": "nyc report --reporter=html",
     "test": "lerna run lint && npm run test-cov && npm run generate-cov-html",
-    "test-cov": "XUNIT_FILE=test-results-xunit.xml nyc mocha test/**/*Test.js -R xunit-file && nyc report --reporter=lcov",
+    "test-cov": "XUNIT_FILE=test/results/unit/results.xml nyc mocha test/**/*Test.js -R xunit-file && nyc report --reporter=lcov",
     "unit": "mocha test/**/*Test.js",
     "test-it": "XUNIT_FILE=test-results-it-xunit.xml mocha test/**/*IT.js -R xunit-file"
   }

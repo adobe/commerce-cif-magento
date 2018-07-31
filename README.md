@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/adobe/commerce-cif-magento.svg?style=svg)](https://circleci.com/gh/adobe/commerce-cif-magento)
+[![codecov](https://codecov.io/gh/adobe/commerce-cif-magento/branch/master/graph/badge.svg)](https://codecov.io/gh/adobe/commerce-cif-magento)
 
 # Commerce Integration Framework (CIF) on Cloud for Magento
 
@@ -12,7 +13,7 @@ This project contains the OpenWhisk actions implementation for [Magento](https:/
 
 ### Magento GraphQL and aggregated cart extension
 
-The CIF Cloud Magento integration relies on the new [Magento graphQL implementation](https://github.com/magento/graphql-ce) for the products integration, and on a dedicated Magento extension for the carts integration. This extension will be released very soon on a separate Github repository.
+The CIF Cloud Magento integration relies on the new [Magento graphQL implementation](https://github.com/magento/graphql-ce) for the products integration, and on a dedicated [Magento extension for the carts integration](https://github.com/adobe/commerce-cif-magento-extension).
 
 ### Project structure
 

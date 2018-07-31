@@ -41,6 +41,7 @@ describe('Magento PaymentMapper', () => {
 
             let expected = new Payment();
             expected.method = "creditcard";
+            expected.id = expected.method;
 
             assert.deepEqual(cifPayment, expected);
         });

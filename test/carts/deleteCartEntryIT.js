@@ -18,9 +18,9 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
-
 chai.use(chaiHttp);
 
 
@@ -82,6 +82,8 @@ describe('magento deleteCartEntry', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.CREATED);
+                    requiredFields.verifyCart(res.body);
+
                     // Verify that two products are in the cart
                     expect(res.body.cartEntries).to.have.lengthOf(2);
                 
@@ -97,18 +99,16 @@ describe('magento deleteCartEntry', function() {
                         .query({
                             id: cartId,
                             cartEntryId: cartEntryIdSecond
-                        })
-                        .then(function(res) {
-                            expect(res).to.be.json;
-                            expect(res).to.have.status(HttpStatus.OK);
-
-                            // Verify that only original product is still in the cart
-                            expect(res.body.cartEntries).to.have.lengthOf(1);
-                            expect(res.body.cartEntries[0].id).to.equal(cartEntryId);
-                        })
-                        .catch(function(err) {
-                            throw err;
                         });
+                })
+                .then(function(res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyCart(res.body);
+
+                    // Verify that only original product is still in the cart
+                    expect(res.body.cartEntries).to.have.lengthOf(1);
+                    expect(res.body.cartEntries[0].id).to.equal(cartEntryId);
                 })
                 .catch(function(err) {
                     throw err;
@@ -117,20 +117,21 @@ describe('magento deleteCartEntry', function() {
     
         it('removes an entry from a cart', function() {
             return chai.request(env.openwhiskEndpoint)
-                    .post(env.cartsPackage + 'deleteCartEntry')
-                    .query({
-                        id: cartId,
-                        cartEntryId: cartEntryId
-                    })
-                    .then(function(res) {
-                        expect(res).to.be.json;
-                        expect(res).to.have.status(HttpStatus.OK);
-                    
-                        expect(res.body.cartEntries).to.have.lengthOf(0);
-                    })
-                    .catch(function(err) {
-                        throw err;
-                    });
+                .post(env.cartsPackage + 'deleteCartEntry')
+                .query({
+                    id: cartId,
+                    cartEntryId: cartEntryId
+                })
+                .then(function(res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                
+                    requiredFields.verifyCart(res.body);
+                    expect(res.body.cartEntries).to.have.lengthOf(0);
+                })
+                .catch(function(err) {
+                    throw err;
+                });
         });
         
         it('returns a 400 error for an invalid entry id', function() {
@@ -142,6 +143,8 @@ describe('magento deleteCartEntry', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -154,6 +157,8 @@ describe('magento deleteCartEntry', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -166,6 +171,8 @@ describe('magento deleteCartEntry', function() {
                 })
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -174,6 +181,8 @@ describe('magento deleteCartEntry', function() {
                 .post(env.cartsPackage + 'deleteCartEntry')
                 .catch(function(err) {
                     expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 

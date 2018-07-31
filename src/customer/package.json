@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/commerce-cif-magento.git"
   },
   "dependencies": {
-    "@adobe/commerce-cif-common": "0.1.15",
+    "@adobe/commerce-cif-common": "0.1.17",
     "@adobe/commerce-cif-magento-common": "0.0.1",
     "@adobe/commerce-cif-model": "0.1.123"
   },
@@ -25,6 +25,7 @@
     "extends": "../../.eslintrc.js"
   },
   "scripts": {
+    "postinstall": "chmod +x $(npm bin)/serverless",
     "lint": "$(npm bin)/eslint -f table --ignore-path ../../.eslintignore .",
     "deploy": "$(npm bin)/serverless deploy",
     "remove": "$(npm bin)/serverless remove",

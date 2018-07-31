@@ -140,6 +140,9 @@ class ProductMapper {
     _mapProductVariant(product, variant) {
         let v = new ProductVariant(variant.sku); // not a mistake, we use the SKU for the ID
         this._mapProductData(v, variant);
+
+        // TODO: Get actual value from backend
+        v.available = true;
         
         if (product.configurable_options) {
             v.attributes = this._addConfigurableOptions(product, variant);

@@ -18,6 +18,7 @@ const chai = require('chai');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
 const categoriesConfig = require('../lib/config').categoriesConfig;
+const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
 chai.use(require('chai-sorted'));
@@ -40,6 +41,7 @@ describe('magento getCategories', function() {
         before(function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree'
                 })
@@ -53,17 +55,20 @@ describe('magento getCategories', function() {
         it('returns all categories in tree structure', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree'
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(21);
                     expect(res.body.results).to.have.lengthOf(3);
 
                     // Verify structure
                     for(let category of res.body.results) {
+                        requiredFields.verifyCategory(category);
                         expect(category).to.have.own.property('subCategories');
                         for(let subCategory of category.subCategories) {
                             expect(subCategory).to.have.own.property('parentCategories');
@@ -75,27 +80,30 @@ describe('magento getCategories', function() {
         it('returns all categories in flat structure', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'flat'
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(21);
                     expect(res.body.results).to.have.lengthOf(21);
 
                     // Verify structure
                     for(let category of res.body.results) {
+                        requiredFields.verifyCategory(category);
                         expect(category).to.not.have.own.property('subCategories');
                     }
                 });
         });
 
-
         it('returns a single category', function() {
             const categoryId = MEN_CATEGORY_ID;
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     id: categoryId
                 })
@@ -105,9 +113,9 @@ describe('magento getCategories', function() {
 
                     // Verify structure
                     const category = res.body;
+                    requiredFields.verifyCategory(category);
                     expect(category).to.have.own.property('name');
                     expect(category.name).to.equal('Men');
-                    expect(category).to.have.own.property('id');
                     expect(category).to.have.own.property('lastModifiedDate');
                     expect(category).to.have.own.property('createdDate');
                 });
@@ -116,6 +124,7 @@ describe('magento getCategories', function() {
         it('returns all categories in a tree structure with only root nodes', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
                     depth: '0'
@@ -123,11 +132,13 @@ describe('magento getCategories', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.count).to.equal(3);
                     expect(res.body.results).to.have.lengthOf(3);
 
                     // Verify structure
                     for(let category of res.body.results) {
+                        requiredFields.verifyCategory(category);
                         expect(category).to.not.have.own.property('subCategories');
                     }
                 });
@@ -137,6 +148,7 @@ describe('magento getCategories', function() {
         it.skip('returns all categories in tree structure sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
                     sort: 'name.desc'
@@ -144,6 +156,10 @@ describe('magento getCategories', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
+                    for (let category of res.body.results) {
+                        requiredFields.verifyCategory(category);
+                    }
 
                     // Verfiy sorting
                     const names = res.body.results.map(r => r.name);
@@ -155,6 +171,7 @@ describe('magento getCategories', function() {
         it.skip('returns all categories in tree structure with subcategories sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
                     sort: 'name.desc'
@@ -162,9 +179,11 @@ describe('magento getCategories', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
 
                     // Verify sorting of subcategories
                     for(let category of res.body.results) {
+                        requiredFields.verifyCategory(category);
                         const subnames = category.subCategories.map(r => r.name);
                         expect(subnames).to.be.descending;
                     }
@@ -175,6 +194,7 @@ describe('magento getCategories', function() {
         it.skip('returns all categories in flat structure sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'flat',
                     sort: 'name.desc'
@@ -182,8 +202,13 @@ describe('magento getCategories', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
-                    const names = res.body.results.map(r => r.name);
+                    requiredFields.verifyPagedResponse(res.body);
+                    for (let category of res.body.results) {
+                        requiredFields.verifyCategory(category);
+                    }
+
                     // Verfiy sorting
+                    const names = res.body.results.map(r => r.name);
                     expect(names).to.be.descending;
                 });
         });
@@ -192,6 +217,7 @@ describe('magento getCategories', function() {
         it.skip('returns a subset of categories in tree structure as defined by paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
                     limit: 5,
@@ -200,10 +226,14 @@ describe('magento getCategories', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.offset).to.equal(10);
                     expect(res.body.count).to.equal(5);
                     expect(res.body.total).to.equal(24);
                     expect(res.body.results).to.have.lengthOf(5);
+                    for (let category of res.body.results) {
+                        requiredFields.verifyCategory(category);
+                    }
                 });
         });
 
@@ -211,6 +241,7 @@ describe('magento getCategories', function() {
         it.skip('returns a subset of categories in flat structure as defined by paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'flat',
                     limit: 7,
@@ -219,27 +250,45 @@ describe('magento getCategories', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.offset).to.equal(14);
                     expect(res.body.count).to.equal(7);
                     expect(res.body.total).to.equal(24);
                     expect(res.body.results).to.have.lengthOf(7);
+                    for (let category of res.body.results) {
+                        requiredFields.verifyCategory(category);
+                    }
                 });
         });
 
         it('returns a 400 error for invalid paging parameters', function () {
-            const promise = chai.request(env.openwhiskEndpoint)
+            return chai.request(env.openwhiskEndpoint)
                 .get(`${env.categoriesPackage}getCategories`)
-                .query({ limit: -7 });
-            return expect(promise, 'Getting categories with invalid paging parameter should return BAD_REQUEST')
-                .to.eventually.be.rejected.and.have.property('status', HttpStatus.BAD_REQUEST);
+                .set('Cache-Control', 'no-cache')
+                .query({ limit: -7 })
+                .then(function() {
+                    chai.assert.fail();
+                })
+                .catch(function(err) {
+                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
 
         it('returns a 404 error for a non existent category', function () {
-            const promise = chai.request(env.openwhiskEndpoint)
+            return chai.request(env.openwhiskEndpoint)
                 .get(`${env.categoriesPackage}getCategories`)
-                .query({ id: '999999999999999' });
-            return expect(promise, 'Getting a category by id which does not exist should return NOT_FOUND')
-                .to.eventually.be.rejected.and.have.property('status', HttpStatus.NOT_FOUND);
+                .set('Cache-Control', 'no-cache')
+                .query({ id: '999999999999999' })
+                .then(function() {
+                    chai.assert.fail();
+                })
+                .catch(function(err) {
+                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
         });
     });
 });
