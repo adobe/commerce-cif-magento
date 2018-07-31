@@ -37,7 +37,7 @@ if ("test" in pkg.scripts) {
     ci.sh('$(npm bin)/codecov');
 }
 
-if ("test-it" in pkg.scripts) {
+if ("test-it" in pkg.scripts && process.env.CORE_WSK_AUTH_STRING) {
     ci.stage('INTEGRATION TESTS');
     ci.sh('mkdir -p test/results/integration');
 
@@ -50,7 +50,7 @@ if ("test-it" in pkg.scripts) {
             ci.sh('$(npm bin)/lerna run deploy-suffix --concurrency 1');
         });
 
-        if (fs.existsSync('customer-deployment')) {
+        if (fs.existsSync('customer-deployment') && process.env.CUSTOMER_WSK_AUTH_STRING) {
             ci.dir('customer-deployment', () => {
                 ci.withWskCredentials(process.env.WSK_API_HOST, process.env.CUSTOMER_WSK_NAMESPACE, process.env.CUSTOMER_WSK_AUTH_STRING, () => {
                     ci.withCredentials(process.env.BACKEND_CREDENTIALS, () => {
@@ -65,7 +65,7 @@ if ("test-it" in pkg.scripts) {
         ci.sh('npm run test-it');
 
     } finally {
-        if (fs.existsSync('customer-deployment')) {
+        if (fs.existsSync('customer-deployment') && process.env.CUSTOMER_WSK_AUTH_STRING) {
             ci.dir('customer-deployment', () => {
                 ci.withWskCredentials(process.env.WSK_API_HOST, process.env.CUSTOMER_WSK_NAMESPACE, process.env.CUSTOMER_WSK_AUTH_STRING, () => {
                     let params = '--customer-package magento@' + process.env.OW_PACKAGE_SUFFIX + ' --customer-namespace ' + process.env.CUSTOMER_WSK_NAMESPACE + ' --bindings-namespace ' + process.env.CORE_WSK_NAMESPACE;
