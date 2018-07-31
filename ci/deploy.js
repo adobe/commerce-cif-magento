@@ -17,17 +17,10 @@
 const CI = require('./ci.js');
 const ci = new CI();
 
-// Modules in this repository
-const releaseableModules = {
-    'commerce-cif-magento-cart': 'src/carts',
-    'commerce-cif-magento-category': 'src/categories',
-    'commerce-cif-magento-common': 'src/common',
-    'commerce-cif-magento-customer': 'src/customer',
-    'commerce-cif-magento-order': 'src/orders',
-    'commerce-cif-magento-product': 'src/products'
-}
-
 ci.context();
+
+// Modules in this repository
+const modules = JSON.parse(fs.readFileSync('ci/modules.json'));
 
 // Check for tag
 let gitTag = process.env.CIRCLE_TAG;
@@ -36,7 +29,7 @@ if (!gitTag) {
 }
 
 // Find module of that release
-let moduleToRelease = ci.parseModuleFromVersionTag(gitTag, releaseableModules);
+let moduleToRelease = ci.parseModuleFromVersionTag(gitTag, modules);
 if (!moduleToRelease) {
     throw new Error('Invalid version tag.');
 }
@@ -51,7 +44,7 @@ ci.sh('npm install');
 
 ci.stage(`PERFORM DEPLOYMENT OF ${moduleToRelease}`);
 
-ci.dir(releaseableModules[moduleToRelease], () => {
+ci.dir(modules[moduleToRelease], () => {
     ci.withWskCredentials(process.env.WSK_API_HOST, process.env.PROD_WSK_NAMESPACE, process.env.PROD_WSK_AUTH_STRING, () => {
         ci.sh('npm run deploy-package');
     });

@@ -15,20 +15,14 @@
 'use strict';
 
 const cp = require('child_process');
+const fs = require('fs');
 const CI = require('./ci.js');
 const ci = new CI();
 
-// Modules in this repository
-const releaseableModules = {
-    'commerce-cif-magento-cart': 'src/carts',
-    'commerce-cif-magento-category': 'src/categories',
-    'commerce-cif-magento-common': 'src/common',
-    'commerce-cif-magento-customer': 'src/customer',
-    'commerce-cif-magento-order': 'src/orders',
-    'commerce-cif-magento-product': 'src/products'
-}
-
 ci.context();
+
+// Modules in this repository
+const releaseableModules = JSON.parse(fs.readFileSync('ci/modules.json'));
 
 // Check for tag
 let gitTag = process.env.CIRCLE_TAG;
