@@ -20,10 +20,18 @@ jobs:
       - run:
           name: Release
           command: node ci/release.js
+  deploy:
+    docker:
+      - image: adobe/commerce-cif-ci-env:v0.0.1
+    steps:
+      - checkout
+      - run:
+          name: Deploy
+          command: node ci/deploy.js
 
 workflows:
   version: 2
-  build-and-release:
+  continuous-delivery:
     jobs:
       - build:
           filters:
@@ -36,4 +44,12 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^@(.+)@release-(major|minor|patch)$/ 
+              only: /^@(.+)@release-(major|minor|patch)$/
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^@adobe\/(.*)-[\d]+.[\d]+.[\d]+$/

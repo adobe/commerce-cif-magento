@@ -149,8 +149,16 @@ module.exports = class CI {
      * Determine the module to be released from a release tag and a given object
      * with module to path mappings.
      */
-    parseReleaseModule(tag, mappings) {
+    parseModuleFromReleaseTag(tag, mappings) {
         return Object.keys(mappings).find(key => tag.startsWith(`@${key}@`));
     };
+
+    /**
+     * Determine the module that was released from a given release version tag
+     * and a given object with module to path mappings.
+     */
+    parseModuleFromVersionTag(tag, mappings) {
+        return Object.keys(mappings).find(key => tag.startsWith(`@adobe/${key}-`));
+    }
 
 };
