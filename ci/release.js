@@ -37,7 +37,7 @@ if (!gitTag) {
 }
 
 // Find module that should be release
-let moduleToRelease = ci.parseReleaseModule(gitTag, releaseableModules);
+let moduleToRelease = ci.parseModuleFromReleaseTag(gitTag, releaseableModules);
 if (!moduleToRelease) {
     throw new Error('Invalid release tag.');
 }
@@ -74,7 +74,8 @@ try {
             ci.sh(`git commit -m "@releng Release: @adobe/${moduleToRelease}-${newVersion}"`);
 
             // Add tag
-            ci.sh(`git tag -a @adobe/${moduleToRelease}-${newVersion} -m "@adobe/${moduleToRelease}-${newVersion}"`);
+            let versionTag = `@adobe/${moduleToRelease}-${newVersion}`;
+            ci.sh(`git tag -a ${versionTag} -m "${versionTag}"`);
 
             // Publish to npm
             ci.sh('npm publish --access public');
