@@ -31,7 +31,7 @@ jobs:
 
 workflows:
   version: 2
-  build-and-release:
+  continuous-delivery:
     jobs:
       - build:
           filters:
@@ -46,6 +46,8 @@ workflows:
             tags:
               only: /^@(.+)@release-(major|minor|patch)$/
       - deploy:
+          requires:
+            - build
           filters:
             branches:
               ignore: /.*/
