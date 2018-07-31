@@ -58,7 +58,7 @@ describe('magento deleteCoupon', function () {
 
                     // Store cart id
                     cartId = res.body.id;
-                    cartEntryId = res.body.cartEntries[0].id;
+                    cartEntryId = res.body.entries[0].id;
 
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.cartsPackage + 'postCoupon')
@@ -94,7 +94,7 @@ describe('magento deleteCoupon', function () {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
-                    expect(res.body.cartEntries).to.have.lengthOf(0);
+                    expect(res.body.entries).to.have.lengthOf(0);
                 });
         });
 

@@ -79,9 +79,9 @@ describe('magento getCart', function() {
                     //TODO update when TOTAL is added
                     expect(res.body.id).to.equal(cartId);
                     expect(res.body).to.have.own.property('createdDate');
-                    expect(res.body.cartEntries).to.have.lengthOf(1);
+                    expect(res.body.entries).to.have.lengthOf(1);
 
-                    const entry = res.body.cartEntries[0];
+                    const entry = res.body.entries[0];
                     expect(entry.quantity).to.equal(2);
                     expect(entry.productVariant).to.have.own.property('id');
                     expect(entry.productVariant.sku).to.equal(productVariantId);

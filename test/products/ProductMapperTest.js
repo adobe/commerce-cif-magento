@@ -54,8 +54,8 @@ describe('Magento ProductMapper', () => {
             assert.strictEqual(product.sku, magentoProduct.sku);
             assert.strictEqual(product.masterVariantId, magentoFirstVariant.sku);
             assert.strictEqual(product.name, magentoProduct.name);
-            assert.strictEqual(product.createdDate, formatDate(magentoProduct.created_at));
-            assert.strictEqual(product.lastModifiedDate, formatDate(magentoProduct.updated_at));
+            assert.strictEqual(product.createdAt, formatDate(magentoProduct.created_at));
+            assert.strictEqual(product.lastModifiedAt, formatDate(magentoProduct.updated_at));
             assert.lengthOf(product.variants, magentoProduct.variants.length);
             assert.lengthOf(product.categories, magentoProduct.categories.length);
 
@@ -76,8 +76,8 @@ describe('Magento ProductMapper', () => {
                 assert.strictEqual(variant.id, magentoVariant.sku);
                 assert.strictEqual(variant.sku, magentoVariant.sku);
                 assert.strictEqual(variant.name, magentoVariant.name);
-                assert.strictEqual(variant.createdDate, formatDate(magentoVariant.created_at));
-                assert.strictEqual(variant.lastModifiedDate, formatDate(magentoVariant.updated_at));
+                assert.strictEqual(variant.createdAt, formatDate(magentoVariant.created_at));
+                assert.strictEqual(variant.lastModifiedAt, formatDate(magentoVariant.updated_at));
                 assert.lengthOf(product.categories, magentoProduct.categories.length);
                 
                 assert.strictEqual(variant.attributes.length, 4);
@@ -114,7 +114,7 @@ describe('Magento ProductMapper', () => {
 
             product.prices.forEach(price => {
                 assert.hasAnyKeys(price, ['centAmount', 'currency', 'country']);
-                assert.isNumber(price.centAmount);
+                assert.isNumber(price.amount);
             });
 
             assert.isUndefined(product.prices[0].country);
@@ -150,8 +150,8 @@ describe('Magento ProductMapper', () => {
                 assert.strictEqual(product.masterVariantId, magentoFirstVariant.sku);
                 assert.strictEqual(product.name, magentoProduct.name);
                 assert.strictEqual(product.description, magentoFirstVariant.description);
-                assert.strictEqual(product.createdDate, formatDate(magentoProduct.created_at));
-                assert.strictEqual(product.lastModifiedDate, formatDate(magentoProduct.updated_at));
+                assert.strictEqual(product.createdAt, formatDate(magentoProduct.created_at));
+                assert.strictEqual(product.lastModifiedAt, formatDate(magentoProduct.updated_at));
                 assert.lengthOf(product.variants, magentoProduct.variants.length);
                 assert.lengthOf(product.categories, magentoProduct.categories.length);
             }

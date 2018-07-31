@@ -57,7 +57,7 @@ describe('magento putCartEntry', function () {
                     cartId = res.body.id;
                     
                     // Store cart entry id
-                    cartEntryId = res.body.cartEntries[0].id;
+                    cartEntryId = res.body.entries[0].id;
                 })
                 .catch(function (err) {
                     throw err;
@@ -89,9 +89,9 @@ describe('magento putCartEntry', function () {
                     expect(res.body).to.have.own.property('createdDate');
 
                     // Verify cart content
-                    expect(res.body.cartEntries).to.have.lengthOf(1);
-                    expect(res.body.cartEntries[0].id).to.equal(cartEntryId);
-                    expect(res.body.cartEntries[0].quantity).to.equal(newQuantity);
+                    expect(res.body.entries).to.have.lengthOf(1);
+                    expect(res.body.entries[0].id).to.equal(cartEntryId);
+                    expect(res.body.entries[0].quantity).to.equal(newQuantity);
                 })
                 .catch(function (err) {
                     throw err;
@@ -125,7 +125,7 @@ describe('magento putCartEntry', function () {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
                     requiredFields.verifyCart(res.body);
-                    expect(res.body.cartEntries).to.have.lengthOf(0);
+                    expect(res.body.entries).to.have.lengthOf(0);
                 })
                 .catch(function (err) {
                     throw err;

@@ -45,7 +45,7 @@ describe('Magento postPayment', function () {
             statusCode: '1',
             status: 'Paid',
             amount: {
-                centAmount: 17900,
+                amount: 17900,
                 currency: 'USD'
             }
         };
@@ -80,7 +80,7 @@ describe('Magento postPayment', function () {
 
                     // Store cart id
                     cartId = res.body.id;
-                    cartEntryId = res.body.cartEntries[0].id;
+                    cartEntryId = res.body.entries[0].id;
                     // Set shipping address
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.cartsPackage + 'postShippingAddress')
@@ -110,7 +110,7 @@ describe('Magento postPayment', function () {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
 
-                    expect(res.body.cartEntries).to.have.lengthOf(0);
+                    expect(res.body.entries).to.have.lengthOf(0);
                 })
                 .catch(function (err) {
                     throw err;

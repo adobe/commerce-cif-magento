@@ -42,12 +42,15 @@ class CustomerMapper {
         if (!magentoCustomer || !magentoCustomer.id) {
             throw new MissingPropertyException('Invalid customer response received from Magento');
         }
-        let customer = new Customer(magentoCustomer.id);
-        customer.email = magentoCustomer.email;
-        customer.firstname = magentoCustomer.firstname;
-        customer.lastname = magentoCustomer.lastname;
-        customer.createdDate = formatDate(magentoCustomer.created_at);
-        customer.lastModifiedDate = formatDate(magentoCustomer.updated_at);
+        let customer = new Customer(magentoCustomer.email,
+            magentoCustomer.firstname, 
+            magentoCustomer.id,
+            magentoCustomer.lastname);
+        // customer.email = magentoCustomer.email;
+        // customer.firstname = magentoCustomer.firstname;
+        // customer.lastname = magentoCustomer.lastname;
+        customer.createdAt = formatDate(magentoCustomer.created_at);
+        customer.lastModifiedAt = formatDate(magentoCustomer.updated_at);
         return customer;
     }
 

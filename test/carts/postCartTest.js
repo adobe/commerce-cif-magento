@@ -55,7 +55,7 @@ describe('Magento postCart', () => {
                         assert.strictEqual(result.response.headers.Location, `carts/${args.id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
-                        assert.isEmpty(result.response.body.cartEntries);
+                        assert.isEmpty(result.response.body.entries);
                     });
         });
         
@@ -93,7 +93,7 @@ describe('Magento postCart', () => {
                         assert.strictEqual(result.response.headers.Location, `carts/${args.id}/entries/${samplecartentry.item_id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
-                        assert.isNotEmpty(result.response.body.cartEntries);
+                        assert.isNotEmpty(result.response.body.entries);
                     });
         });
         
@@ -133,7 +133,7 @@ describe('Magento postCart', () => {
                         assert.strictEqual(result.response.headers.Location, `carts/${args.id}/entries/${samplecartentry.item_id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
-                        assert.isNotEmpty(result.response.body.cartEntries);
+                        assert.isNotEmpty(result.response.body.entries);
                     });
         });
         
