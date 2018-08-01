@@ -46,9 +46,6 @@ class CustomerMapper {
             magentoCustomer.firstname, 
             magentoCustomer.id,
             magentoCustomer.lastname);
-        // customer.email = magentoCustomer.email;
-        // customer.firstname = magentoCustomer.firstname;
-        // customer.lastname = magentoCustomer.lastname;
         customer.createdAt = formatDate(magentoCustomer.created_at);
         customer.lastModifiedAt = formatDate(magentoCustomer.updated_at);
         return customer;
