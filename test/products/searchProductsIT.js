@@ -137,7 +137,7 @@ describe('magento searchProducts', function() {
                     requiredFields.verifyProduct(product);
                     expect(product.name).to.equal('El Gordo Down Jacket');
                     expect(product).to.have.own.property('categories');
-                    expect(product).to.have.own.property('createdDate');
+                    expect(product).to.have.own.property('createdAt');
 
                     expect(product.variants).to.have.lengthOf(15);
                     expect(product.attributes).to.have.lengthOf(2);

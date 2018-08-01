@@ -58,7 +58,7 @@ describe('magento postCoupon', function () {
 
                     // Store cart id
                     cartId = res.body.id;
-                    cartEntryId = res.body.cartEntries[0].id;
+                    cartEntryId = res.body.entries[0].id;
                 })
                 .catch(function (err) {
                     throw err;
@@ -88,7 +88,7 @@ describe('magento postCoupon', function () {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
-                    expect(res.body.cartEntries).to.have.lengthOf(0);
+                    expect(res.body.entries).to.have.lengthOf(0);
                 })
                 .catch(function (err) {
                     throw err;
@@ -154,6 +154,8 @@ describe('magento postCoupon', function () {
                     let coupon = res.body.coupons[0];
                     requiredFields.verifyCoupon(coupon);
                     expect(coupon.code).to.equal(couponCode);
+                }).catch(err => {
+                    throw(err);
                 });
         });
 

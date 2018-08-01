@@ -87,11 +87,11 @@ class ProductMapper {
         }
         
         if (product.created_at) {
-            p.createdDate = formatDate(product.created_at);
+            p.createdAt = formatDate(product.created_at);
         }
         
         if (product.updated_at) {
-            p.lastModifiedDate = formatDate(product.updated_at);
+            p.lastModifiedAt = formatDate(product.updated_at);
         }
         
         if (product.image) {
@@ -138,11 +138,11 @@ class ProductMapper {
      * @private
      */
     _mapProductVariant(product, variant) {
-        let v = new ProductVariant(variant.sku); // not a mistake, we use the SKU for the ID
-        this._mapProductData(v, variant);
-
         // TODO: Get actual value from backend
-        v.available = true;
+        let available = true;
+
+        let v = new ProductVariant(available, variant.sku); // not a mistake, we use the SKU for the ID
+        this._mapProductData(v, variant);
         
         if (product.configurable_options) {
             v.attributes = this._addConfigurableOptions(product, variant);

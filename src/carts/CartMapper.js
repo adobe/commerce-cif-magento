@@ -81,7 +81,7 @@ class CartMapper {
             cartEntries = CartMapper._mapCartEntries(magentoCart.totals.items, magentoCart.totals.quote_currency_code);
         }
 
-        let cart = new Cart(cartEntries, id);
+        let cart = new Cart(magentoCart.currency, cartEntries, id);
         cart.lastModifiedDate = formatDate(magentoCart.cart_details.updated_at);
         cart.createdDate = formatDate(magentoCart.cart_details.created_at);
 
@@ -98,14 +98,14 @@ class CartMapper {
             }
             // Required field
             if (Math.abs(magentoCart.totals.subtotal_incl_tax) > 0) {
-                cart.totalProductPrice = new Price(magentoCart.totals.subtotal_incl_tax * 100, magentoCart.totals.quote_currency_code);
+                cart.productTotalPrice = new Price(magentoCart.totals.subtotal_incl_tax * 100, magentoCart.totals.quote_currency_code);
             } else {
-                cart.totalProductPrice = new Price(0, magentoCart.totals.quote_currency_code);
+                cart.productTotalPrice = new Price(0, magentoCart.totals.quote_currency_code);
             }
 
             //do not map when 0
             if (Math.abs(magentoCart.totals.tax_amount) > 0) {
-                cart.cartTaxInfo = new TaxInfo(magentoCart.totals.tax_amount * 100);
+                cart.taxInfo = new TaxInfo(magentoCart.totals.tax_amount * 100);
             }
             let totalSegments = magentoCart.totals.total_segments;
             if (totalSegments) {
@@ -162,10 +162,10 @@ class CartMapper {
      */
     static _mapShippingInfo(magentoShippingInfo, magentoCartTotals) {
         let shippingPrice = new Price(magentoCartTotals.shipping_incl_tax * 100, magentoCartTotals.quote_currency_code);
-        let shippingInfo = new ShippingInfo(magentoShippingInfo.method, shippingPrice);
+        let shippingInfo = new ShippingInfo(magentoShippingInfo.method, magentoShippingInfo.method, shippingPrice);
         shippingInfo.id = magentoShippingInfo.method;
         shippingInfo.discountedPrice = new Price(magentoCartTotals.shipping_incl_tax * 100, magentoCartTotals.quote_currency_code);
-        shippingInfo.shippingTaxInfo = new TaxInfo(magentoCartTotals.shipping_tax_amount * 100);
+        shippingInfo.taxInfo = new TaxInfo(magentoCartTotals.shipping_tax_amount * 100);
         return shippingInfo;
     }
 
@@ -175,9 +175,9 @@ class CartMapper {
     static _mapCartEntries(itemsTotals, currency) {
         return itemsTotals.map(item => {
             const productVariant = CartMapper._mapProductVariant(item);
-            const cartEntry = new CartEntry(item.item_id, productVariant, item.qty);
+            const entryPrice = new Price(item.row_total_incl_tax * 100, currency);
+            const cartEntry = new CartEntry(item.item_id,entryPrice , productVariant, item.qty);
             cartEntry.unitPrice = new Price(item.price_incl_tax * 100, currency);
-            cartEntry.cartEntryPrice = new Price(item.row_total_incl_tax * 100, currency);
             cartEntry.type = CartEntryType.REGULAR;
             if (item.discount_amount && item.discount_amount > 0) {
                 const discount = CartMapper._mapCartEntryDiscount(item.discount_amount, currency);
@@ -222,7 +222,7 @@ class CartMapper {
      * @param productAttributes     the product attributes that should be filled in for products (configured)
      */
     static mapProductsDetails(magentoProducts, magentoAttributes, partialCart, mediaPath, productAttributes) {
-        partialCart.cartEntries.forEach(cartEntry => {
+        partialCart.entries.forEach(cartEntry => {
             let item = magentoProducts.items.find(o => {
                 return o.sku === cartEntry.productVariant.sku;
             });

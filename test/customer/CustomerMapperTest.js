@@ -30,9 +30,9 @@ describe('Magento CustomerMapper', () => {
 
             assert.strictEqual(ccifCustomer.id, magentoCustomer.id);
             assert.strictEqual(ccifCustomer.email, magentoCustomer.email);
-            assert.strictEqual(ccifCustomer.firstname, magentoCustomer.firstname);
-            assert.strictEqual(ccifCustomer.createdDate, formatDate(magentoCustomer.created_at));
-            assert.strictEqual(ccifCustomer.lastModifiedDate, formatDate(magentoCustomer.updated_at));
+            assert.strictEqual(ccifCustomer.firstName, magentoCustomer.firstname);
+            assert.strictEqual(ccifCustomer.createdAt, formatDate(magentoCustomer.created_at));
+            assert.strictEqual(ccifCustomer.lastModifiedAt, formatDate(magentoCustomer.updated_at));
         });
 
         it('returns an error if the customer has no id', () => {
