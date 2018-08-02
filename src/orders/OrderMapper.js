@@ -37,8 +37,7 @@ class OrderMapper {
             return null;
         }
 
-        let ccifOrder = new Order();
-        ccifOrder.id = id;
+        let ccifOrder = new Order.Builder().withId(id).build();
 
         return ccifOrder;
     }

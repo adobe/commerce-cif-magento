@@ -45,9 +45,10 @@ class PaymentMapper {
             return null;
         }
 
-        let ccifPayment = new Payment();
-        ccifPayment.id = magentoPayment.method;
-        ccifPayment.method = magentoPayment.method;
+        let ccifPayment = new Payment.Builder()
+            .withId(magentoPayment.method)
+            .withMethod(magentoPayment.method)
+            .build();
 
         return ccifPayment;
     }
