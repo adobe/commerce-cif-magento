@@ -322,14 +322,11 @@ class CartMapper {
      * @private
      */
     static _mapImage(image, mediaPath) {
-        if (image) {
-            let url = `${mediaPath}${image}`;
-            return new Asset.Builder()
-                .withId(url)
-                .withUrl(url)
-                .build();
-        }
-        return null;
+        let url = `${mediaPath}${image}`;
+        return new Asset.Builder()
+            .withId(url)
+            .withUrl(url)
+            .build();
     }
 
     /**
