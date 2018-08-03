@@ -40,10 +40,17 @@ class CartShippingMethodMapper {
      * @private
      */
     static _mapShippingMethod(magentoShippingMethod, currency) {
-        let shippingMethod = new ShippingMethod(magentoShippingMethod.method_code + '_' + magentoShippingMethod.carrier_code);
-        shippingMethod.name = magentoShippingMethod.method_title;
+        let price = new Price.Builder()
+            .withAmount(magentoShippingMethod.amount * 100)
+            .withCurrency(currency)
+            .build();
+        let shippingMethod = new ShippingMethod.Builder()
+            .withId(magentoShippingMethod.method_code + '_' + magentoShippingMethod.carrier_code)
+            .withName(magentoShippingMethod.method_title)
+            .withPrice(price)
+            .build();
         shippingMethod.description = magentoShippingMethod.carrier_title;
-        shippingMethod.price = new Price(magentoShippingMethod.amount * 100, currency);
+
         return shippingMethod;
     }
 }

@@ -43,19 +43,21 @@ class CategoryMapper {
             magentoResponse.items = magentoResponse.items.filter(cat => cat.level <= (depth + ignoreCategoresWithLevelLowerThan));
         }
 
-        let pagedResponse = new PagedResponse();
-
-        pagedResponse.results = (type === 'tree') ?
+        let results = (type === 'tree') ?
             CategoryMapper._mapCategoriesTree(magentoResponse, ignoreCategoresWithLevelLowerThan) :
             CategoryMapper._mapCategories(magentoResponse, ignoreCategoresWithLevelLowerThan);
-        pagedResponse.count = magentoResponse.items.length;
-        pagedResponse.total = magentoResponse.total_count;
+
+        let offset = 0;
         if (magentoResponse.search_criteria.current_page && magentoResponse.search_criteria.page_size) {
-            pagedResponse.offset = magentoResponse.search_criteria.current_page * magentoResponse.search_criteria.page_size;
-        } else {
-            pagedResponse.offset = 0;
+            offset = magentoResponse.search_criteria.current_page * magentoResponse.search_criteria.page_size;
         }
-        return pagedResponse;
+
+        return new PagedResponse.Builder()
+            .withCount(magentoResponse.items.length)
+            .withOffset(offset)
+            .withTotal(magentoResponse.total_count)
+            .withResults(results)
+            .build();
     }
 
     /**
@@ -109,14 +111,14 @@ class CategoryMapper {
     }
 
     static mapCategory(magentoCategory, ignoreCategoresWithLevelLowerThan) {
-        let category = new Category(magentoCategory.id + '');
+        let category = new Category.Builder().withId(magentoCategory.id + '').build();
         category.name = magentoCategory.name;
         category.description = undefined; // This is unavailable in magento response.
         // TODO: Check if it is supported and the info is missing, or it just does not exist
 
         if (magentoCategory.level && magentoCategory.level > ignoreCategoresWithLevelLowerThan) {
             // TODO: Use level here instead of parent id. Doh!
-            let parentCategory = new Category(magentoCategory.parent_id + '');
+            let parentCategory = new Category.Builder().withId(magentoCategory.parent_id + '').build();
             category.parentCategories = [parentCategory];
         }
 
