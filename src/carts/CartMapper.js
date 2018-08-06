@@ -97,8 +97,8 @@ class CartMapper {
             .withId(id)
             .withProductTotalPrice(productTotalPrice)
             .build();
-        cart.lastModifiedDate = formatDate(magentoCart.cart_details.updated_at);
-        cart.createdDate = formatDate(magentoCart.cart_details.created_at);
+        cart.lastModifiedAt = formatDate(magentoCart.cart_details.updated_at);
+        cart.createdAt = formatDate(magentoCart.cart_details.created_at);
 
         if (magentoCart.totals) {
             cart.currency = magentoCart.totals.quote_currency_code;
@@ -169,7 +169,7 @@ class CartMapper {
             .withId("discount")
             .withType("discount")
             .build();
-        discount.message = magentoDiscount.title;
+        discount.description = magentoDiscount.title;
         return discount;
     }
 
@@ -288,7 +288,7 @@ class CartMapper {
                             .withName(name)
                             .withValue(value)
                             .build();
-                        customAttribute.variantAttribute = true;
+                        customAttribute.isVariantAxis = true;
                         return customAttribute;
                     }
                     return null;

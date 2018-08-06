@@ -75,10 +75,10 @@ describe('magento getCart', function() {
 
                     // Verify structure
                     requiredFields.verifyCart(res.body);
-                    expect(res.body).to.have.own.property('lastModifiedDate');
+                    expect(res.body).to.have.own.property('lastModifiedAt');
                     //TODO update when TOTAL is added
                     expect(res.body.id).to.equal(cartId);
-                    expect(res.body).to.have.own.property('createdDate');
+                    expect(res.body).to.have.own.property('createdAt');
                     expect(res.body.entries).to.have.lengthOf(1);
 
                     const entry = res.body.entries[0];
