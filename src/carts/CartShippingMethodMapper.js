@@ -15,7 +15,7 @@
 'use strict';
 
 const ShippingMethod = require('@adobe/commerce-cif-model').ShippingMethod;
-const Price = require('@adobe/commerce-cif-model').Price;
+const MoneyValue = require('@adobe/commerce-cif-model').MoneyValue;
 
 /**
  * Utility class to map Magento objects to CIF objects.
@@ -40,14 +40,14 @@ class CartShippingMethodMapper {
      * @private
      */
     static _mapShippingMethod(magentoShippingMethod, currency) {
-        let price = new Price.Builder()
+        let cost = new MoneyValue.Builder()
             .withAmount(magentoShippingMethod.amount * 100)
             .withCurrency(currency)
             .build();
         let shippingMethod = new ShippingMethod.Builder()
             .withId(magentoShippingMethod.method_code + '_' + magentoShippingMethod.carrier_code)
             .withName(magentoShippingMethod.method_title)
-            .withPrice(price)
+            .withCost(cost)
             .build();
         shippingMethod.description = magentoShippingMethod.carrier_title;
 

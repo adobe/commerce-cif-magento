@@ -88,9 +88,9 @@ class RequiredFields {
     verifyDiscount(o, rec = true) {
         expect(o).to.have.own.property("id");
         expect(o).to.have.own.property("type");
-        expect(o).to.have.own.property("discountedAmount");
+        expect(o).to.have.own.property("value");
         if (!rec) return;
-        this.verifyPrice(o.discountedAmount);
+        this.verifyPrice(o.value);
     }
 
     verifyInventoryItem(o) {
@@ -170,12 +170,12 @@ class RequiredFields {
     }
 
     verifyTaxInfo(o) {
-        expect(o).to.have.own.property("amount");
+        expect(o).to.have.own.property("value");
     }
 
     verifyTaxPortion(o) {
         expect(o).to.have.own.property("name");
-        expect(o).to.have.own.property("amount");
+        expect(o).to.have.own.property("value");
     }
 
     verifyCategory(o) {
@@ -218,20 +218,20 @@ class RequiredFields {
 
     verifyShippingInfo(o, rec = true) {
         expect(o).to.have.own.property("name");
-        expect(o).to.have.own.property("price");
+        expect(o).to.have.own.property("cost");
         expect(o).to.have.own.property("taxInfo");
         expect(o).to.have.own.property("id");
         if (!rec) return;
-        this.verifyPrice(o.price);
+        this.verifyPrice(o.cost);
         this.verifyTaxInfo(o.taxInfo);
     }
 
     verifyShippingMethod(o, rec = true) {
         expect(o).to.have.own.property("id");
         expect(o).to.have.own.property("name");
-        expect(o).to.have.own.property("price");
+        expect(o).to.have.own.property("cost");
         if (!rec) return;
-        this.verifyPrice(o.price);
+        this.verifyPrice(o.cost);
     }
 
 }

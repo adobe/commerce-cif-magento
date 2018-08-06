@@ -39,7 +39,7 @@ describe('Magento CartShippingMethodMapper', () => {
             assert.lengthOf(mappedShippingMethods, sampleShippingMethods.length);
 
             mappedShippingMethods.forEach(shippingMethod => {
-                assert.containsAllKeys(shippingMethod, ['id', 'name', 'description', 'price']);
+                assert.containsAllKeys(shippingMethod, ['id', 'name', 'description', 'cost']);
                 assert.include(shippingMethod.id, '_');
             });
         });

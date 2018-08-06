@@ -64,8 +64,8 @@ describe('Magento CartMapper', () => {
             assert.isUndefined(mappedCart.taxInfo);
 
             assert.isDefined(mappedCart.shippingInfo);
-            assertPrice(mappedCart.shippingInfo.price, sampleCartTotals.shipping_incl_tax * 100, sampleCartTotals.quote_currency_code);
-            assertPrice(mappedCart.shippingInfo.discountedPrice, sampleCartTotals.shipping_incl_tax * 100, sampleCartTotals.quote_currency_code);
+            assertPrice(mappedCart.shippingInfo.cost, sampleCartTotals.shipping_incl_tax * 100, sampleCartTotals.quote_currency_code);
+            assertPrice(mappedCart.shippingInfo.discountedCost, sampleCartTotals.shipping_incl_tax * 100, sampleCartTotals.quote_currency_code);
             assertTax(mappedCart.shippingInfo.taxInfo, sampleCartTotals.shipping_tax_amount * 100);
 
             assert.strictEqual(mappedCart.createdDate, formatDate(sampleCartDetails.created_at));
@@ -74,7 +74,7 @@ describe('Magento CartMapper', () => {
             assert.isDefined(mappedCart.discounts);
             assert.lengthOf(mappedCart.discounts, 1);
             assert.strictEqual(mappedCart.discounts[0].message, sampleCartTotals.total_segments[3].title);
-            assertPrice(mappedCart.discounts[0].amount, -sampleCartTotals.total_segments[3].value * 100, sampleCartTotals.quote_currency_code);
+            assertPrice(mappedCart.discounts[0].value, -sampleCartTotals.total_segments[3].value * 100, sampleCartTotals.quote_currency_code);
 
             assert.isDefined(mappedCart.coupons);
             assert.lengthOf(mappedCart.coupons, 1);
@@ -106,7 +106,7 @@ describe('Magento CartMapper', () => {
                 assert.strictEqual(cartEntry.productVariant.sku, sampleCartTotals.items[idx].sku);
                 assert.isDefined(cartEntry.discounts);
                 assert.lengthOf(cartEntry.discounts, 1);
-                assertPrice(cartEntry.discounts[0].amount, sampleCartTotals.items[idx].discount_amount * 100, sampleCartTotals.quote_currency_code);
+                assertPrice(cartEntry.discounts[0].value, sampleCartTotals.items[idx].discount_amount * 100, sampleCartTotals.quote_currency_code);
             });
             assert.lengthOf(mappedCartEntries, sampleCartDetails.items.length);
 
@@ -199,5 +199,5 @@ function assertPrice(mappedPrice, sampleAmount, sampleCurrencyCode) {
 
 function assertTax(mappedTax, sampleAmount) {
     assert.isDefined(mappedTax);
-    assert.strictEqual(mappedTax.amount, sampleAmount);
+    assert.strictEqual(mappedTax.value, sampleAmount);
 }
