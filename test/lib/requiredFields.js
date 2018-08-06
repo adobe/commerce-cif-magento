@@ -57,13 +57,13 @@ class RequiredFields {
     }
 
     verifyFacet(o, rec = true) {
+        expect(o).to.have.own.property("id");
         expect(o).to.have.own.property("name");
-        expect(o).to.have.own.property("label");
         expect(o).to.have.own.property("type");
-        expect(o).to.have.own.property("facetValues");
+        expect(o).to.have.own.property("values");
         if (!rec) return;
-        for (let facetValue of o.facetValues) {
-            this.verifyFacetValue(facetValue);
+        for (let value of o.values) {
+            this.verifyFacetValue(value);
         }
     }
 
@@ -88,7 +88,7 @@ class RequiredFields {
     verifyDiscount(o, rec = true) {
         expect(o).to.have.own.property("id");
         expect(o).to.have.own.property("type");
-        expect(o).to.have.own.property("discountedAmount");
+        expect(o).to.have.own.property("amount");
         if (!rec) return;
         this.verifyPrice(o.discountedAmount);
     }

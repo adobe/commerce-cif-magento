@@ -69,9 +69,9 @@ describe('magento getCategories', function() {
                     // Verify structure
                     for(let category of res.body.results) {
                         requiredFields.verifyCategory(category);
-                        expect(category).to.have.own.property('subCategories');
-                        for(let subCategory of category.subCategories) {
-                            expect(subCategory).to.have.own.property('parentCategories');
+                        expect(category).to.have.own.property('children');
+                        for(let subCategory of category.children) {
+                            expect(subCategory).to.have.own.property('parents');
                         }
                     }
                 });
@@ -94,7 +94,7 @@ describe('magento getCategories', function() {
                     // Verify structure
                     for(let category of res.body.results) {
                         requiredFields.verifyCategory(category);
-                        expect(category).to.not.have.own.property('subCategories');
+                        expect(category).to.not.have.own.property('children');
                     }
                 });
         });
@@ -116,8 +116,8 @@ describe('magento getCategories', function() {
                     requiredFields.verifyCategory(category);
                     expect(category).to.have.own.property('name');
                     expect(category.name).to.equal('Men');
-                    expect(category).to.have.own.property('lastModifiedDate');
-                    expect(category).to.have.own.property('createdDate');
+                    expect(category).to.have.own.property('lastModifiedAt');
+                    expect(category).to.have.own.property('createdAt');
                 });
         });
 
@@ -139,7 +139,7 @@ describe('magento getCategories', function() {
                     // Verify structure
                     for(let category of res.body.results) {
                         requiredFields.verifyCategory(category);
-                        expect(category).to.not.have.own.property('subCategories');
+                        expect(category).to.not.have.own.property('children');
                     }
                 });
         });
@@ -168,7 +168,7 @@ describe('magento getCategories', function() {
         });
 
         //magento sorting is not working - skip for now.
-        it.skip('returns all categories in tree structure with subcategories sorted by their names', function() {
+        it.skip('returns all categories in tree structure with children sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
                 .set('Cache-Control', 'no-cache')
@@ -181,10 +181,10 @@ describe('magento getCategories', function() {
                     expect(res).to.have.status(HttpStatus.OK);
                     requiredFields.verifyPagedResponse(res.body);
 
-                    // Verify sorting of subcategories
+                    // Verify sorting of children
                     for(let category of res.body.results) {
                         requiredFields.verifyCategory(category);
-                        const subnames = category.subCategories.map(r => r.name);
+                        const subnames = category.children.map(r => r.name);
                         expect(subnames).to.be.descending;
                     }
                 });

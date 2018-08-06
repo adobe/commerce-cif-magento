@@ -79,22 +79,22 @@ class CategoryMapper {
         let orphans = [];
 
         for (let cat of categoryMap.values()) {
-            if (cat.parentCategories) {
+            if (cat.parents) {
                 // in Magento, a category only has one parent
-                let parentId = cat.parentCategories[0].id;
+                let parentId = cat.parents[0].id;
                 if (categoryMap.has(parentId)) {
                     let parent = categoryMap.get(parentId);
-                    if (!parent.subCategories) {
-                        parent.subCategories = [];
+                    if (!parent.children) {
+                        parent.children = [];
                     }
-                    parent.subCategories.push(cat);
+                    parent.children.push(cat);
                 } else {
                     orphans.push(cat);
                 }
             }
         }
 
-        return categories.filter(cat => !cat.parentCategories).concat(orphans);
+        return categories.filter(cat => !cat.parents).concat(orphans);
     }
 
     /**
@@ -119,14 +119,14 @@ class CategoryMapper {
         if (magentoCategory.level && magentoCategory.level > ignoreCategoresWithLevelLowerThan) {
             // TODO: Use level here instead of parent id. Doh!
             let parentCategory = new Category.Builder().withId(magentoCategory.parent_id + '').build();
-            category.parentCategories = [parentCategory];
+            category.parents = [parentCategory];
         }
 
         if (magentoCategory.created_at) {
-            category.createdDate = formatDate(magentoCategory.created_at);
+            category.createdAt = formatDate(magentoCategory.created_at);
         }
         if (magentoCategory.updated_at) {
-            category.lastModifiedDate = formatDate(magentoCategory.updated_at);
+            category.lastModifiedAt = formatDate(magentoCategory.updated_at);
         }
 
         return category;
