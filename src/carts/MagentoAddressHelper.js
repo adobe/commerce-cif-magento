@@ -79,29 +79,41 @@ class MagentoAddressHelper {
     * @return {Address}        CIF mapped address object
     */
     static mapToCIFAddress(magentoAddress) {
-        const address = new Address();
-        address.id = magentoAddress.id;
-        address.firstName = magentoAddress.firstname;
-        address.lastName = magentoAddress.lastname;
-        address.title = magentoAddress.prefix;
+        let streetName = null;
+        let streetNumber = null;
+        let additionalStreetInfo = null;
+        let additionalAddressInfo = null;
+
         if (Array.isArray(magentoAddress.street)) {
             if (magentoAddress.street[0]) {
-                address.streetName = magentoAddress.street[0];
+                streetName = magentoAddress.street[0];
             }
             if (magentoAddress.street[1]) {
-                address.streetNumber = magentoAddress.street[1];
+                streetNumber = magentoAddress.street[1];
             }
             if (magentoAddress.street[2]) {
-                address.additionalStreetInfo = magentoAddress.street[2];
+                additionalStreetInfo = magentoAddress.street[2];
             }
             if (magentoAddress.street[3]) {
-                address.additionalAddressInfo = magentoAddress.street[3];
+                additionalAddressInfo = magentoAddress.street[3];
             }
         }
-        address.postalCode = magentoAddress.postcode;
-        address.city = magentoAddress.city;
+
+        let address = new Address.Builder()
+            .withCity(magentoAddress.city)
+            .withCountry(magentoAddress.country_id)
+            .withFirstName(magentoAddress.firstname)
+            .withId(magentoAddress.id)
+            .withLastName(magentoAddress.lastname)
+            .withPostalCode(magentoAddress.postcode)
+            .withStreetName(streetName)
+            .build();
+
+        address.streetNumber = streetNumber;
+        address.additionalStreetInfo = additionalStreetInfo;
+        address.additionalAddressInfo = additionalAddressInfo;
+        address.title = magentoAddress.prefix;
         address.region = magentoAddress.region;
-        address.country = magentoAddress.country_id;
         address.organizationName = magentoAddress.company;
         address.phone = magentoAddress.telephone;
         address.email = magentoAddress.email;

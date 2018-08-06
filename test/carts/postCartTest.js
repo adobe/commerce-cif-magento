@@ -55,7 +55,7 @@ describe('Magento postCart', () => {
                         assert.strictEqual(result.response.headers.Location, `carts/${args.id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
-                        assert.isEmpty(result.response.body.cartEntries);
+                        assert.isEmpty(result.response.body.entries);
                     });
         });
         
@@ -93,7 +93,7 @@ describe('Magento postCart', () => {
                         assert.strictEqual(result.response.headers.Location, `carts/${args.id}/entries/${samplecartentry.item_id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
-                        assert.isNotEmpty(result.response.body.cartEntries);
+                        assert.isNotEmpty(result.response.body.entries);
                     });
         });
         
@@ -133,7 +133,7 @@ describe('Magento postCart', () => {
                         assert.strictEqual(result.response.headers.Location, `carts/${args.id}/entries/${samplecartentry.item_id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
-                        assert.isNotEmpty(result.response.body.cartEntries);
+                        assert.isNotEmpty(result.response.body.entries);
                     });
         });
         
@@ -150,5 +150,29 @@ describe('Magento postCart', () => {
                         assert.strictEqual(result.response.error.name, 'CommerceServiceResourceNotFoundError');
                     });
         });
+
+        it('returns invalid argument for non integer quantity', () => {
+            //for any http code <> 200, 404, get cart returns Promise.reject(error)
+            return this.prepareReject(null).execute({
+                id: 'not-extisting-cart-id',
+                productId: 'eqbisucos-L',
+                quantity: ''
+            }).then(result => {
+                console.log(JSON.stringify(result, null, 2));
+                assert.strictEqual(result.response.error.name, 'InvalidArgumentError');
+            });
+        });
+
+        it('returns missing property when quantity is not provided', () => {
+            //for any http code <> 200, 404, get cart returns Promise.reject(error)
+            return this.prepareReject(null).execute({
+                id: 'not-extisting-cart-id',
+                productId: 'eqbisucos-L'
+            }).then(result => {
+                console.log(JSON.stringify(result, null, 2));
+                assert.strictEqual(result.response.error.name, 'MissingPropertyError');
+            });
+        });
+
     })
 });

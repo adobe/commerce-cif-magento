@@ -17,6 +17,7 @@
 const setup = require('../lib/setupTest').setup;
 const assert = require('chai').assert;
 const samplecart = require('../resources/sample-cart');
+const samplecart404 = require('../resources/sample-cart-404');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
 
@@ -65,6 +66,17 @@ describe('Magento deleteBillingAddress', () => {
                     assert.isDefined(result.response.body);
                     assert.isUndefined(result.response.body['billingAddress'],
                         'Expected undefined result.response.body[billingAddress]');
+                });
+        });
+
+        it('returns 404 for a non-existing cart', () => {
+            //for http code = 404, get cart returns Promise.resolve indicating that the item was not found
+            return this.prepareReject(samplecart404)
+                .execute({'id': 'dummy-1'})
+                .then(result => {
+                    assert.isDefined(result.response);
+                    assert.isDefined(result.response.error);
+                    assert.strictEqual(result.response.error.name, 'CommerceServiceResourceNotFoundError');
                 });
         });
     });

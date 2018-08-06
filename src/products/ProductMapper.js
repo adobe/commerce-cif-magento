@@ -42,14 +42,16 @@ class ProductMapper {
     mapGraphQlResponse(result) {
         let products = result.data.products;
         let items = result.data.products.items;
-        
-        let pr = new PagedResponse();
-        pr.results = this.mapProducts(items);
-        pr.offset = (products.page_info.current_page - 1) * products.page_info.page_size;
-        pr.count = items.length;
-        pr.total = products.total_count;
-        
-        return pr;
+
+        let results = this.mapProducts(items);
+        let offset = (products.page_info.current_page - 1) * products.page_info.page_size;
+
+        return new PagedResponse.Builder()
+            .withCount(items.length)
+            .withOffset(offset)
+            .withTotal(products.total_count)
+            .withResults(results)
+            .build();
     }
 
     /**
@@ -70,28 +72,17 @@ class ProductMapper {
      * @private
      */
     _mapProductData(p, product) {
-        p.sku = product.sku;
 
-        if (product.name) {
-            p.name = product.name;
-        }
-        
         if (product.description) {
             p.description = product.description;
         }
-        
-        if (product.price && product.price.regularPrice) {
-            p.prices = [
-                this._mapPrice(product.price.regularPrice)
-            ];
-        }
-        
+
         if (product.created_at) {
-            p.createdDate = formatDate(product.created_at);
+            p.createdAt = formatDate(product.created_at);
         }
         
         if (product.updated_at) {
-            p.lastModifiedDate = formatDate(product.updated_at);
+            p.lastModifiedAt = formatDate(product.updated_at);
         }
         
         if (product.image) {
@@ -103,31 +94,53 @@ class ProductMapper {
         if (product.categories) {
             p.categories = this._mapCategories(product.categories);
         }
+
     }
 
     /**
      * Maps a Magento product into a CCIF product
-     * 
+     *
      * @private
      */
     _mapProduct(product) {
-        let p = new Product(product.sku);
-        this._mapProductData(p, product);
+
+        //required fields
+        let prices = [];
+        let variants;
+        let masterVariantId;
+
+        if (product.price && product.price.regularPrice) {
+            prices = [
+                this._mapPrice(product.price.regularPrice)
+            ];
+        }
 
         if (product.variants) {
-            p.variants = product.variants.map(v => this._mapProductVariant(product, v.product));
-            p.masterVariantId = p.variants[0].sku;
+            variants = product.variants.map(v => this._mapProductVariant(product, v.product));
+            masterVariantId = variants[0].sku;
         } else {
-            p.variants = [{
+            variants = [{
                 id: product.sku,
                 sku: product.sku
             }];
-            p.masterVariantId = product.sku;
+            masterVariantId = product.sku;
         }
-        
+
+        let p = new Product.Builder()
+            .withId(product.sku)
+            .withName(product.name || '')
+            .withVariants(variants)
+            .withMasterVariantId(masterVariantId)
+            .withPrices(prices)
+            .build();
+
+        this._mapProductData(p, product);
+
         if (this.attributes) {
             this._addAttributes(p, product);
         }
+
+        p.sku = product.sku;
 
         return p;
     }
@@ -138,11 +151,23 @@ class ProductMapper {
      * @private
      */
     _mapProductVariant(product, variant) {
-        let v = new ProductVariant(variant.sku); // not a mistake, we use the SKU for the ID
-        this._mapProductData(v, variant);
-
         // TODO: Get actual value from backend
-        v.available = true;
+        let available = true;
+        let prices = [];
+        if (product.price && product.price.regularPrice) {
+            prices = [
+                this._mapPrice(product.price.regularPrice)
+            ];
+        }
+        let v = new ProductVariant.Builder()
+            .withAvailable(available)
+            .withId(variant.sku) // not a mistake, we use the SKU for the ID
+            .withName(variant.name)
+            .withPrices(prices)
+            .withSku(variant.sku)
+            .build();
+
+        this._mapProductData(v, variant);
         
         if (product.configurable_options) {
             v.attributes = this._addConfigurableOptions(product, variant);
@@ -163,8 +188,12 @@ class ProductMapper {
             if (variant[opt.attribute_code] != null) {
                 let value = opt.values.find(v => v.value_index == variant[opt.attribute_code]);
                 if (value != null) {
-                    let attr = new Attribute(opt.attribute_code, opt.label, value.label);
-                    attr.variantAttribute = true;
+                    let attr = new Attribute.Builder()
+                        .withId(opt.attribute_code)
+                        .withName(opt.label)
+                        .withValue(value.label)
+                        .build();
+                    attr.isVariantAxis = true;
                     return attr;
                 }
             }
@@ -185,8 +214,12 @@ class ProductMapper {
             }
 
             if (product[id]) {
-                let attr = new Attribute(id, id, product[id]);
-                attr.variantAttribute = false;
+                let attr = new Attribute.Builder()
+                    .withId(id)
+                    .withName(id)
+                    .withValue(product[id])
+                    .build();
+                attr.isVariantAxis = false;
                 p.attributes.push(attr);
             }
         });
@@ -196,15 +229,20 @@ class ProductMapper {
      * @private
      */
     _mapPrice(price) {
-        return new Price(price.amount.value * 100, price.amount.currency);
+        return new Price.Builder()
+            .withAmount(price.amount.value * 100)
+            .withCurrency(price.amount.currency)
+            .build();
     }
 
     /**
      * @private
      */
     _mapAsset(imageUrl) {
-        let asset = new Asset();
-        asset.url = (this.imageUrlPrefix || '') + imageUrl; 
+        let asset = new Asset.Builder()
+            .withId(imageUrl)
+            .withUrl((this.imageUrlPrefix || '') + imageUrl)
+            .build();
         return asset;
     }
     
@@ -213,7 +251,7 @@ class ProductMapper {
      */
     _mapCategories(categories) {
         return categories.map(category => {
-            return new Category(category.id);
+            return new Category.Builder().withId(category.id).build();
         });
     }
 }

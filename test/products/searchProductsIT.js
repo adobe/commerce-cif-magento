@@ -53,7 +53,7 @@ describe('magento searchProducts', function() {
                     }).id);
                     WOMENSHORTS_CATEGORY_ID = parseInt(res.body.results.find(o => {
                         return o.name === categoriesConfig.WOMEN.name
-                    }).subCategories.find(o => {
+                    }).children.find(o => {
                         return o.name === categoriesConfig.WOMEN.SHORTS.name;
                     }).id);
                 });
@@ -94,7 +94,7 @@ describe('magento searchProducts', function() {
         });
 
         //https://github.com/magento/graphql-ce/issues/89
-        it.skip('returns products in a category and all its subcategories', function() {
+        it.skip('returns products in a category and all its children', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
                 .set('Cache-Control', 'no-cache')
@@ -137,7 +137,7 @@ describe('magento searchProducts', function() {
                     requiredFields.verifyProduct(product);
                     expect(product.name).to.equal('El Gordo Down Jacket');
                     expect(product).to.have.own.property('categories');
-                    expect(product).to.have.own.property('createdDate');
+                    expect(product).to.have.own.property('createdAt');
 
                     expect(product.variants).to.have.lengthOf(15);
                     expect(product.attributes).to.have.lengthOf(2);

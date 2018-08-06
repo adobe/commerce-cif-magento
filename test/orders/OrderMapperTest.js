@@ -29,8 +29,7 @@ describe('Magento OrderMapper', () => {
 
         it('maps a Magento order to a CIF order', () => {
             let response = "12";
-            let expectedOrder = new Order();
-            expectedOrder.id = 12;
+            let expectedOrder = new Order.Builder().withId(12).build();
 
             let order = orderMapper._mapOrder(response);
             assert.deepEqual(order, expectedOrder);
@@ -38,8 +37,7 @@ describe('Magento OrderMapper', () => {
 
         it('maps a Magento order with a quoted id to a CIF order', () => {
             let response = '"12"';
-            let expectedOrder = new Order();
-            expectedOrder.id = 12;
+            let expectedOrder = new Order.Builder().withId(12).build();
 
             let order = orderMapper._mapOrder(response);
             assert.deepEqual(order, expectedOrder);

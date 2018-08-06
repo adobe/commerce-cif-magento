@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@adobe/commerce-cif-common": "0.1.17",
-    "@adobe/commerce-cif-model": "0.1.123",
+    "@adobe/commerce-cif-model": "0.1.126",
     "request": "2.87.0",
     "request-promise-native": "1.0.5",
     "proxyquire": "v2.0.0"

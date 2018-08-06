@@ -57,7 +57,7 @@ describe('magento postCartEntry', function() {
 
                     // Store cart id
                     cartId = res.body.id;
-                    cartEntryId = res.body.cartEntries[0].id;
+                    cartEntryId = res.body.entries[0].id;
                 })
                 .catch(function(err) {
                     throw err;
@@ -74,7 +74,7 @@ describe('magento postCartEntry', function() {
                     }).then(res => {
                         expect(res).to.be.json;
                         expect(res).to.have.status(HttpStatus.OK);
-                        expect(res.body.cartEntries).to.have.lengthOf(1);
+                        expect(res.body.entries).to.have.lengthOf(1);
 
                         return chai.request(env.openwhiskEndpoint)
                             .post(env.cartsPackage + 'deleteCartEntry')
@@ -85,7 +85,7 @@ describe('magento postCartEntry', function() {
                     }).then(function (res) {
                         expect(res).to.be.json;
                         expect(res).to.have.status(HttpStatus.OK);
-                        expect(res.body.cartEntries).to.have.lengthOf(0);
+                        expect(res.body.entries).to.have.lengthOf(0);
                     });
         });
 
@@ -104,9 +104,9 @@ describe('magento postCartEntry', function() {
                     // Verify structure
                     requiredFields.verifyCart(res.body);
                     expect(res.body.id).to.not.be.empty;
-                    expect(res.body).to.have.own.property('lastModifiedDate');
-                    expect(res.body).to.have.own.property('createdDate');
-                    expect(res.body.cartEntries).to.have.lengthOf(0);
+                    expect(res.body).to.have.own.property('lastModifiedAt');
+                    expect(res.body).to.have.own.property('createdAt');
+                    expect(res.body.entries).to.have.lengthOf(0);
                 })
                 .catch(function(err) {
                     throw err;
@@ -130,13 +130,13 @@ describe('magento postCartEntry', function() {
                     // Verify structure
                     requiredFields.verifyCart(res.body);
                     expect(res.body.id).to.equal(cartId);
-                    expect(res.body).to.have.own.property('lastModifiedDate');
-                    expect(res.body).to.have.own.property('createdDate');
-                    expect(res.body.cartEntries).to.have.lengthOf(2);
-                    cartEntryIdSecond = res.body.cartEntries[1].id;
+                    expect(res.body).to.have.own.property('lastModifiedAt');
+                    expect(res.body).to.have.own.property('createdAt');
+                    expect(res.body.entries).to.have.lengthOf(2);
+                    cartEntryIdSecond = res.body.entries[1].id;
                     // Verify that product was added
                     let addedEntry;
-                    for(let entry of res.body.cartEntries) {
+                    for(let entry of res.body.entries) {
                         if(entry.productVariant.sku == productVariantIdSecond) {
                             addedEntry = entry;
                         }
@@ -165,12 +165,12 @@ describe('magento postCartEntry', function() {
                     // Verify structure
                     requiredFields.verifyCart(res.body);
                     expect(res.body.id).to.not.be.empty;
-                    expect(res.body).to.have.own.property('lastModifiedDate');
-                    expect(res.body).to.have.own.property('createdDate');
-                    expect(res.body.cartEntries).to.have.lengthOf(1);
+                    expect(res.body).to.have.own.property('lastModifiedAt');
+                    expect(res.body).to.have.own.property('createdAt');
+                    expect(res.body.entries).to.have.lengthOf(1);
 
                     // Verify entry structure
-                    const entry = res.body.cartEntries[0];
+                    const entry = res.body.entries[0];
                     expect(entry.quantity).to.equal(2);
                     expect(entry.productVariant.sku).to.equal(productVariantId);
                 })

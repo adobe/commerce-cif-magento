@@ -39,16 +39,18 @@ describe('Magento PaymentMapper', () => {
             };
             let cifPayment = paymentMapper._mapPayment(payment);
 
-            let expected = new Payment();
-            expected.method = "creditcard";
-            expected.id = expected.method;
-
+            let expected = new Payment.Builder()
+                .withMethod('creditcard')
+                .withId('creditcard')
+                .build();
             assert.deepEqual(cifPayment, expected);
         });
 
         it('maps a CIF payment to a Magento payment', () => {
-            let cifPayment = new Payment();
-            cifPayment.method = 'creditcard';
+            let cifPayment = new Payment.Builder()
+                .withMethod('creditcard')
+                .withId('creditcard')
+                .build();
 
             let payment = paymentMapper._mapToMagentoPayment(cifPayment);
             assert.deepEqual(payment, {
@@ -58,7 +60,10 @@ describe('Magento PaymentMapper', () => {
 
         it('it adds a payment to a partial cart', () => {
             let cart = {};
-            let payment = new Payment();
+            let payment = new Payment.Builder()
+                .withMethod('creditcard')
+                .withId('creditcard')
+                .build();
             cart = paymentMapper._fillPayment(payment, cart);
             assert.isDefined(cart.payment);
             assert.deepEqual(cart.payment, payment);

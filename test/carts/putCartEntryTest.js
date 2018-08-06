@@ -132,7 +132,7 @@ describe('Magento putCartEntry', () => {
                     assert.isDefined(result.response.statusCode);
                     assert.isDefined(result.response.body);
                     assert.isDefined(result.response.body.id);
-                    assert.isNotEmpty(result.response.body.cartEntries);
+                    assert.isNotEmpty(result.response.body.entries);
                 });
         });
     });

@@ -54,27 +54,27 @@ describe('Magento CartMapper', () => {
             assertEqualAddress(mappedCart['billingAddress'], sampleCartDetails['billing_address']);
 
             assert.strictEqual(mappedCart.id, args.id);
-            assert.strictEqual(mappedCart.cartEntries.length, sampleCartDetails.items.length);
+            assert.strictEqual(mappedCart.entries.length, sampleCartDetails.items.length);
             assert.strictEqual(mappedCart.currency, sampleCartTotals.quote_currency_code);
 
             assertPrice(mappedCart.netTotalPrice, sampleCartTotals.grand_total * 100, sampleCartTotals.quote_currency_code);
             assertPrice(mappedCart.grossTotalPrice, sampleCartTotals.base_grand_total * 100, sampleCartTotals.quote_currency_code);
-            assertPrice(mappedCart.totalProductPrice, sampleCartTotals.subtotal_incl_tax * 100, sampleCartTotals.quote_currency_code);
+            assertPrice(mappedCart.productTotalPrice, sampleCartTotals.subtotal_incl_tax * 100, sampleCartTotals.quote_currency_code);
             //cart tax is not yet implemented
-            assert.isUndefined(mappedCart.cartTaxInfo);
+            assert.isUndefined(mappedCart.taxInfo);
 
             assert.isDefined(mappedCart.shippingInfo);
             assertPrice(mappedCart.shippingInfo.price, sampleCartTotals.shipping_incl_tax * 100, sampleCartTotals.quote_currency_code);
             assertPrice(mappedCart.shippingInfo.discountedPrice, sampleCartTotals.shipping_incl_tax * 100, sampleCartTotals.quote_currency_code);
-            assertTax(mappedCart.shippingInfo.shippingTaxInfo, sampleCartTotals.shipping_tax_amount * 100);
+            assertTax(mappedCart.shippingInfo.taxInfo, sampleCartTotals.shipping_tax_amount * 100);
 
-            assert.strictEqual(mappedCart.createdDate, formatDate(sampleCartDetails.created_at));
-            assert.strictEqual(mappedCart.lastModifiedDate, formatDate(sampleCartDetails.updated_at));
+            assert.strictEqual(mappedCart.createdAt, formatDate(sampleCartDetails.created_at));
+            assert.strictEqual(mappedCart.lastModifiedAt, formatDate(sampleCartDetails.updated_at));
 
             assert.isDefined(mappedCart.discounts);
             assert.lengthOf(mappedCart.discounts, 1);
-            assert.strictEqual(mappedCart.discounts[0].message, sampleCartTotals.total_segments[3].title);
-            assertPrice(mappedCart.discounts[0].discountedAmount, -sampleCartTotals.total_segments[3].value * 100, sampleCartTotals.quote_currency_code);
+            assert.strictEqual(mappedCart.discounts[0].description, sampleCartTotals.total_segments[3].title);
+            assertPrice(mappedCart.discounts[0].amount, -sampleCartTotals.total_segments[3].value * 100, sampleCartTotals.quote_currency_code);
 
             assert.isDefined(mappedCart.coupons);
             assert.lengthOf(mappedCart.coupons, 1);
@@ -90,7 +90,7 @@ describe('Magento CartMapper', () => {
             let sampleCartAttributes = cartData.product_attributes;
 
             let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
-            let mappedCartEntries = mappedCart.cartEntries;
+            let mappedCartEntries = mappedCart.entries;
 
             assert.isDefined(mappedCartEntries);
             assert.isArray(mappedCartEntries);
@@ -102,15 +102,15 @@ describe('Magento CartMapper', () => {
                 assert.strictEqual(cartEntry.quantity, sampleCartTotals.items[idx].qty);
                 assert.strictEqual(cartEntry.type, 'REGULAR');
                 assertPrice(cartEntry.unitPrice, sampleCartTotals.items[idx].price_incl_tax * 100, sampleCartTotals.quote_currency_code);
-                assertPrice(cartEntry.cartEntryPrice, sampleCartTotals.items[idx].row_total_incl_tax * 100, sampleCartTotals.quote_currency_code);
+                assertPrice(cartEntry.price, sampleCartTotals.items[idx].row_total_incl_tax * 100, sampleCartTotals.quote_currency_code);
                 assert.strictEqual(cartEntry.productVariant.sku, sampleCartTotals.items[idx].sku);
                 assert.isDefined(cartEntry.discounts);
                 assert.lengthOf(cartEntry.discounts, 1);
-                assertPrice(cartEntry.discounts[0].discountedAmount, sampleCartTotals.items[idx].discount_amount * 100, sampleCartTotals.quote_currency_code);
+                assertPrice(cartEntry.discounts[0].amount, sampleCartTotals.items[idx].discount_amount * 100, sampleCartTotals.quote_currency_code);
             });
             assert.lengthOf(mappedCartEntries, sampleCartDetails.items.length);
 
-            mappedCart.cartEntries.forEach((cartEntry, idx) => {
+            mappedCart.entries.forEach((cartEntry, idx) => {
                 //check that the cart partial cart entries are still correctly mapped.
                 let sampleCartProduct = sampleCartProducts.items[idx];
 
@@ -119,7 +119,7 @@ describe('Magento CartMapper', () => {
                 assert.strictEqual(cartEntry.productVariant.name, sampleCartProduct.name);
                 assert.strictEqual(cartEntry.productVariant.description, cartMapper._getCustomAttributeValue(sampleCartProduct.custom_attributes, 'description'));
                 cartEntry.productVariant.prices.forEach(price => {
-                    assertPrice(price, cartEntry.unitPrice.centAmount, mappedCart.currency);
+                    assertPrice(price, cartEntry.unitPrice.amount, mappedCart.currency);
                 });
                 cartEntry.productVariant.assets.forEach(asset => {
                     let sampleImagePath = cartMapper._getCustomAttributeValue(sampleCartProduct.custom_attributes, 'image');
@@ -131,7 +131,7 @@ describe('Magento CartMapper', () => {
                     let [name, value] = cartMapper._getNameValueForAttributeCode(attribute.id, attributeCodeValue, sampleCartAttributes);
                     assert.strictEqual(attribute.value, value);
                     assert.strictEqual(attribute.name, name);
-                    assert.strictEqual(attribute.variantAttribute, true);
+                    assert.strictEqual(attribute.isVariantAxis, true);
                 });
             });
         });
@@ -142,7 +142,7 @@ describe('Magento CartMapper', () => {
                 return attr.attribute_code !== 'color';
             });
             let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
-            assert.strictEqual(mappedCart.cartEntries[0].productVariant.attributes.length, 1);
+            assert.strictEqual(mappedCart.entries[0].productVariant.attributes.length, 1);
         });
 
         it('succeeds in not mapping when prices are 0 ', () => {
@@ -156,11 +156,11 @@ describe('Magento CartMapper', () => {
 
             assert.isUndefined(mappedCart.netTotalPrice);
             assert.isUndefined(mappedCart.grossTotalPrice);
-            assert.isUndefined(mappedCart.cartTaxInfo);
+            assert.isUndefined(mappedCart.taxInfo);
             assert.isUndefined(mappedCart.shippingInfo);
 
             // Required field
-            assert.isDefined(mappedCart.totalProductPrice);
+            assert.isDefined(mappedCart.productTotalPrice);
         });
 
         it('succeeds if cart has no billingAddress', () => {
@@ -193,11 +193,11 @@ function assertEqualAddress(mappedCartAddress, magentoCartAddress) {
 
 function assertPrice(mappedPrice, sampleAmount, sampleCurrencyCode) {
     assert.isDefined(mappedPrice);
-    assert.strictEqual(mappedPrice.centAmount, sampleAmount);
+    assert.strictEqual(mappedPrice.amount, sampleAmount);
     assert.strictEqual(mappedPrice.currency, sampleCurrencyCode);
 }
 
 function assertTax(mappedTax, sampleAmount) {
     assert.isDefined(mappedTax);
-    assert.strictEqual(mappedTax.totalCentAmount, sampleAmount);
+    assert.strictEqual(mappedTax.amount, sampleAmount);
 }

@@ -42,12 +42,14 @@ class CustomerMapper {
         if (!magentoCustomer || !magentoCustomer.id) {
             throw new MissingPropertyException('Invalid customer response received from Magento');
         }
-        let customer = new Customer(magentoCustomer.id);
-        customer.email = magentoCustomer.email;
-        customer.firstname = magentoCustomer.firstname;
-        customer.lastname = magentoCustomer.lastname;
-        customer.createdDate = formatDate(magentoCustomer.created_at);
-        customer.lastModifiedDate = formatDate(magentoCustomer.updated_at);
+        let customer = new Customer.Builder()
+            .withEmail(magentoCustomer.email)
+            .withFirstName(magentoCustomer.firstname)
+            .withLastName(magentoCustomer.lastname)
+            .withId(magentoCustomer.id)
+            .build();
+        customer.createdAt = formatDate(magentoCustomer.created_at);
+        customer.lastModifiedAt = formatDate(magentoCustomer.updated_at);
         return customer;
     }
 
@@ -58,9 +60,8 @@ class CustomerMapper {
      * @returns {LoginResult}   A CCIF LoginResult object.
      */
     static mapCustomerLogin(magentoCustomer) {
-        let loginResult = new LoginResult();
-        loginResult.customer = CustomerMapper._mapCustomer(magentoCustomer);
-
+        let customer = CustomerMapper._mapCustomer(magentoCustomer);
+        let loginResult = new LoginResult.Builder().withCustomer(customer).build();
         /* TODO
         if (ctResult.body.cart) {
             loginResult.cart = CartMapper._mapCart(ctResult.body.cart);

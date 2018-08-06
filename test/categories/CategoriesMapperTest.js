@@ -43,10 +43,10 @@ describe('Magento CategoriesMapper', () => {
             assert.isNotNull(mappedCategory.name);
             assert.strictEqual(mappedCategory.name, "Equipment");
 
-            assert.strictEqual(mappedCategory.createdDate, formatDate(magentoCategory.created_at));
-            assert.strictEqual(mappedCategory.lastModifiedDate, formatDate(magentoCategory.updated_at));
+            assert.strictEqual(mappedCategory.createdAt, formatDate(magentoCategory.created_at));
+            assert.strictEqual(mappedCategory.lastModifiedAt, formatDate(magentoCategory.updated_at));
 
-            assert.isUndefined(mappedCategory.parentCategories);
+            assert.isUndefined(mappedCategory.parents);
         });
 
         it('Map a single category which has a parent category', () => {
@@ -59,12 +59,12 @@ describe('Magento CategoriesMapper', () => {
             assert.isNotNull(mappedCategory.name);
             assert.strictEqual(mappedCategory.name, "Running");
 
-            assert.strictEqual(mappedCategory.createdDate, formatDate(magentoCategory.created_at));
-            assert.strictEqual(mappedCategory.lastModifiedDate, formatDate(magentoCategory.updated_at));
+            assert.strictEqual(mappedCategory.createdAt, formatDate(magentoCategory.created_at));
+            assert.strictEqual(mappedCategory.lastModifiedAt, formatDate(magentoCategory.updated_at));
 
-            assert.isArray(mappedCategory.parentCategories);
-            assert.strictEqual(mappedCategory.parentCategories.length, 1);
-            assert.strictEqual(mappedCategory.parentCategories[0].id, "3");
+            assert.isArray(mappedCategory.parents);
+            assert.strictEqual(mappedCategory.parents.length, 1);
+            assert.strictEqual(mappedCategory.parents[0].id, "3");
         });
 
         it('Map multiple categories in a paged response which contains all categories.', () => {
@@ -106,22 +106,22 @@ describe('Magento CategoriesMapper', () => {
             assert.strictEqual(mappedCategories.results.length, 3);
 
             const firstCategory = mappedCategories.results[0];
-            assert.isArray(firstCategory.subCategories);
-            assert.strictEqual(firstCategory.subCategories.length, 6);
-            firstCategory.subCategories.forEach(subCategory => {
-                assert.strictEqual(subCategory.parentCategories[0].id, firstCategory.id);
+            assert.isArray(firstCategory.children);
+            assert.strictEqual(firstCategory.children.length, 6);
+            firstCategory.children.forEach(subCategory => {
+                assert.strictEqual(subCategory.parents[0].id, firstCategory.id);
             });
         });
 
         it('Map multiple categories and make sure parents are set', () => {
             const mappedCategories = CategoryMapper.mapPagedCategoryResponse(categoriesData, 'flat', undefined, ignoreCategoriesWithLevelLowerThan);
             assert.isNotEmpty(mappedCategories.results);
-            assert.isUndefined(mappedCategories.results[0].parentCategories);
-            assert.isUndefined(mappedCategories.results[1].parentCategories);
-            assert.isUndefined(mappedCategories.results[2].parentCategories);
+            assert.isUndefined(mappedCategories.results[0].parents);
+            assert.isUndefined(mappedCategories.results[1].parents);
+            assert.isUndefined(mappedCategories.results[2].parents);
             for (let i = 3; i < mappedCategories.results.length; ++i) {
-                assert.isArray(mappedCategories.results[i].parentCategories);
-                assert.strictEqual(mappedCategories.results[i].parentCategories.length, 1);
+                assert.isArray(mappedCategories.results[i].parents);
+                assert.strictEqual(mappedCategories.results[i].parents.length, 1);
             }
         });
     });

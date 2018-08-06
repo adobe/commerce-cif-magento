@@ -58,8 +58,8 @@ describe('Magento getCustomerById', () => {
                     assert.strictEqual(result.__ow_headers.cookie, cookieValue);
                     assert.strictEqual(result.response.body.id, id);
                     assert.strictEqual(result.response.body.email, "aa@a.com");
-                    assert.strictEqual(result.response.body.firstname, "B");
-                    assert.strictEqual(result.response.body.lastname, "M");
+                    assert.strictEqual(result.response.body.firstName, "B");
+                    assert.strictEqual(result.response.body.lastName, "M");
                 });
         });
 

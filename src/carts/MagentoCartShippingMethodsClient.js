@@ -46,8 +46,6 @@ class MagentoCartShippingMethodsClient extends MagentoClientBase {
         let data = { address: MagentoAddressHelper.mapToMagentoAddress(address) };
         return this.withEndpoint("estimate-shipping-methods")._execute('POST', data).then(result => {
             return this._handleSuccess(this.mapper(result, currency));
-        }).catch(error => {
-            return this.handleError(error);
         });
     }
 }
