@@ -111,7 +111,7 @@ class ProductMapper {
 
         if (product.price && product.price.regularPrice) {
             prices = [
-                this._mapMoneyValue(product.price.regularPrice)
+                this._mapPrice(product.price.regularPrice)
             ];
         }
 
@@ -156,7 +156,7 @@ class ProductMapper {
         let prices = [];
         if (product.price && product.price.regularPrice) {
             prices = [
-                this._mapMoneyValue(product.price.regularPrice)
+                this._mapPrice(product.price.regularPrice)
             ];
         }
         let v = new ProductVariant.Builder()
@@ -228,7 +228,7 @@ class ProductMapper {
     /**
      * @private
      */
-    _mapMoneyValue(price) {
+    _mapPrice(price) {
         return new MoneyValue.Builder()
             .withAmount(price.amount.value * 100)
             .withCurrency(price.amount.currency)

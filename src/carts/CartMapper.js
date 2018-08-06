@@ -160,12 +160,12 @@ class CartMapper {
     static _mapCartDiscount(magentoDiscount, currency) {
         //ensure discount value is always positive since Magento sets negative value here
         const discountValue = Math.abs(magentoDiscount.value);
-        const amount = new MoneyValue.Builder()
+        const value = new MoneyValue.Builder()
             .withAmount(discountValue * 100)
             .withCurrency(currency)
             .build();
         const discount = new Discount.Builder()
-            .withValue(amount)
+            .withValue(value)
             .withId("discount")
             .withType("discount")
             .build();
@@ -184,7 +184,7 @@ class CartMapper {
      * @private
      */
     static _mapShippingInfo(magentoShippingInfo, magentoCartTotals) {
-        let shippingPrice = new MoneyValue.Builder()
+        let shippingCost = new MoneyValue.Builder()
             .withAmount(magentoCartTotals.shipping_incl_tax * 100)
             .withCurrency(magentoCartTotals.quote_currency_code)
             .build();
@@ -192,7 +192,7 @@ class CartMapper {
         let shippingInfo = new ShippingInfo.Builder()
             .withId(magentoShippingInfo.method)
             .withName(magentoShippingInfo.method)
-            .withCost(shippingPrice)
+            .withCost(shippingCost)
             .withTaxInfo(taxInfo)
             .build();
         shippingInfo.discountedCost = new MoneyValue.Builder()
@@ -242,12 +242,12 @@ class CartMapper {
      * @private
      */
     static _mapCartEntryDiscount(discount_amount, currency) {
-        const amount = new MoneyValue.Builder()
+        const value = new MoneyValue.Builder()
             .withAmount(discount_amount * 100)
             .withCurrency(currency)
             .build();
         return new Discount.Builder()
-            .withValue(amount)
+            .withValue(value)
             .withId("discount")
             .withType("discount")
             .build();
