@@ -193,7 +193,7 @@ class ProductMapper {
                         .withName(opt.label)
                         .withValue(value.label)
                         .build();
-                    attr.variantAttribute = true;
+                    attr.isVariantAxis = true;
                     return attr;
                 }
             }
@@ -219,7 +219,7 @@ class ProductMapper {
                     .withName(id)
                     .withValue(product[id])
                     .build();
-                attr.variantAttribute = false;
+                attr.isVariantAxis = false;
                 p.attributes.push(attr);
             }
         });

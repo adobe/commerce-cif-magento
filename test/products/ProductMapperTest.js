@@ -61,7 +61,7 @@ describe('Magento ProductMapper', () => {
 
             assert.strictEqual(product.attributes.length, 2);
             product.attributes.forEach(attr => {
-                assert.isFalse(attr.variantAttribute);
+                assert.isFalse(attr.isVariantAxis);
                 assert.strictEqual(attr.value, magentoProduct[attr.id]);
             });
         });
@@ -82,7 +82,7 @@ describe('Magento ProductMapper', () => {
                 
                 assert.strictEqual(variant.attributes.length, 4);
                 variant.attributes.forEach(attr => {
-                    if (attr.variantAttribute) {
+                    if (attr.isVariantAxis) {
                         let option = magentoProduct.configurable_options.find(opt => opt.attribute_code == attr.id);
                         assert.strictEqual(attr.name, option.label);
                         let index = magentoVariant[attr.id];
@@ -113,7 +113,7 @@ describe('Magento ProductMapper', () => {
             assert.lengthOf(product.prices, 1);
 
             product.prices.forEach(price => {
-                assert.hasAnyKeys(price, ['centAmount', 'currency', 'country']);
+                assert.hasAnyKeys(price, ['amount', 'currency', 'country']);
                 assert.isNumber(price.amount);
             });
 

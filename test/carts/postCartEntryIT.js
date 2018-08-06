@@ -104,8 +104,8 @@ describe('magento postCartEntry', function() {
                     // Verify structure
                     requiredFields.verifyCart(res.body);
                     expect(res.body.id).to.not.be.empty;
-                    expect(res.body).to.have.own.property('lastModifiedDate');
-                    expect(res.body).to.have.own.property('createdDate');
+                    expect(res.body).to.have.own.property('lastModifiedAt');
+                    expect(res.body).to.have.own.property('createdAt');
                     expect(res.body.entries).to.have.lengthOf(0);
                 })
                 .catch(function(err) {
@@ -130,8 +130,8 @@ describe('magento postCartEntry', function() {
                     // Verify structure
                     requiredFields.verifyCart(res.body);
                     expect(res.body.id).to.equal(cartId);
-                    expect(res.body).to.have.own.property('lastModifiedDate');
-                    expect(res.body).to.have.own.property('createdDate');
+                    expect(res.body).to.have.own.property('lastModifiedAt');
+                    expect(res.body).to.have.own.property('createdAt');
                     expect(res.body.entries).to.have.lengthOf(2);
                     cartEntryIdSecond = res.body.entries[1].id;
                     // Verify that product was added
@@ -165,8 +165,8 @@ describe('magento postCartEntry', function() {
                     // Verify structure
                     requiredFields.verifyCart(res.body);
                     expect(res.body.id).to.not.be.empty;
-                    expect(res.body).to.have.own.property('lastModifiedDate');
-                    expect(res.body).to.have.own.property('createdDate');
+                    expect(res.body).to.have.own.property('lastModifiedAt');
+                    expect(res.body).to.have.own.property('createdAt');
                     expect(res.body.entries).to.have.lengthOf(1);
 
                     // Verify entry structure

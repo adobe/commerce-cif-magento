@@ -68,12 +68,12 @@ describe('Magento CartMapper', () => {
             assertPrice(mappedCart.shippingInfo.discountedCost, sampleCartTotals.shipping_incl_tax * 100, sampleCartTotals.quote_currency_code);
             assertTax(mappedCart.shippingInfo.taxInfo, sampleCartTotals.shipping_tax_amount * 100);
 
-            assert.strictEqual(mappedCart.createdDate, formatDate(sampleCartDetails.created_at));
-            assert.strictEqual(mappedCart.lastModifiedDate, formatDate(sampleCartDetails.updated_at));
+            assert.strictEqual(mappedCart.createdAt, formatDate(sampleCartDetails.created_at));
+            assert.strictEqual(mappedCart.lastModifiedAt, formatDate(sampleCartDetails.updated_at));
 
             assert.isDefined(mappedCart.discounts);
             assert.lengthOf(mappedCart.discounts, 1);
-            assert.strictEqual(mappedCart.discounts[0].message, sampleCartTotals.total_segments[3].title);
+            assert.strictEqual(mappedCart.discounts[0].description, sampleCartTotals.total_segments[3].title);
             assertPrice(mappedCart.discounts[0].value, -sampleCartTotals.total_segments[3].value * 100, sampleCartTotals.quote_currency_code);
 
             assert.isDefined(mappedCart.coupons);
@@ -131,7 +131,7 @@ describe('Magento CartMapper', () => {
                     let [name, value] = cartMapper._getNameValueForAttributeCode(attribute.id, attributeCodeValue, sampleCartAttributes);
                     assert.strictEqual(attribute.value, value);
                     assert.strictEqual(attribute.name, name);
-                    assert.strictEqual(attribute.variantAttribute, true);
+                    assert.strictEqual(attribute.isVariantAxis, true);
                 });
             });
         });
@@ -156,7 +156,7 @@ describe('Magento CartMapper', () => {
 
             assert.isUndefined(mappedCart.netTotalPrice);
             assert.isUndefined(mappedCart.grossTotalPrice);
-            assert.isUndefined(mappedCart.cartTaxInfo);
+            assert.isUndefined(mappedCart.taxInfo);
             assert.isUndefined(mappedCart.shippingInfo);
 
             // Required field

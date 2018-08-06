@@ -60,8 +60,8 @@ describe('Magento getCategories', () => {
                 assert.strictEqual(result.response.body.total, 21);
                 assert.isArray(result.response.body.results);
                 assert.strictEqual(result.response.body.results.length, 3);
-                assert.isNotEmpty(result.response.body.results[0].subCategories);
-                assert.strictEqual(result.response.body.results[0].subCategories.length, 6);
+                assert.isNotEmpty(result.response.body.results[0].children);
+                assert.strictEqual(result.response.body.results[0].children.length, 6);
             });
         });
 
