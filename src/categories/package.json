@@ -11,13 +11,13 @@
   "dependencies": {
     "@adobe/commerce-cif-magento-common": "0.0.1",
     "@adobe/commerce-cif-common": "0.1.17",
-    "@adobe/commerce-cif-model": "0.1.126"
+    "@adobe/commerce-cif-model": "1.0.0"
   },
   "devDependencies": {
     "eslint": "3.19.0",
     "eslint-plugin-header": "1.2.0",
     "js-yaml": "3.9.0",
-    "serverless": "1.27.3",
+    "serverless": "1.29.0",
     "serverless-openwhisk": "0.13.0",
     "serverless-webpack": "4.3.0",
     "webpack": "4.0.1"

@@ -19,7 +19,7 @@ const CartEntry = require('@adobe/commerce-cif-model').CartEntry;
 const CartEntryType = require('@adobe/commerce-cif-common/model').CartEntryType;
 const Discount = require('@adobe/commerce-cif-model').Discount;
 const ProductVariant = require('@adobe/commerce-cif-model').ProductVariant;
-const Price = require('@adobe/commerce-cif-model').Price;
+const MoneyValue = require('@adobe/commerce-cif-model').MoneyValue;
 const Asset = require('@adobe/commerce-cif-model').Asset;
 const Attribute = require('@adobe/commerce-cif-model').Attribute;
 const TaxInfo = require('@adobe/commerce-cif-model').TaxInfo;
@@ -80,12 +80,12 @@ class CartMapper {
             cartEntries = CartMapper._mapCartEntries(magentoCart, currency, mediaBaseUrl, productAttributes);
         }
 
-        let productTotalPrice = new Price.Builder()
+        let productTotalPrice = new MoneyValue.Builder()
             .withAmount(0)
             .withCurrency(currency)
             .build();
         if (magentoCart.totals && Math.abs(magentoCart.totals.subtotal_incl_tax) > 0) {
-            productTotalPrice = new Price.Builder()
+            productTotalPrice = new MoneyValue.Builder()
                 .withAmount(magentoCart.totals.subtotal_incl_tax * 100)
                 .withCurrency(currency)
                 .build();
@@ -105,14 +105,14 @@ class CartMapper {
             cart.taxIncludedInPrices = true;
             //do not map when 0
             if (Math.abs(magentoCart.totals.grand_total) > 0) {
-                cart.netTotalPrice = new Price.Builder()
+                cart.netTotalPrice = new MoneyValue.Builder()
                     .withAmount(magentoCart.totals.grand_total * 100)
                     .withCurrency(currency)
                     .build();
             }
             //do not map when 0
             if (Math.abs(magentoCart.totals.base_grand_total) > 0) {
-                cart.grossTotalPrice = new Price.Builder()
+                cart.grossTotalPrice = new MoneyValue.Builder()
                     .withAmount(magentoCart.totals.base_grand_total * 100)
                     .withCurrency(currency)
                     .build();
@@ -121,7 +121,7 @@ class CartMapper {
             //do not map when 0
             if (Math.abs(magentoCart.totals.tax_amount) > 0) {
                 cart.taxInfo = new TaxInfo.Builder()
-                    .withAmount(magentoCart.totals.tax_amount * 100).build();
+                    .withValue(magentoCart.totals.tax_amount * 100).build();
             }
             let totalSegments = magentoCart.totals.total_segments;
             if (totalSegments) {
@@ -160,12 +160,12 @@ class CartMapper {
     static _mapCartDiscount(magentoDiscount, currency) {
         //ensure discount value is always positive since Magento sets negative value here
         const discountValue = Math.abs(magentoDiscount.value);
-        const price = new Price.Builder()
+        const value = new MoneyValue.Builder()
             .withAmount(discountValue * 100)
             .withCurrency(currency)
             .build();
         const discount = new Discount.Builder()
-            .withAmount(price)
+            .withValue(value)
             .withId("discount")
             .withType("discount")
             .build();
@@ -184,18 +184,18 @@ class CartMapper {
      * @private
      */
     static _mapShippingInfo(magentoShippingInfo, magentoCartTotals) {
-        let shippingPrice = new Price.Builder()
+        let shippingCost = new MoneyValue.Builder()
             .withAmount(magentoCartTotals.shipping_incl_tax * 100)
             .withCurrency(magentoCartTotals.quote_currency_code)
             .build();
-        let taxInfo = new TaxInfo.Builder().withAmount(magentoCartTotals.shipping_tax_amount * 100).build();
+        let taxInfo = new TaxInfo.Builder().withValue(magentoCartTotals.shipping_tax_amount * 100).build();
         let shippingInfo = new ShippingInfo.Builder()
             .withId(magentoShippingInfo.method)
             .withName(magentoShippingInfo.method)
-            .withPrice(shippingPrice)
+            .withCost(shippingCost)
             .withTaxInfo(taxInfo)
             .build();
-        shippingInfo.discountedPrice = new Price.Builder()
+        shippingInfo.discountedCost = new MoneyValue.Builder()
             .withAmount(magentoCartTotals.shipping_incl_tax * 100)
             .withCurrency(magentoCartTotals.quote_currency_code)
             .build();
@@ -212,11 +212,11 @@ class CartMapper {
             const productItem = magentoCart.products.items.find(item => {
                 return itemTotal.sku === item.sku;
             });
-            const price = new Price.Builder()
+            const price = new MoneyValue.Builder()
                 .withAmount(itemTotal.row_total_incl_tax * 100)
                 .withCurrency(currency)
                 .build();
-            const unitPrice = new Price.Builder()
+            const unitPrice = new MoneyValue.Builder()
                 .withAmount(itemTotal.price_incl_tax * 100)
                 .withCurrency(currency)
                 .build();
@@ -242,12 +242,12 @@ class CartMapper {
      * @private
      */
     static _mapCartEntryDiscount(discount_amount, currency) {
-        const price = new Price.Builder()
+        const value = new MoneyValue.Builder()
             .withAmount(discount_amount * 100)
             .withCurrency(currency)
             .build();
         return new Discount.Builder()
-            .withAmount(price)
+            .withValue(value)
             .withId("discount")
             .withType("discount")
             .build();
