@@ -199,5 +199,5 @@ function assertPrice(mappedPrice, sampleAmount, sampleCurrencyCode) {
 
 function assertTax(mappedTax, sampleAmount) {
     assert.isDefined(mappedTax);
-    assert.strictEqual(mappedTax.value, sampleAmount);
+    assert.strictEqual(mappedTax.value.amount, sampleAmount);
 }
