@@ -158,7 +158,6 @@ describe('Magento postCart', () => {
                 productId: 'eqbisucos-L',
                 quantity: ''
             }).then(result => {
-                console.log(JSON.stringify(result, null, 2));
                 assert.strictEqual(result.response.error.name, 'InvalidArgumentError');
             });
         });
@@ -169,7 +168,6 @@ describe('Magento postCart', () => {
                 id: 'not-extisting-cart-id',
                 productId: 'eqbisucos-L'
             }).then(result => {
-                console.log(JSON.stringify(result, null, 2));
                 assert.strictEqual(result.response.error.name, 'MissingPropertyError');
             });
         });
