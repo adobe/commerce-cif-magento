@@ -20,7 +20,7 @@
     "copy-webpack-plugin": "4.5.1",
     "eslint": "3.19.0",
     "eslint-plugin-header": "1.2.0",
-    "serverless": "1.27.3",
+    "serverless": "1.29.0",
     "serverless-openwhisk": "0.13.0",
     "serverless-webpack": "4.3.0",
     "webpack": "4.0.1"
