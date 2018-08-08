@@ -212,15 +212,5 @@ describe('magento postCartEntry', function() {
                 });
         });
 
-        it('returns a 400 error for missing parameters', function() {
-            return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .then(function(res) {
-                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(res).to.be.json;
-                    requiredFields.verifyErrorResponse(res.body);
-                });
-        });
-
     });
 });

@@ -39,7 +39,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         const productVariantId = 'eqbisumas-10';
 
         /** Create cart. */
-        before(function () {
+        beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postCart')
                 .query({
@@ -58,7 +58,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         });
 
         /** Delete cart. */
-        after(function () {
+        afterEach(function () {
             // TODO(mabecker): Delete cart with id = cartId
         });
 
