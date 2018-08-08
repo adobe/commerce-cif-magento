@@ -57,8 +57,9 @@ function postCartEntry(args) {
 
     validator.checkArguments();
     if (actionState !== ActionStateEnum.NEW_EMPTY_CART) {
-        validator.isInteger('quantity');
-        validator.mandatoryParameter('quantity');
+        validator.mandatoryParameter('quantity')
+            .isInteger('quantity')
+            .isInsideInterval('quantity', 1);
     }
 
     if (validator.error) {

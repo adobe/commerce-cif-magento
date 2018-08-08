@@ -38,7 +38,8 @@ function putCartEntry(args) {
         .mandatoryParameter('id')
         .mandatoryParameter('cartEntryId')
         .mandatoryParameter('quantity')
-        .isInteger('quantity');
+        .isInteger('quantity')
+        .isInsideInterval('quantity', 1);
     if (validator.error) {
         return validator.buildErrorResponse();
     }

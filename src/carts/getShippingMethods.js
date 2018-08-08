@@ -53,7 +53,8 @@ function getShippingMethods(args) {
             const cartResult = result.response.body;
             return shippingMethods.byId(args.id).getShippingMethods(cartResult.shippingAddress, cartResult.currency)
         } else {
-            return shippingMethods._handleSuccess([]);
+            // No shipping address is set, return error
+            return cart.handleError({ statusCode: 404 });
         }
     }).catch(error => {
         return cart.handleError(error);

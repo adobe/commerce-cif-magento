@@ -167,19 +167,6 @@ describe('magento postCartEntry', function() {
                 });
         });
 
-        it('returns a 400 error for an invalid currency', function() {
-            return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
-                    currency: 'EURO'
-                })
-                .then(function(res) {
-                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(res).to.be.json;
-                    requiredFields.verifyErrorResponse(res.body);
-                });
-        });
-
         it('returns a 400 error for an invalid quantity', function() {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postCartEntry')
