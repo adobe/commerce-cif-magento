@@ -15,9 +15,8 @@
   "devDependencies": {
     "lerna": "2.9.0",
     "chai": "4.0.2",
-    "chai-http": "^3.0.0",
+    "chai-http": "4.0.0",
     "chai-sorted": "0.1.2",
-    "chai-as-promised": "7.1.1",
     "http-status-codes": "^1.2.0",
     "mocha": "5.2.0",
     "mocha-jenkins-reporter": "0.3.7",
