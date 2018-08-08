@@ -54,9 +54,6 @@ describe('Magento getShippingMethodsIT for a cart', function () {
 
                     // Store cart id
                     cartId = res.body.id;
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -96,9 +93,6 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                         requiredFields.verifyShippingMethod(shippingMethod);
                         expect(shippingMethod).to.have.own.property('description');
                     });
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -107,8 +101,10 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                 .get(env.cartsPackage + 'getShippingMethods')
                 .set('Cache-Control', 'no-cache')
                 .query({ id: cartId })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -116,10 +112,10 @@ describe('Magento getShippingMethodsIT for a cart', function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getShippingMethods')
                 .set('Cache-Control', 'no-cache')
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -128,10 +124,10 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                 .get(env.cartsPackage + 'getShippingMethods')
                 .set('Cache-Control', 'no-cache')
                 .query({ id: 'does-not-exist' })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
     });
