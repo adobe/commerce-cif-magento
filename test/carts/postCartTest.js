@@ -48,15 +48,15 @@ describe('Magento postCart', () => {
             mockedResponses.push('[]');
             
             return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(config))
-                    .then(result => {
-                        assert.isDefined(result.response);
-                        assert.strictEqual(result.response.statusCode, 201);
-                        assert.isDefined(result.response.headers);
-                        assert.strictEqual(result.response.headers.Location, `carts/${args.id}`);
-                        assert.isDefined(result.response.body);
-                        assert.isDefined(result.response.body.id);
-                        assert.isEmpty(result.response.body.entries);
-                    });
+                .then(result => {
+                    assert.isDefined(result.response);
+                    assert.strictEqual(result.response.statusCode, 201);
+                    assert.isDefined(result.response.headers);
+                    assert.strictEqual(result.response.headers.Location, `carts/${args.id}`);
+                    assert.isDefined(result.response.body);
+                    assert.isDefined(result.response.body.id);
+                    assert.isEmpty(result.response.body.entries);
+                });
         });
         
         it('adds a single product to an existing cart', () => {
@@ -98,43 +98,43 @@ describe('Magento postCart', () => {
         });
         
         it('creates a new guest cart and adds one product item', () => {
+            let id = 'dummy-id';
             let args = {
-                id: 'dummy-id',
                 productVariantId: 'eqbisucos-L',
                 quantity: 3
             };
             //build the expected requests
             let body = {
                 'cartItem': {
-                    'quote_id': args.id,
                     'sku': args.productVariantId,
-                    'qty': args.quantity
+                    'qty': args.quantity,
+                    'quote_id': id
                 }
             };
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/items`), 'POST');
+            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${id}/items`), 'POST');
             postRequestWithBody.body = body;
     
             const expectedArgs = [
-                requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/items`), 'POST'),
+                requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts`), 'POST'),
                 postRequestWithBody,
                 requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/dummy-id?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET'),
             ];
             //build the responses
             let mockedResponses = [];
-            mockedResponses.push(samplecartempty);
+            mockedResponses.push('dummy-id');
             mockedResponses.push(samplecartentry);
             mockedResponses.push(samplecart);
             
             return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
-                    .then(result => {
-                        assert.isDefined(result.response);
-                        assert.strictEqual(result.response.statusCode, 201);
-                        assert.isDefined(result.response.headers);
-                        assert.strictEqual(result.response.headers.Location, `carts/${args.id}/entries/${samplecartentry.item_id}`);
-                        assert.isDefined(result.response.body);
-                        assert.isDefined(result.response.body.id);
-                        assert.isNotEmpty(result.response.body.entries);
-                    });
+                .then(result => {
+                    assert.isDefined(result.response);
+                    assert.strictEqual(result.response.statusCode, 201);
+                    assert.isDefined(result.response.headers);
+                    assert.strictEqual(result.response.headers.Location, `carts/${id}/entries/${samplecartentry.item_id}`);
+                    assert.isDefined(result.response.body);
+                    assert.isDefined(result.response.body.id);
+                    assert.isNotEmpty(result.response.body.entries);
+                });
         });
         
         it('fails with HTTP 404 not found when adding products to an non existing cart', () => {
