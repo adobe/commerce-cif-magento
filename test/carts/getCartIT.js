@@ -54,11 +54,9 @@ describe('magento getCart', function() {
 
                     // Store cart id
                     cartId = res.body.id;
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
+
         /** Delete cart. */
         after(function() {
             // TODO(mabecker): Delete cart with id = cartId
@@ -85,9 +83,6 @@ describe('magento getCart', function() {
                     expect(entry.quantity).to.equal(2);
                     expect(entry.productVariant).to.have.own.property('id');
                     expect(entry.productVariant.sku).to.equal(productVariantId);
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
         
@@ -95,10 +90,10 @@ describe('magento getCart', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getCart')
                 .set('Cache-Control', 'no-cache')
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -107,10 +102,10 @@ describe('magento getCart', function() {
                 .get(env.cartsPackage + 'getCart')
                 .set('Cache-Control', 'no-cache')
                 .query({id: 'does-not-exist'})
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
         

@@ -77,9 +77,6 @@ describe('magento deleteCoupon', function () {
                     expect(coupon).to.have.property('id');
                     expect(coupon).to.have.property('code');
                     expect(coupon.code).to.equal(couponCode);
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -121,10 +118,10 @@ describe('magento deleteCoupon', function () {
                     id: 'non-existing-cart-id',
                     code: couponCode
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -134,10 +131,10 @@ describe('magento deleteCoupon', function () {
                 .query({
                     id: cartId
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
     });
