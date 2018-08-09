@@ -67,22 +67,19 @@ describe('Magento postOrder', function () {
         /** Create empty cart. */
         beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
-                       .post(env.cartsPackage + 'postCartEntry')
-                       .query({
-                           currency: 'USD',
-                           quantity: 5,
-                           productVariantId: productVariantId
-                       })
-                       .then(function (res) {
-                           expect(res).to.be.json;
-                           expect(res).to.have.status(HttpStatus.CREATED);
+                .post(env.cartsPackage + 'postCartEntry')
+                .query({
+                    currency: 'USD',
+                    quantity: 5,
+                    productVariantId: productVariantId
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.CREATED);
 
-                           // Store cart id
-                           cartId = res.body.id;
-                       })
-                       .catch(function (err) {
-                           throw err;
-                       });
+                    // Store cart id
+                    cartId = res.body.id;
+                });
         });
 
         /** Delete cart. */
@@ -94,10 +91,10 @@ describe('Magento postOrder', function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.ordersPackage + 'postOrder')
                 .query({})
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -105,10 +102,10 @@ describe('Magento postOrder', function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.ordersPackage + 'postOrder')
                 .query({cartId: 'non-existing-cart-id-1'})
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -116,10 +113,10 @@ describe('Magento postOrder', function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.ordersPackage + 'postOrder')
                 .query({cartId: cartId})
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 

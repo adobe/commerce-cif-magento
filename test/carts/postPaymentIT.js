@@ -92,9 +92,6 @@ describe('Magento postPayment', function () {
                         .send({
                             address: addr
                         });
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -111,9 +108,6 @@ describe('Magento postPayment', function () {
                     expect(res).to.have.status(HttpStatus.OK);
 
                     expect(res.body.entries).to.have.lengthOf(0);
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -126,10 +120,10 @@ describe('Magento postPayment', function () {
                 .send({
                     payment: ccifPayment
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -139,10 +133,10 @@ describe('Magento postPayment', function () {
                 .query({
                     id: cartId
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 

@@ -63,10 +63,10 @@ describe('magento searchProducts', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
                 .set('Cache-Control', 'no-cache')
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -87,9 +87,6 @@ describe('magento searchProducts', function() {
                         requiredFields.verifyProduct(result);
                         expect(result.categories).to.deep.include({"id": WOMENSHORTS_CATEGORY_ID});
                     }
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -111,9 +108,6 @@ describe('magento searchProducts', function() {
                         expect(result.categories).to.have.lengthOf.at.least(1);
                         requiredFields.verifyProduct(result);
                     }
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -147,9 +141,6 @@ describe('magento searchProducts', function() {
                     //only product variant contains variants attributes
                     expect(product.variants[0].attributes.find(o => {return o.id === 'color'})).to.be.an('object');
                     expect(product.variants[0].attributes.find(o => {return o.id === 'size'})).to.be.an('object');
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -171,9 +162,6 @@ describe('magento searchProducts', function() {
                     for(let result of res.body.results) {
                         requiredFields.verifyProduct(result);
                     }
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -199,9 +187,6 @@ describe('magento searchProducts', function() {
                     // Verfiy sorting
                     const names = res.body.results.map(r => r.name);
                     expect(names).to.be.descending;
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -214,10 +199,10 @@ describe('magento searchProducts', function() {
                     filter: `categories.id:"${WOMENSHORTS_CATEGORY_ID}"`,
                     sort: 'abc.asc'
                 })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -242,9 +227,6 @@ describe('magento searchProducts', function() {
                     for(let result of res.body.results) {
                         requiredFields.verifyProduct(result);
                     }
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -257,10 +239,10 @@ describe('magento searchProducts', function() {
                     filter: `categories.id:subtree:"${MEN_CATEGORY_ID}"`,
                     limit: -1
                 })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
