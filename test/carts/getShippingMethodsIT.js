@@ -36,17 +36,11 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         this.timeout(env.timeout);
 
         let cartId;
-        const productVariantId = 'eqbisumas-10';
 
         /** Create cart. */
         beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postCart')
-                .query({
-                    currency: 'USD',
-                    quantity: 2,
-                    productVariantId: productVariantId
-                })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.CREATED);
