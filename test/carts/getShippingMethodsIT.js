@@ -56,7 +56,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
             additionalAddressInfo: 'Diameter: ~4.5 Light Years, 26,453,814,179,326 Miles'
         };
 
-        /** Create cart. */
+        /** Create an empty cart. */
         beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postCart')
@@ -76,14 +76,28 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         });
 
         it('returns the list of available shipping methods for the cart', function () {
-            // set valid shipping address for cart
+            
             const args = {
                 id: cartId
             };
+            // Add an item to the cart. Magento does not allow setting a shipping address to an empty cart.
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postShippingAddress')
-                .query(args)
-                .send({ address: addr })
+                .post(env.cartsPackage + 'postCartEntry')
+                .query({
+                    quantity: 2,
+                    id: cartId,
+                    productVariantId: 'eqbisumas-10'
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.CREATED);
+
+                    // set valid shipping address for cart
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postShippingAddress')
+                        .query(args)
+                        .send({ address: addr });
+                })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
