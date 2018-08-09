@@ -37,6 +37,25 @@ describe('Magento getShippingMethodsIT for a cart', function () {
 
         let cartId;
 
+        const addr = {
+            title: 'Work',
+            salutation: 'Ms',
+            firstName: 'Cat Eye',
+            lastName: 'Nebulae',
+            streetName: 'Draco',
+            streetNumber: '3,262',
+            additionalStreetInfo: 'Light Years',
+            postalCode: '666666',
+            city: 'Constellation',
+            region: 'FarAway',
+            country: 'US',
+            organizationName: 'Zeus',
+            phone: '66666666666',
+            email: 'cat.eye@zeus.com',
+            fax: '6666666666',
+            additionalAddressInfo: 'Diameter: ~4.5 Light Years, 26,453,814,179,326 Miles'
+        };
+
         /** Create cart. */
         beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
@@ -64,9 +83,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postShippingAddress')
                 .query(args)
-                .send({
-                    address: { country: 'US' }
-                })
+                .send({ address: addr })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
