@@ -87,6 +87,10 @@ class MagentoClientBase {
      * @protected
      */
     _handleSuccess(body, headers, statusCode = 200) {
+        if (this.args.DEBUG) {
+            headers = headers || {};
+            headers['OW-Activation-Id'] = process.env.__OW_ACTIVATION_ID;
+        }
         this.args['response'] = { 'statusCode': statusCode, 'body': body, 'headers': headers };
         return Promise.resolve(this.args);
     }
@@ -113,13 +117,49 @@ class MagentoClientBase {
             headers: this.headers,
             json: true
         };
+
+        if (this.args.DEBUG) {
+            return this._profileRequest(options);
+        }
         return requestPromise(options);
     }
-    
+
     /**
-     *
+     * Wraps a request and prints out debug information to the log.
+     * 
+     * @param {Object} options  Request options.
+     */
+    _profileRequest(options) {
+        let s = process.hrtime();
+        let logRequest = this._logRequest.bind(this);
+
+        return requestPromise(options)
+            .then((res) => {
+                logRequest(options, s, true);
+                return Promise.resolve(res);
+            })
+            .catch((res) => {
+                logRequest(options, s, false);
+                return Promise.reject(res);
+            });
+    }
+
+    /**
+     * Logs a request to Magento.
+     * 
+     * @param {Object} options      Request options.
+     * @param {Array} start         HR starting time of request.
+     * @param {Boolean} passed      true, if request returned with 2xx status.
+     */
+    _logRequest(options, start, passed) {
+        let end = process.hrtime(start);
+        let duration = end[0] * 1000000 + end[1] / 1000;
+        console.log("BACKEND-CALL", options.method, options.uri, duration, passed ? "PASS" : "FAIL");
+    }
+
+    /**
      * ById wrapper. Sets the existing endpoint to the id param.
-     
+     *
      * @param id
      * @return {MagentoRestClientBase}
      */

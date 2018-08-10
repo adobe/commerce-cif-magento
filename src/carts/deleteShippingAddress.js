@@ -14,7 +14,6 @@
 
 'use strict';
 
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
@@ -32,4 +31,4 @@ function deleteShippingAddress(args) {
     return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
 }
 
-module.exports.main = decorateActionForSequence(deleteShippingAddress);
+module.exports.main = deleteShippingAddress;

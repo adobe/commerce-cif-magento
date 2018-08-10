@@ -15,7 +15,6 @@
 'use strict';
 
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const MagentoOrderClient = require('./MagentoOrderClient');
 const OrderMapper = require('./OrderMapper');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
@@ -48,4 +47,4 @@ function postOrder(args) {
     return orderClient.create(args.cartId);
 }
 
-module.exports.main = decorateActionForSequence(postOrder);
+module.exports.main = postOrder;
