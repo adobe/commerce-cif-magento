@@ -70,7 +70,7 @@ describe('Magento postOrder', function () {
                 .post(env.cartsPackage + 'postCartEntry')
                 .query({
                     currency: 'USD',
-                    quantity: 5,
+                    quantity: 1,
                     productVariantId: productVariantId
                 })
                 .then(function (res) {
