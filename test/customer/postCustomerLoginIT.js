@@ -54,7 +54,6 @@ describe('magento postCustomerLogin', function() {
 
                     requiredFields.verifyLoginResult(res.body);
                     expect(res.body.customer.email).to.equal(email);
-                    console.log(res.body.cart);
                     expect(res.body.cart).to.not.be.undefined;
                     //check cookie is set
                     let accessToken = extractToken(res);
