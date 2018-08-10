@@ -51,7 +51,6 @@ describe('Magento getCart', () => {
                         assert.strictEqual(result.response.body.id, spec.args.id);
                     });
             })
-
         });
 
         it('returns 404 for a non-existing cart', () => {
