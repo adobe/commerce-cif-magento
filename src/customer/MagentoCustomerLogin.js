@@ -30,7 +30,7 @@ class MagentoCustomerLogin extends MagentoClientBase {
         super(args, customerMapper, '', ERROR_TYPE);
     }
 
-    login(data, anonymousCartId) {
+    login(data) {
         let postData = {
             username: data.email,
             password: data.password

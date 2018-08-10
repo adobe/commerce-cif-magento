@@ -56,6 +56,6 @@ function extractToken (res) {
         throw 'NO HEADERS';
     }
     return accessToken;
-};
+}
 
 module.exports.extractToken = extractToken;
