@@ -15,7 +15,6 @@
 'use strict';
 
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
-const req = require('request-promise-native');
 const ProductGraphQlRequestBuilder = require('./ProductGraphQlRequestBuilder');
 const ProductMapper = require('./ProductMapper');
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
