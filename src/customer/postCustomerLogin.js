@@ -50,7 +50,7 @@ function login(args) {
     };
 
     const magentoCustomer = new MagentoCustomerLogin(args, customerMapper.mapCustomerLogin);
-    return magentoCustomer.login(data, args.anonymousCartId);
+    return magentoCustomer.login(data);
 }
 
 module.exports.main = decorateActionForSequence(login);

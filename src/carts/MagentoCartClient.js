@@ -192,21 +192,6 @@ class MagentoCartClient extends MagentoClientBase {
         return this._execute('GET');
     }
 
-    /**
-     * Assigns a cart to the customer. This is for a logged in customer.
-     *
-     * @param cartId        the anonymous cart id to be assigned
-     * @param customerId    the customer id.
-     * @protected
-     */
-    _assignCartToCustomer(cartId, customerId) {
-        this._setEndpointBasedOnCustomer();
-        let data = {
-            'customerId': customerId
-        };
-        return this.withEndpoint(cartId)._execute('PUT', data);
-    }
-
     _mapFilter(idx, field, value) {
         return `productAttributesSearchCriteria[filter_groups][0][filters][${idx}][field]=${field}&productAttributesSearchCriteria[filter_groups][0][filters][${idx}][value]=${value}`;
     }
