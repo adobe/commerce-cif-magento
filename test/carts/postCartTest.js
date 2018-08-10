@@ -22,6 +22,7 @@ const samplecartentry = require('../resources/sample-cart-entry');
 const samplecart404 = require('../resources/sample-cart-404');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
 
 /**
  * Describes the unit tests for Magento cart operation.
@@ -34,109 +35,129 @@ describe('Magento postCart', () => {
         setup(this, __dirname, 'postCartEntry');
         
         it('creates a new empty guest cart', () => {
-            let args = {
-                id: 'dummy-id'
-            }
-            const expectedArgs = [
-                requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts`), 'POST'),
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
-            ];
-            
-            let mockedResponses = [];
-            mockedResponses.push('dummy-id');
-            mockedResponses.push(samplecartempty);
-            mockedResponses.push('[]');
-            
-            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(config))
+
+            let specs = specsBuilder();
+
+            specs.forEach(spec => {
+                const expectedArgs = [
+                    requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseCart}`), 'POST', spec.token),
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+
+                let mockedResponses = [];
+                let id = spec.args.id;
+                mockedResponses.push(`${id}`);
+                mockedResponses.push(samplecartempty);
+                mockedResponses.push('[]');
+
+                //this is create cart so remove any cart id from spec
+                delete spec.args.id;
+
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
                     .then(result => {
                         assert.isDefined(result.response);
                         assert.strictEqual(result.response.statusCode, 201);
                         assert.isDefined(result.response.headers);
-                        assert.strictEqual(result.response.headers.Location, `carts/${args.id}`);
+                        assert.strictEqual(result.response.headers.Location, `carts/${id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
                         assert.isEmpty(result.response.body.entries);
                     });
+            });
+
         });
         
         it('adds a single product to an existing cart', () => {
-            let args = {
-                id: 'dummy-id',
-                productVariantId: 'eqbisucos-L',
-                quantity: 3
-            };
-            //build the expected requests
-            let body = {
-                'cartItem': {
-                    'quote_id': args.id,
-                    'sku': args.productVariantId,
-                    'qty': args.quantity
-                }
-            };
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/items`), 'POST');
-            postRequestWithBody.body = body;
-            
-            const expectedArgs = [
-                postRequestWithBody,
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/dummy-id?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET'),
-            ];
-            //build responses
-            let mockedResponses = [];
-            mockedResponses.push(samplecartentry);
-            mockedResponses.push(samplecart);
-            
-            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
+
+            let specs = specsBuilder();
+
+            specs.forEach(spec => {
+                spec.args.productVariantId = 'eqbisucos-L';
+                spec.args.quantity = 3;
+
+                //build the expected requests
+                let body = {
+                    'cartItem': {
+                        'quote_id': spec.args.id,
+                        'sku': spec.args.productVariantId,
+                        'qty': spec.args.quantity
+                    }
+                };
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/items`),
+                    'POST', spec.token);
+                postRequestWithBody.body = body;
+
+                const expectedArgs = [
+                    postRequestWithBody,
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token),
+                ];
+                //build responses
+                let mockedResponses = [];
+                mockedResponses.push(samplecartentry);
+                mockedResponses.push(samplecart);
+
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
                     .then(result => {
                         assert.isDefined(result.response);
                         assert.strictEqual(result.response.statusCode, 201);
                         assert.isDefined(result.response.headers);
-                        assert.strictEqual(result.response.headers.Location, `carts/${args.id}/entries/${samplecartentry.item_id}`);
+                        assert.strictEqual(result.response.headers.Location, `carts/${spec.args.id}/entries/${samplecartentry.item_id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
                         assert.isNotEmpty(result.response.body.entries);
                     });
+            });
         });
-        
+
         it('creates a new guest cart and adds one product item', () => {
-            let args = {
-                id: 'dummy-id',
-                productVariantId: 'eqbisucos-L',
-                quantity: 3
-            };
-            //build the expected requests
-            let body = {
-                'cartItem': {
-                    'quote_id': args.id,
-                    'sku': args.productVariantId,
-                    'qty': args.quantity
-                }
-            };
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/items`), 'POST');
-            postRequestWithBody.body = body;
-    
-            const expectedArgs = [
-                requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/items`), 'POST'),
-                postRequestWithBody,
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/dummy-id?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET'),
-            ];
-            //build the responses
-            let mockedResponses = [];
-            mockedResponses.push(samplecartempty);
-            mockedResponses.push(samplecartentry);
-            mockedResponses.push(samplecart);
-            
-            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
+
+            let specs = specsBuilder();
+
+            specs.forEach(spec => {
+
+                spec.args.productVariantId = 'eqbisucos-L';
+                spec.args.quantity = 1;
+
+                //build the expected requests
+                let body = {
+                    'cartItem': {
+                        'quote_id': spec.args.id,
+                        'sku': spec.args.productVariantId,
+                        'qty': spec.args.quantity
+                    }
+                };
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/items`),
+                    'POST', spec.token);
+                postRequestWithBody.body = body;
+
+                const expectedArgs = [
+                    requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}`), 'POST', spec.token), // creates the empty cart
+                    postRequestWithBody,  //adds the items
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)  //gets the cart
+                ];
+
+                //build the responses
+                let mockedResponses = [];
+                mockedResponses.push(samplecartempty);
+                mockedResponses.push(samplecartentry);
+                mockedResponses.push(samplecart);
+
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
                     .then(result => {
                         assert.isDefined(result.response);
                         assert.strictEqual(result.response.statusCode, 201);
                         assert.isDefined(result.response.headers);
-                        assert.strictEqual(result.response.headers.Location, `carts/${args.id}/entries/${samplecartentry.item_id}`);
+                        assert.strictEqual(result.response.headers.Location, `carts/${spec.args.id}/entries/${samplecartentry.item_id}`);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
                         assert.isNotEmpty(result.response.body.entries);
                     });
+            });
         });
-        
+
         it('fails with HTTP 404 not found when adding products to an non existing cart', () => {
             return this.prepareReject(samplecart404)
                     .execute({

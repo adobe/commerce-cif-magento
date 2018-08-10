@@ -122,12 +122,14 @@ describe('magento putCartEntry', function () {
                     cartEntryId: cartEntryId
                 })
                 .then(function (res) {
+                    console.log(JSON.stringify(res, null, 2));
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
                     requiredFields.verifyCart(res.body);
                     expect(res.body.entries).to.have.lengthOf(0);
                 })
                 .catch(function (err) {
+                    console.log(JSON.stringify(err, null, 2));
                     throw err;
                 });
         });

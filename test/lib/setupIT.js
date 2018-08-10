@@ -16,7 +16,7 @@
 
 const expect = require('chai').expect;
 
-module.exports.setup = function () {
+module.exports.setup = function() {
 
     let env = {};
     env.slow = 10000;
@@ -40,7 +40,22 @@ module.exports.setup = function () {
     env.customersPackage = mainPackage;
     env.productsPackage = mainPackage;
     env.ordersPackage = mainPackage;
-    
+
     return env;
 
 };
+
+function extractToken (res) {
+    let headers = res.header['set-cookie'];
+    let accessToken = null;
+    if (headers) {
+        headers.forEach(header => {
+            accessToken = header.match(/ccs-magento-customer-token=(.*);P/)[1];
+        });
+    } else {
+        throw 'NO HEADERS';
+    }
+    return accessToken;
+};
+
+module.exports.extractToken = extractToken;

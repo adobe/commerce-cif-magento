@@ -15,11 +15,13 @@
 'use strict';
 
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
+const MagentoCartClient = require('../carts/MagentoCartClient');
+const cartMapper = require('../carts/CartMapper');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 class MagentoCustomerLogin extends MagentoClientBase {
 
-    /*
+    /**
      * @param   {string} args.MAGENTO_SCHEMA         Magento schema
      * @param   {string} args.MAGENTO_HOST           Magento host key
      * @param   {string} args.MAGENTO_API_VERSION    Magento api version
@@ -28,32 +30,59 @@ class MagentoCustomerLogin extends MagentoClientBase {
         super(args, customerMapper, '', ERROR_TYPE);
     }
 
-    login(data) {
+    login(data, anonymousCartId) {
         let postData = {
             username: data.email,
             password: data.password
         };
-        let token;
-
-        return this
-            .withEndpoint("integration/customer/token")
-            ._execute("POST", postData)
-            .then((result) => {
-                token = result;
-                return this
-                    .withResetEndpoint("customers/me", 0)
-                    .withAuthorizationHeader(token)
-                    ._execute("GET")
+        const cartClient = new MagentoCartClient(this.args, cartMapper.mapCart, 'customer-aggregated-carts');
+        return this._customerToken(postData)
+            //get a customer token
+            .then(token => {
+                return token;
             })
-            .then((result) => {
-                let headers = {
-                    'Set-Cookie': MagentoClientBase.const().CCS_MAGENTO_CUSTOMER_TOKEN + '=' + token + ';Path=/;Max-Age=' + this.args.MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME
-                };
-                return this._handleSuccess(this.mapper(result), headers);
+            //customer login
+            .then(token => {
+                cartClient.customerToken = token;
+                return this._customerLogin(token);
+            })
+            //assign anonymous cart id to customer
+            .then(loginResult => {
+                //NOT YET IMPLEMENTED
+                return loginResult;
+            })
+            // get the customer cart and add it to login response
+            .then(loginResult => {
+                return this._customerCart(cartClient, loginResult);
             })
             .catch((error) => {
                 return this.handleError(error);
             });
+    }
+
+    _customerToken (postData) {
+        return this
+            .withEndpoint("integration/customer/token")
+            ._execute("POST", postData)
+    }
+
+    _customerLogin(token) {
+        return this.withResetEndpoint("customers/me", 0)
+            .withAuthorizationHeader(token)
+            ._execute("GET").then( result => {
+                return this.mapper(result);
+            });
+    }
+
+    _customerCart(cartClient, loginResult) {
+        let headers = {
+            'Set-Cookie': MagentoClientBase.const().CCS_MAGENTO_CUSTOMER_TOKEN + '=' + cartClient.customerToken + ';Path=/;Max-Age=' + this.args.MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME
+        };
+        // no need to provide the id for a customer cart
+        return cartClient.byId().get().then(result => {
+            loginResult.cart = result.response.body;
+            return this._handleSuccess(loginResult, headers);
+        });
     }
 
 }

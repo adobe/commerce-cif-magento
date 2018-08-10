@@ -14,7 +14,7 @@
 
 'use strict';
 
-const requestConfig = function (uri, method) {
+const requestConfig = function (uri, method, token = 'my-token') {
     return {
         uri: uri,
         method: method,
@@ -24,7 +24,7 @@ const requestConfig = function (uri, method) {
             'content-type': 'application/json; charset=utf-8',
             'pragma': 'no-cache',
             'cache-control': 'no-cache',
-            'authorization': 'Bearer my-token'
+            'authorization': `Bearer ${token}`
         },
         json: true
     }
@@ -32,7 +32,7 @@ const requestConfig = function (uri, method) {
 
 module.exports.requestConfig = requestConfig;
 
-module.exports.config = {
+let config = {
     MAGENTO_HOST: 'does.not.exist',
     MAGENTO_MEDIA_PATH: 'media/catalog/product',
     PRODUCT_ATTRIBUTES: ['color', 'size'],
@@ -40,6 +40,7 @@ module.exports.config = {
     MAGENTO_AUTH_ADMIN_TOKEN: 'my-token',
     SHIPPING_CODES: ['flatrate', 'flatrate']
 };
+module.exports.config = config;
 
 module.exports.categoriesConfig = {
     MEN: {
@@ -52,3 +53,43 @@ module.exports.categoriesConfig = {
         }
     }
 };
+
+module.exports.specsBuilder = function(propName, propValue) {
+
+    let baseGuestCart = 'guest-carts';
+    let baseGuestAggregatedCart = 'guest-aggregated-carts';
+    let baseCustomerCart = 'carts';
+    let baseCustomerAggregatedCart = 'customer-aggregated-carts';
+    let cartId = '12345-7';
+
+    let specs = [
+        {
+            args: {
+                id: `${cartId}`
+            },
+            baseCart: `${baseGuestCart}`,
+            baseEndpoint: `${baseGuestCart}/${cartId}`,
+            baseEndpointAggregatedCart: `${baseGuestAggregatedCart}/${cartId}`,
+            token: config.MAGENTO_AUTH_ADMIN_TOKEN,
+        },
+        {
+            args: {
+                id: `${cartId}`,
+                __ow_headers: {
+                    'cookie': `ccs-magento-customer-token=customer-token;`
+                }
+            },
+            baseCart: `${baseCustomerCart}`,
+            baseEndpoint: `${baseCustomerCart}/mine`,
+            baseEndpointAggregatedCart: `${baseCustomerAggregatedCart}/mine`,
+            token: 'customer-token'
+        }
+    ];
+
+    if(propName && propValue) {
+        specs.forEach(spec => {
+            spec.args[propName] = propValue;
+        });
+    }
+    return specs;
+}

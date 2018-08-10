@@ -20,6 +20,7 @@ const samplecart = require('../resources/sample-cart');
 const sampleShippingMethods = require('../resources/sample-shippingmethods');
 const requestConfig = require('../lib/config').requestConfig;
 const config = require('../lib/config').config;
+const specsBuilder = require('../lib/config').specsBuilder;
 
 /**
  * Describes the unit tests for Magento get available shipping methods list operation.
@@ -33,32 +34,35 @@ describe('Magento getShippingMethods for a cart', () => {
 
         //validates that the response object is valid
         it('successfully returns a list of shipping methods for a cart', () => {
-            let args = {
-                id: 'dummy-id'
-            };
 
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/estimate-shipping-methods`), 'POST');
-            postRequestWithBody.body = {
-                address: samplecart.cart_details.extension_attributes.shipping_assignments[0].shipping.address
-            };
-            
-            const expectedArgs = [
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET'),
-                postRequestWithBody
-            ];
+            let specs = specsBuilder();
 
-            let mockedResponses = [];
-            mockedResponses.push(samplecart);
-            mockedResponses.push(sampleShippingMethods);
+            specs.forEach(spec => {
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/estimate-shipping-methods`),
+                    'POST', spec.token);
+                postRequestWithBody.body = {
+                    address: samplecart.cart_details.extension_attributes.shipping_assignments[0].shipping.address
+                };
 
-            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
-                .then(result => {
-                    assert.isDefined(result.response);
-                    assert.isDefined(result.response.statusCode);
-                    assert.isDefined(result.response.body);
-                    assert.isArray(result.response.body);
-                    assert.lengthOf(result.response.body, sampleShippingMethods.length);
-                });
+                const expectedArgs = [
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token),
+                    postRequestWithBody
+                ];
+
+                let mockedResponses = [];
+                mockedResponses.push(samplecart);
+                mockedResponses.push(sampleShippingMethods);
+
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
+                    .then(result => {
+                        assert.isDefined(result.response);
+                        assert.isDefined(result.response.statusCode);
+                        assert.isDefined(result.response.body);
+                        assert.isArray(result.response.body);
+                        assert.lengthOf(result.response.body, sampleShippingMethods.length);
+                    });
+            });
         });
 
         //validates that the response object is valid

@@ -62,11 +62,6 @@ class CustomerMapper {
     static mapCustomerLogin(magentoCustomer) {
         let customer = CustomerMapper._mapCustomer(magentoCustomer);
         let loginResult = new LoginResult.Builder().withCustomer(customer).build();
-        /* TODO
-        if (ctResult.body.cart) {
-            loginResult.cart = CartMapper._mapCart(ctResult.body.cart);
-        }
-        */
         return loginResult;
     }
 

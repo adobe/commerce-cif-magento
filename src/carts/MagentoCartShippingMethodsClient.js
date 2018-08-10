@@ -42,6 +42,12 @@ class MagentoCartShippingMethodsClient extends MagentoClientBase {
      * @return {Promise}
      */
     getShippingMethods(address, currency) {
+        //change the endpoint based on the customer login token
+        if(this.customerToken) {
+            this.baseEndpoint = 'carts';
+        } else {
+            this.baseEndpoint = 'guest-carts';
+        }
         // get the address needed for the estimate-shipping-methods call
         let data = { address: MagentoAddressHelper.mapToMagentoAddress(address) };
         return this.withEndpoint("estimate-shipping-methods")._execute('POST', data).then(result => {

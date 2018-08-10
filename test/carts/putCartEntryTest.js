@@ -21,6 +21,7 @@ const samplecartentry = require('../resources/sample-cart-entry');
 const samplecart404 = require('../resources/sample-cart-404');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
 /**
  * Describes the unit tests for Magento put cart entry operation.
  */
@@ -102,38 +103,46 @@ describe('Magento putCartEntry', () => {
         });
 
         it('updates an existing cart entry with new quantity', () => {
-            let args = {
-                id: 'dummy-id',
-                cartEntryId: 17,
-                quantity: 2
-            }
-            //build the expected requests
-            let body = {
-                'cartItem': {
-                    'quote_id': args.id,
-                    'qty': args.quantity
-                }
-            };
-            let putRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/items/${args.cartEntryId}`), 'PUT');
-            putRequestWithBody.body = body;
-    
-            const expectedArgs = [
-                putRequestWithBody,
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/dummy-id?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
-            ];
-            //build the responses
-            let mockedResponses = [];
-            mockedResponses.push(samplecartentry);
-            mockedResponses.push(samplecart);
 
-            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args,config))
-                .then(result => {
-                    assert.isDefined(result.response);
-                    assert.isDefined(result.response.statusCode);
-                    assert.isDefined(result.response.body);
-                    assert.isDefined(result.response.body.id);
-                    assert.isNotEmpty(result.response.body.entries);
-                });
+            let specs = specsBuilder();
+
+            specs.forEach(spec => {
+
+                spec.args.cartEntryId = 17;
+                spec.args.quantity = 2;
+
+                //build the expected requests
+                let body = {
+                    'cartItem': {
+                        'quote_id': spec.args.id,
+                        'qty': spec.args.quantity
+                    }
+                };
+
+                let putRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/items/${spec.args.cartEntryId}`),
+                    'PUT', spec.token);
+                putRequestWithBody.body = body;
+
+                const expectedArgs = [
+                    putRequestWithBody,
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+
+                //build the responses
+                let mockedResponses = [];
+                mockedResponses.push(samplecartentry);
+                mockedResponses.push(samplecart);
+
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
+                    .then(result => {
+                        assert.isDefined(result.response);
+                        assert.isDefined(result.response.statusCode);
+                        assert.isDefined(result.response.body);
+                        assert.isDefined(result.response.body.id);
+                        assert.isNotEmpty(result.response.body.entries);
+                    });
+            });
         });
     });
 });

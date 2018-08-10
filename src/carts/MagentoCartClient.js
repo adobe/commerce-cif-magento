@@ -32,10 +32,15 @@ class MagentoCartClient extends MagentoClientBase {
      */
     constructor(args, cartMapper, endpoint) {
         super(args, cartMapper, endpoint, ERROR_TYPE);
+        if(this.customerToken) {
+            this.baseEndpoint = 'carts';
+        } else {
+            this.baseEndpoint = 'guest-carts';
+        }
     }
 
     /**
-     * Gets a CCIF cart by id.
+     * Gets a CIF cart by id.
      * This method accepts optional HTTP headers and status code which can be used when returning the cart after
      * a POST and DELETE operation.
      *
@@ -51,7 +56,12 @@ class MagentoCartClient extends MagentoClientBase {
                 return this._mapFilter(idx, 'attribute_code', attribute);
             }).join('&');
         }
-        this.baseEndpoint = 'guest-aggregated-carts';
+        //change the endpoint based on the customer login token
+        if(this.customerToken) {
+            this.baseEndpoint = 'customer-aggregated-carts';
+        } else {
+            this.baseEndpoint = 'guest-aggregated-carts';
+        }
         return this.withQueryString(queryString)._cartById().then(result => {
             return this._handleSuccess(this.mapper(result, this.args.id, this.mediaBaseUrl, this.args.PRODUCT_ATTRIBUTES), headers, statusCode);
         });
@@ -103,8 +113,8 @@ class MagentoCartClient extends MagentoClientBase {
      *
      * @return {Promise}
      */
-    deleteItem(id, cartEntryId) {
-        this.withEndpoint(`${id}/items/${cartEntryId}`);
+    deleteItem(cartEntryId) {
+        this.withEndpoint(`items/${cartEntryId}`);
         return this._execute('DELETE').then(result => {
             return this._handleSuccess(result);
         });
@@ -131,8 +141,8 @@ class MagentoCartClient extends MagentoClientBase {
      * @return {Promise}
      */
     updateShippingInfo(data) {
-        this.baseEndpoint = 'guest-carts';
         this.queryString = '';
+        this._setEndpointBasedOnCustomer();
         return this.withEndpoint('shipping-information')._execute('POST', data).then(result => {
             return this._handleSuccess(result);
         });
@@ -182,8 +192,31 @@ class MagentoCartClient extends MagentoClientBase {
         return this._execute('GET');
     }
 
+    /**
+     * Assigns a cart to the customer. This is for a logged in customer.
+     *
+     * @param cartId        the anonymous cart id to be assigned
+     * @param customerId    the customer id.
+     * @protected
+     */
+    _assignCartToCustomer(cartId, customerId) {
+        this._setEndpointBasedOnCustomer();
+        let data = {
+            'customerId': customerId
+        };
+        return this.withEndpoint(cartId)._execute('PUT', data);
+    }
+
     _mapFilter(idx, field, value) {
         return `productAttributesSearchCriteria[filter_groups][0][filters][${idx}][field]=${field}&productAttributesSearchCriteria[filter_groups][0][filters][${idx}][value]=${value}`;
+    }
+
+    _setEndpointBasedOnCustomer() {
+        if(this.customerToken) {
+            this.baseEndpoint = 'carts';
+        } else {
+            this.baseEndpoint = 'guest-carts';
+        }
     }
 }
 

@@ -20,6 +20,7 @@ const samplecart = require('../resources/sample-cart');
 const samplecart404 = require('../resources/sample-cart-404');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
 
 /**
  * Describes the unit tests for magento cart operation.
@@ -34,21 +35,25 @@ describe('Magento getCart', () => {
         //validates that the response object is valid
         //cart properties and values are validated on object mapper tests
         it('successfully returns a cart', () => {
-            let args = {
-                id: 'dummy-id'
-            };
-            const expectedArgs =
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/dummy-id?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET');
 
-            return this.prepareResolve(samplecart, expectedArgs).execute(Object.assign(args, config))
+            let specs = specsBuilder();
+
+            specs.forEach(spec => {
+                const expectedArgs =
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token);
+
+                return this.prepareResolve(samplecart, expectedArgs).execute(Object.assign(spec.args, config))
                     .then(result => {
                         assert.isDefined(result.response);
                         assert.isDefined(result.response.statusCode);
                         assert.isDefined(result.response.body);
-                        assert.strictEqual(result.response.body.id, args.id);
+                        assert.strictEqual(result.response.body.id, spec.args.id);
                     });
+            })
+
         });
-        
+
         it('returns 404 for a non-existing cart', () => {
             //for http code = 404, get cart returns Promise.resolve indicating that the item was not found
             return this.prepareReject(samplecart404)

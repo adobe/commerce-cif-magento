@@ -21,11 +21,13 @@ const setup = require('../lib/setupIT.js').setup;
 const requiredFields = require('../lib/requiredFields');
 
 const expect = chai.expect;
+const extractToken = require('../lib/setupIT').extractToken;
+const CCS_MAGENTO_CUSTOMER_TOKEN = require('../../src/common/MagentoClientBase').const().CCS_MAGENTO_CUSTOMER_TOKEN;
 
 chai.use(chaiHttp);
 
 
-describe('magento getCart', function() {
+describe('magento getCustomerById', function() {
 
     describe('Integration tests', function() {
 
@@ -36,79 +38,73 @@ describe('magento getCart', function() {
         this.slow(env.slow);
         this.timeout(env.timeout);
 
-        let cartId;
-        const productVariantId = 'eqbisumas-10';
+        const email = 'smaftei@adobe.com';
+        const password = 'Adobe1234';
+        const customerId = 1;
+        let accessToken;
 
         /** Create cart. */
-        before(function() {
+        beforeEach(function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCart')
+                .get(env.customersPackage + 'postCustomerLogin')
+                .set('Cache-Control', 'no-cache')
                 .query({
-                    quantity: 2,
-                    productVariantId: productVariantId
+                    email: email,
+                    password: password
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.CREATED);
-                    expect(res.body.id).to.not.be.empty;
+                    expect(res).to.have.status(HttpStatus.OK);
 
-                    // Store cart id
-                    cartId = res.body.id;
+                    //store the token
+                    accessToken = extractToken(res);
                 })
                 .catch(function(err) {
                     throw err;
                 });
         });
 
-        it('returns a cart for a valid cart id', function() {
+        it('fails when the customer token is not provided', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getCart')
+                .get(env.customersPackage + 'getCustomerById')
                 .set('Cache-Control', 'no-cache')
-                .query({id: cartId})
+                .query({id: customerId})
+                .catch(function (err) {
+                    expect(err.response).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
+        });
+
+        it('returns 500 error for a non existent customer', function() {
+            return chai.request(env.openwhiskEndpoint)
+                .get(env.customersPackage + 'getCustomerById')
+                .set('Cache-Control', 'no-cache')
+                .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                .query({id: 'does-not-exist'})
+                .catch(function(err) {
+                    expect(err.response).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                    expect(err.response).to.be.json;
+                    requiredFields.verifyErrorResponse(err.response.body);
+                });
+        });
+
+        it('succesfully returns a customer', function() {
+            return chai.request(env.openwhiskEndpoint)
+                .get(env.customersPackage + 'getCustomerById')
+                .set('Cache-Control', 'no-cache')
+                .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                .query({id: customerId})
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
 
                     // Verify structure
-                    requiredFields.verifyCart(res.body);
-                    expect(res.body).to.have.own.property('lastModifiedAt');
-                    //TODO update when TOTAL is added
-                    expect(res.body.id).to.equal(cartId);
+                    requiredFields.verifyCustomer(res.body);
+                    expect(res.body.id).to.equal(customerId);
                     expect(res.body).to.have.own.property('createdAt');
-                    expect(res.body.entries).to.have.lengthOf(1);
-
-                    const entry = res.body.entries[0];
-                    expect(entry.quantity).to.equal(2);
-                    expect(entry.productVariant).to.have.own.property('id');
-                    expect(entry.productVariant.sku).to.equal(productVariantId);
-                })
-                .catch(function(err) {
-                    throw err;
-                });
-        });
-        
-        it('returns a 400 error for a missing id parameter', function() {
-            return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getCart')
-                .set('Cache-Control', 'no-cache')
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
-        it('returns a 404 error for a non existent cart', function() {
-            return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getCart')
-                .set('Cache-Control', 'no-cache')
-                .query({id: 'does-not-exist'})
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
-                });
-        });
-        
     });
 });
