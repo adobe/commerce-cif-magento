@@ -113,5 +113,25 @@ describe('Magento postCustomerLogin', () => {
                 assert.strictEqual(result.response.error.message, 'Unauthorized Request');
             });
         });
+
+        it('returns proper error when email is missing', () => {
+            let args = {
+                password: 'bad password'
+            };
+            return this.prepareReject(sampleCustomerLogin401).execute(args).then(result => {
+                assert.strictEqual(result.response.error.name, 'MissingPropertyError');
+                assert.strictEqual(result.response.error.message, 'Parameter \'email\' is missing.');
+            });
+        });
+
+        it('returns proper error when password is missing', () => {
+            let args = {
+                email: 'a@a.com'
+            };
+            return this.prepareReject(sampleCustomerLogin401).execute(args).then(result => {
+                assert.strictEqual(result.response.error.name, 'MissingPropertyError');
+                assert.strictEqual(result.response.error.message, 'Parameter \'password\' is missing.');
+            });
+        });
     });
 });

@@ -99,5 +99,18 @@ describe('Magento getCustomerById', () => {
                     assert.strictEqual(result.response.error.message, "The requested customer id doesn't match the provided customer authentication token");
                 });
         });
+
+        it('returns proper error message when customer id is empty', () => {
+            return this.prepareResolve(customerResponseMock)
+                .execute({
+                    __ow_headers: {
+                        cookie: cookieValue
+                    }
+                })
+                .then(result => {
+                    assert.strictEqual(result.response.error.name, 'MissingPropertyError');
+                    assert.strictEqual(result.response.error.message, 'Parameter \'id\' is missing.');
+                });
+        });
     });
 });
