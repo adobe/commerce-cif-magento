@@ -58,9 +58,6 @@ describe('magento getCustomerById', function() {
 
                     //store the token
                     accessToken = extractToken(res);
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 

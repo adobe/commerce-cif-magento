@@ -65,7 +65,6 @@ describe('Magento postCart', () => {
                         assert.isEmpty(result.response.body.entries);
                     });
             });
-
         });
         
         it('adds a single product to an existing cart', () => {

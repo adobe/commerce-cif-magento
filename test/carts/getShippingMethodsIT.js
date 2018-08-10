@@ -36,17 +36,30 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         this.timeout(env.timeout);
 
         let cartId;
-        const productVariantId = 'eqbisumas-10';
 
-        /** Create cart. */
-        before(function () {
+        const addr = {
+            title: 'Work',
+            salutation: 'Ms',
+            firstName: 'Cat Eye',
+            lastName: 'Nebulae',
+            streetName: 'Draco',
+            streetNumber: '3,262',
+            additionalStreetInfo: 'Light Years',
+            postalCode: '666666',
+            city: 'Constellation',
+            region: 'FarAway',
+            country: 'US',
+            organizationName: 'Zeus',
+            phone: '66666666666',
+            email: 'cat.eye@zeus.com',
+            fax: '6666666666',
+            additionalAddressInfo: 'Diameter: ~4.5 Light Years, 26,453,814,179,326 Miles'
+        };
+
+        /** Create an empty cart. */
+        beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postCart')
-                .query({
-                    currency: 'USD',
-                    quantity: 2,
-                    productVariantId: productVariantId
-                })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.CREATED);
@@ -54,27 +67,36 @@ describe('Magento getShippingMethodsIT for a cart', function () {
 
                     // Store cart id
                     cartId = res.body.id;
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
         /** Delete cart. */
-        after(function () {
+        afterEach(function () {
             // TODO(mabecker): Delete cart with id = cartId
         });
 
         it('returns the list of available shipping methods for the cart', function () {
-            // set valid shipping address for cart
+            
             const args = {
                 id: cartId
             };
+            // Add an item to the cart. Magento does not allow setting a shipping address to an empty cart.
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postShippingAddress')
-                .query(args)
-                .send({
-                    address: { country: 'US' }
+                .post(env.cartsPackage + 'postCartEntry')
+                .query({
+                    quantity: 2,
+                    id: cartId,
+                    productVariantId: 'eqbisumas-10'
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.CREATED);
+
+                    // set valid shipping address for cart
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postShippingAddress')
+                        .query(args)
+                        .send({ address: addr });
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -96,9 +118,6 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                         requiredFields.verifyShippingMethod(shippingMethod);
                         expect(shippingMethod).to.have.own.property('description');
                     });
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -107,8 +126,10 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                 .get(env.cartsPackage + 'getShippingMethods')
                 .set('Cache-Control', 'no-cache')
                 .query({ id: cartId })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -116,10 +137,10 @@ describe('Magento getShippingMethodsIT for a cart', function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getShippingMethods')
                 .set('Cache-Control', 'no-cache')
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -128,10 +149,10 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                 .get(env.cartsPackage + 'getShippingMethods')
                 .set('Cache-Control', 'no-cache')
                 .query({ id: 'does-not-exist' })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
     });

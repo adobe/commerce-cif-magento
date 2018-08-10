@@ -54,43 +54,36 @@ module.exports.tests = function (ctx, addressType) {
     let cartEntryId;
     /** Create empty cart - same for all address ITs */
     before(function () {
-        return chai
-                .request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
-                    currency: 'USD',
-                    quantity: 2,
-                    productVariantId: productVariantId
-                })
-                .then(function (res) {
-                    expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.CREATED);
-                    // Store cart id
-                    cartId = res.body.id;
-                    cartEntryId = res.body.entries[0].id;
-                })
-                .catch(function (err) {
-                    throw err;
-                });
+        return chai.request(env.openwhiskEndpoint)
+            .post(env.cartsPackage + 'postCartEntry')
+            .query({
+                currency: 'USD',
+                quantity: 2,
+                productVariantId: productVariantId
+            })
+            .then(function (res) {
+                expect(res).to.be.json;
+                expect(res).to.have.status(HttpStatus.CREATED);
+                // Store cart id
+                cartId = res.body.id;
+                cartEntryId = res.body.entries[0].id;
+            });
     });
     
     /** Delete cart. */
     after(function () {
         return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCartEntry')
-                .query({
-                    id: cartId,
-                    cartEntryId: cartEntryId
-                })
-                .then(function (res) {
-                    expect(res).to.be.json;
-                    expect(res).to.have.status(HttpStatus.OK);
+            .post(env.cartsPackage + 'deleteCartEntry')
+            .query({
+                id: cartId,
+                cartEntryId: cartEntryId
+            })
+            .then(function (res) {
+                expect(res).to.be.json;
+                expect(res).to.have.status(HttpStatus.OK);
 
-                    expect(res.body.entries).to.have.lengthOf(0);
-                })
-                .catch(function (err) {
-                    throw err;
-                });
+                expect(res.body.entries).to.have.lengthOf(0);
+            });
     });
     /**
      * Verifies that a bad request is returned when no cart id is provided. Used only from post and deletes address ITs.
@@ -101,12 +94,13 @@ module.exports.tests = function (ctx, addressType) {
         return chai.request(env.openwhiskEndpoint)
             .post(path)
             .query({})
-            .catch(function (err) {
-                expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                expect(err.response).to.be.json;
-                requiredFields.verifyErrorResponse(err.response.body);
+            .then(function(res) {
+                expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                expect(res).to.be.json;
+                requiredFields.verifyErrorResponse(res.body);
             });
     };
+
     /**
      * Verifies that a not found is returned when the cart id does not exists. Used only from post and deletes
      * address ITs.
@@ -117,12 +111,13 @@ module.exports.tests = function (ctx, addressType) {
         return chai.request(env.openwhiskEndpoint)
             .post(path)
             .query({id: 'non-existing-cart-id'})
-            .catch(function (err) {
-                expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                expect(err.response).to.be.json;
-                requiredFields.verifyErrorResponse(err.response.body);
+            .then(function(res) {
+                expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                expect(res).to.be.json;
+                requiredFields.verifyErrorResponse(res.body);
             });
     };
+
     /**
      * Verifies that a bad request is returned when country is empty. Used only from post address ITs.
      */
@@ -130,10 +125,10 @@ module.exports.tests = function (ctx, addressType) {
         return chai.request(env.openwhiskEndpoint)
             .post(that.postAddressPath)
             .query({id: cartId, title: 'Home'})
-            .catch(function (err) {
-                expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                expect(err.response).to.be.json;
-                requiredFields.verifyErrorResponse(err.response.body);
+            .then(function(res) {
+                expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                expect(res).to.be.json;
+                requiredFields.verifyErrorResponse(res.body);
             });
     };
     

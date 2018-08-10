@@ -23,8 +23,6 @@ const requiredFields = require('../lib/requiredFields');
 const expect = chai.expect;
 chai.use(require('chai-sorted'));
 chai.use(require('chai-http'));
-chai.use(require('chai-as-promised'));
-
 
 describe('magento getCategories', function() {
 
@@ -46,6 +44,8 @@ describe('magento getCategories', function() {
                     type: 'tree'
                 })
                 .then(function (res) {
+                    expect(res).to.have.status(HttpStatus.OK);
+
                     MEN_CATEGORY_ID = parseInt(res.body.results.find(o => {
                         return o.name === categoriesConfig.MEN.name
                     }).id);
@@ -266,13 +266,10 @@ describe('magento getCategories', function() {
                 .get(`${env.categoriesPackage}getCategories`)
                 .set('Cache-Control', 'no-cache')
                 .query({ limit: -7 })
-                .then(function() {
-                    chai.assert.fail();
-                })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -281,13 +278,10 @@ describe('magento getCategories', function() {
                 .get(`${env.categoriesPackage}getCategories`)
                 .set('Cache-Control', 'no-cache')
                 .query({ id: '999999999999999' })
-                .then(function() {
-                    chai.assert.fail();
-                })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
     });

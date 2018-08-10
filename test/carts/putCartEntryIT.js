@@ -58,9 +58,6 @@ describe('magento putCartEntry', function () {
                     
                     // Store cart entry id
                     cartEntryId = res.body.entries[0].id;
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
         
@@ -70,7 +67,7 @@ describe('magento putCartEntry', function () {
         });
         
         it('updates the quantity of a cart entry to a new value', function () {
-            const newQuantity = 15;
+            const newQuantity = 1;
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'putCartEntry')
                 .query({
@@ -92,9 +89,6 @@ describe('magento putCartEntry', function () {
                     expect(res.body.entries).to.have.lengthOf(1);
                     expect(res.body.entries[0].id).to.equal(cartEntryId);
                     expect(res.body.entries[0].quantity).to.equal(newQuantity);
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -106,10 +100,10 @@ describe('magento putCartEntry', function () {
                     id: cartId,
                     cartEntryId: cartEntryId
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -126,9 +120,6 @@ describe('magento putCartEntry', function () {
                     expect(res).to.have.status(HttpStatus.OK);
                     requiredFields.verifyCart(res.body);
                     expect(res.body.entries).to.have.lengthOf(0);
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
         
@@ -140,10 +131,10 @@ describe('magento putCartEntry', function () {
                     id: cartId,
                     cartEntryId: 'does-not-exist'
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
         
@@ -155,20 +146,20 @@ describe('magento putCartEntry', function () {
                     id: 'does-not-exist',
                     cartEntryId: cartEntryId
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
         
         it('returns a 400 error for missing parameters', function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'putCartEntry')
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
         

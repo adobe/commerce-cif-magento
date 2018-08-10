@@ -119,8 +119,11 @@ class CartMapper {
 
             //do not map when 0
             if (Math.abs(magentoCart.totals.tax_amount) > 0) {
-                cart.taxInfo = new TaxInfo.Builder()
-                    .withValue(magentoCart.totals.tax_amount * 100).build();
+                let value = new MoneyValue.Builder()
+                    .withAmount(magentoCart.totals.tax_amount * 100)
+                    .withCurrency(magentoCart.totals.quote_currency_code)
+                    .build();
+                cart.taxInfo = new TaxInfo.Builder().withValue(value).build();
             }
             let totalSegments = magentoCart.totals.total_segments;
             if (totalSegments) {
@@ -187,7 +190,11 @@ class CartMapper {
             .withAmount(magentoCartTotals.shipping_incl_tax * 100)
             .withCurrency(magentoCartTotals.quote_currency_code)
             .build();
-        let taxInfo = new TaxInfo.Builder().withValue(magentoCartTotals.shipping_tax_amount * 100).build();
+        let value = new MoneyValue.Builder()
+            .withAmount(magentoCartTotals.shipping_tax_amount * 100)
+            .withCurrency(magentoCartTotals.quote_currency_code)
+            .build();
+        let taxInfo = new TaxInfo.Builder().withValue(value).build();
         let shippingInfo = new ShippingInfo.Builder()
             .withId(magentoShippingInfo.method)
             .withName(magentoShippingInfo.method)

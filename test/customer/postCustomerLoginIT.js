@@ -58,9 +58,6 @@ describe('magento postCustomerLogin', function() {
                     //check cookie is set
                     let accessToken = extractToken(res);
                     expect(accessToken).to.not.be.undefined;
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -149,9 +146,6 @@ describe('magento postCustomerLogin', function() {
                     expect(cartResult.body).to.have.own.property('createdAt');
                     expect(cartResult.body.entries).to.have.lengthOf(0);
 
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -163,10 +157,10 @@ describe('magento postCustomerLogin', function() {
                     email: 'unexisting@false.com',
                     password: password
                 })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.UNAUTHORIZED);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.UNAUTHORIZED);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 

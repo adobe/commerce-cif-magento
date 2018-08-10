@@ -53,7 +53,7 @@ function getShippingMethods(args) {
             const cartResult = result.response.body;
             return shippingMethods.byId(args.id).getShippingMethods(cartResult.shippingAddress, cartResult.currency)
         } else {
-            return shippingMethods._handleSuccess([]);
+            return cart.handleError({statusCode: 400, message: 'The shipping address is missing. Set the address and try again.'});
         }
     }).catch(error => {
         return cart.handleError(error);
