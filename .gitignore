@@ -86,7 +86,7 @@ dev-test
 
 # Test results
 test-results*.xml
-test/results*
+test/results/**/
 
 # Local dev test configuration
 dev-tests/config.js
