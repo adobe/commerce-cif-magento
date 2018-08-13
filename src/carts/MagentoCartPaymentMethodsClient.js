@@ -14,21 +14,35 @@
 
 'use strict';
 
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 /**
- * Removes the payment from a cart.
- * 
- * NOT AVAILABLE IN MAGENTO.
- *
- * @return  {Promise}       error message
- *
- * @deprecated use deleteCartPayment()
+ * Magento payment methods API implementation.
  */
-function deletePayment(args) {
-    return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
+class MagentoCartPaymentMethodsClient extends MagentoClientBase {
+
+    /**
+     * Builds a cart payment methods client for Magento
+     *
+     * @param args                                  parameters as received from open whisk
+     * @param paymentMethodsMapper {Function}       Magento cif cart payment methods mapper handler
+     * @param endpoint                              Magento api endpoint
+     */
+    constructor(args, paymentMethodsMapper, endpoint) {
+        super(args, paymentMethodsMapper, endpoint, ERROR_TYPE);
+    }
+
+    /**
+     * Returns the available payment methods for a cart.
+     * 
+     * @return {Promise}
+     */
+    getPaymentMethods() {
+        return this.withEndpoint("payment-methods")._execute('GET').then(result => {
+            return this._handleSuccess(this.mapper(result));
+        });
+    }
 }
 
-module.exports.main = decorateActionForSequence(deletePayment);
+module.exports = MagentoCartPaymentMethodsClient;

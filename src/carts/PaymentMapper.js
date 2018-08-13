@@ -48,6 +48,7 @@ class PaymentMapper {
         let ccifPayment = new Payment.Builder()
             .withId(magentoPayment.method)
             .withMethod(magentoPayment.method)
+            .withMethodId(magentoPayment.method)
             .build();
 
         return ccifPayment;
@@ -61,6 +62,7 @@ class PaymentMapper {
      */
     _fillPayment(payment, partialCart) {
         partialCart.payment = payment;
+        partialCart.payments = [ payment ];
         return partialCart;
     }
 

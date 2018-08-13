@@ -19,16 +19,14 @@ const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoCli
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 /**
- * Removes the payment from a cart.
+ * Removes a payment from a cart.
  * 
  * NOT AVAILABLE IN MAGENTO.
  *
  * @return  {Promise}       error message
- *
- * @deprecated use deleteCartPayment()
  */
-function deletePayment(args) {
+function deleteCartPayment(args) {
     return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
 }
 
-module.exports.main = decorateActionForSequence(deletePayment);
+module.exports.main = decorateActionForSequence(deleteCartPayment);

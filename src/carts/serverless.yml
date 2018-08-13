@@ -72,13 +72,25 @@ functions:
     name: ${self:custom.ow-package}/getShippingMethodsService
     handler: getShippingMethods.main
 
+  getPaymentMethodsService:
+      name: ${self:custom.ow-package}/getPaymentMethodsService
+      handler: getPaymentMethods.main
+
   postPaymentService:
     name: ${self:custom.ow-package}/postPaymentService
     handler: postPayment.main
 
+  postCartPaymentService:
+      name: ${self:custom.ow-package}/postCartPaymentService
+      handler: postCartPayment.main
+
   deletePaymentService:
     name: ${self:custom.ow-package}/deletePaymentService
     handler: deletePayment.main
+
+  deleteCartPaymentService:
+      name: ${self:custom.ow-package}/deleteCartPaymentService
+      handler: deleteCartPayment.main
 
   postCouponService:
     name: ${self:custom.ow-package}/postCouponService

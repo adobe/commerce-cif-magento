@@ -15,51 +15,37 @@
 'use strict';
 
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
+const MagentoCartPaymentMethodsClient = require('./MagentoCartPaymentMethodsClient');
+const CartPaymentMethodMapper = require('./CartPaymentMethodMapper');
 const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
-const cartMapper = require('./CartMapper');
-const MagentoCartClient = require('./MagentoCartClient');
-const PaymentMapper = require('./PaymentMapper');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 /**
- * Adds a payment to a cart.
+ * This action gets the available payment methods for a cart from Magento.
  *
- * @param   {string} args.MAGENTO_SCHEMA            magento schema
- * @param   {string} args.MAGENTO_HOST              magento hostname
- * @param   {string} args.MAGENTO_API_VERSION       magento api version
- * @param   {string} args.MAGENTO_AUTH_ADMIN_TOKEN  magento authentication token
- * @param   {string} args.MAGENTO_MEDIA_PATH        magento media base path
- * 
+ * @param   {string} args.MAGENTO_HOST              Magento hostname
+ * @param   {string} args.MAGENTO_SCHEMA            optional Magento schema
+ * @param   {string} args.MAGENTO_API_VERSION       optional Magento api version
+ * @param   {string} args.MAGENTO_AUTH_ADMIN_TOKEN  optional Magento authentication token
+ *
  * @param   {string}  args.id                       cart id
- * @param   {Payment} args.payment                  payment object
- * 
- * @return  {Promise}                               the cart with the payment
  *
- * @deprecated use postCartPayment()
+ * @return  {Promise}                               the list of payment methods
  */
-function postPayment(args) {
+function getPaymentMethods(args) {
     const validator = new InputValidator(args, ERROR_TYPE);
     validator
         .checkArguments()
-        .mandatoryParameter('id')
-        .mandatoryParameter('payment');
+        .mandatoryParameter('id');
     if (validator.error) {
         return validator.buildErrorResponse();
     }
 
-    let paymentMapper = new PaymentMapper();
+    const paymentMethods = new MagentoCartPaymentMethodsClient(args, CartPaymentMethodMapper.mapPaymentMethods, 'guest-carts');
 
-    const cart = new MagentoCartClient(args, cartMapper.mapCart, 'guest-carts');
-    const data = { 
-        "method": paymentMapper._mapToMagentoPayment(args.payment)
-    };
-
-    return cart.byId(args.id).updatePayment(data).then(function () {
-        return cart.byId(args.id).get();
-    }).catch((error) => {
-        return cart.handleError(error);
+    return paymentMethods.byId(args.id).getPaymentMethods().catch(error => {
+        return paymentMethods.handleError(error);
     });
-
 }
 
-module.exports.main = decorateActionForSequence(postPayment);
+module.exports.main = decorateActionForSequence(getPaymentMethods);
