@@ -106,6 +106,10 @@ class MagentoClientBase {
         if (this.queryString) {
             uri = `${uri}?${this.queryString}`
         }
+        //make sure we are sending the customer token when available
+        if(this.customerToken) {
+            this.withAuthorizationHeader(this.customerToken);
+        }
         let options = {
             uri: uri,
             method: method,
@@ -115,20 +119,21 @@ class MagentoClientBase {
         };
         return requestPromise(options);
     }
-    
+
     /**
-     *
-     * ById wrapper. Sets the existing endpoint to the id param.
-     
+     * Override to set the correct endpoint based on customer token.
      * @param id
-     * @return {MagentoRestClientBase}
+     * @returns {MagentoCartClient}
      */
     byId(id) {
+        //in the customer scenario cart id is obtained based on the customer token
+        //the cart id part of endpoint is replaced with mine
         this.args.id = id;
-        this.endpoint = `${id}`;
+        this.endpoint = (this.customerToken) ? 'mine' : id;
         return this;
     }
-    
+
+
     /**
      * Adds the given endpoint to the existing one. The endpoint is usually the uri suffix.
      * Like https://magento.host/cart/<id>/<endpoint>

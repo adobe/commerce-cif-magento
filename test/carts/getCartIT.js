@@ -57,11 +57,6 @@ describe('magento getCart', function() {
                 });
         });
 
-        /** Delete cart. */
-        after(function() {
-            // TODO(mabecker): Delete cart with id = cartId
-        });
-
         it('returns a cart for a valid cart id', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getCart')

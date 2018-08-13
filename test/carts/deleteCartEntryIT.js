@@ -85,7 +85,7 @@ describe('magento deleteCartEntry', function() {
                     expect(res.body.entries).to.have.lengthOf(2);
                 
                     for(let entry of res.body.entries) {
-                        if(entry.productVariant.sku === productVariantIdSecond) {
+                        if (entry.productVariant.sku === productVariantIdSecond) {
                             cartEntryIdSecond = entry.id;
                         }
                     }
