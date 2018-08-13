@@ -67,7 +67,7 @@ describe('magento putCartEntry', function () {
         });
         
         it('updates the quantity of a cart entry to a new value', function () {
-            const newQuantity = 15;
+            const newQuantity = 1;
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'putCartEntry')
                 .query({
