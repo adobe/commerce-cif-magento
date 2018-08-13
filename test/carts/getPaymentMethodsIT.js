@@ -58,15 +58,15 @@ describe('Magento getPaymentMethodsIT for a cart', function () {
 
         it('returns the list of available payment methods for the cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                        .get(env.cartsPackage + 'getPaymentMethods')
-                        .set('Cache-Control', 'no-cache')
-                        .query({ id: cartId })
+                .get(env.cartsPackage + 'getPaymentMethods')
+                .set('Cache-Control', 'no-cache')
+                .query({ id: cartId })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
 
                     // Verify payment methods structure
-                    expect(res.body).to.be.an('array');
+                    expect(res.body).to.be.an('array').with.length(1);
                     res.body.forEach(paymentMethod => {
                         requiredFields.verifyPaymentMethod(paymentMethod);
                     });

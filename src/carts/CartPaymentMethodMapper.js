@@ -17,7 +17,7 @@
 const PaymentMethod = require('@adobe/commerce-cif-model').PaymentMethod;
 
 /**
- * Utility class to map Magento objects to CIF objects.
+ * Utility class to map Magento payment to CIF payment.
  */
 class CartPaymentMethodMapper {
 
