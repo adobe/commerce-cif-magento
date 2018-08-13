@@ -131,7 +131,7 @@ describe('magento postCartEntry', function() {
                     // Verify that product was added
                     let addedEntry;
                     for(let entry of res.body.entries) {
-                        if(entry.productVariant.sku == productVariantIdSecond) {
+                        if (entry.productVariant.sku == productVariantIdSecond) {
                             addedEntry = entry;
                         }
                     }

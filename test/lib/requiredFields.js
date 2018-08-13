@@ -75,8 +75,8 @@ class RequiredFields {
     verifyCustomer(o) {
         expect(o).to.have.own.property("id");
         expect(o).to.have.own.property("email");
-        expect(o).to.have.own.property("firstname");
-        expect(o).to.have.own.property("lastname");
+        expect(o).to.have.own.property("firstName");
+        expect(o).to.have.own.property("lastName");
     }
 
     verifyLoginResult(o, rec = true) {
