@@ -55,7 +55,7 @@ class MagentoCustomerLogin extends MagentoClientBase {
             });
     }
 
-    _customerToken (postData) {
+    _customerToken(postData) {
         return this
             .withEndpoint("integration/customer/token")
             ._execute("POST", postData)
