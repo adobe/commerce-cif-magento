@@ -131,6 +131,9 @@ class MagentoClientBase {
      */
     _profileRequest(options) {
         let s = process.hrtime();
+
+        // Create a reference to the _logRequest function with the class context
+        // bound, so it can be used within the request Promise.
         let logRequest = this._logRequest.bind(this);
 
         return requestPromise(options)
