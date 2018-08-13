@@ -38,9 +38,7 @@ describe('magento getCustomerById', function() {
         this.slow(env.slow);
         this.timeout(env.timeout);
 
-        const email = 'smaftei@adobe.com';
-        const password = 'Adobe1234';
-        const customerId = 1;
+        let customerId;
         let accessToken;
 
         /** Create cart. */
@@ -49,8 +47,8 @@ describe('magento getCustomerById', function() {
                 .get(env.customersPackage + 'postCustomerLogin')
                 .set('Cache-Control', 'no-cache')
                 .query({
-                    email: email,
-                    password: password
+                    email: env.magentoCustomerName,
+                    password: env.magentoCustomerPwd
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -58,6 +56,7 @@ describe('magento getCustomerById', function() {
 
                     //store the token
                     accessToken = extractToken(res);
+                    customerId = res.body.customer.id;
                 });
         });
 
@@ -66,10 +65,10 @@ describe('magento getCustomerById', function() {
                 .get(env.customersPackage + 'getCustomerById')
                 .set('Cache-Control', 'no-cache')
                 .query({id: customerId})
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function (response) {
+                    expect(response).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                    expect(response).to.be.json;
+                    requiredFields.verifyErrorResponse(response.body);
                 });
         });
 
@@ -79,10 +78,10 @@ describe('magento getCustomerById', function() {
                 .set('Cache-Control', 'no-cache')
                 .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
                 .query({id: 'does-not-exist'})
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(response) {
+                    expect(response).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                    expect(response).to.be.json;
+                    requiredFields.verifyErrorResponse(response.body);
                 });
         });
 

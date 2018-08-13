@@ -32,11 +32,7 @@ class MagentoCartClient extends MagentoClientBase {
      */
     constructor(args, cartMapper, endpoint) {
         super(args, cartMapper, endpoint, ERROR_TYPE);
-        if(this.customerToken) {
-            this.baseEndpoint = 'carts';
-        } else {
-            this.baseEndpoint = 'guest-carts';
-        }
+        this._setEndpointBasedOnCustomer();
     }
 
     /**
@@ -57,7 +53,7 @@ class MagentoCartClient extends MagentoClientBase {
             }).join('&');
         }
         //change the endpoint based on the customer login token
-        if(this.customerToken) {
+        if (this.customerToken) {
             this.baseEndpoint = 'customer-aggregated-carts';
         } else {
             this.baseEndpoint = 'guest-aggregated-carts';
@@ -197,7 +193,7 @@ class MagentoCartClient extends MagentoClientBase {
     }
 
     _setEndpointBasedOnCustomer() {
-        if(this.customerToken) {
+        if (this.customerToken) {
             this.baseEndpoint = 'carts';
         } else {
             this.baseEndpoint = 'guest-carts';

@@ -46,11 +46,6 @@ class MagentoCustomerLogin extends MagentoClientBase {
                 cartClient.customerToken = token;
                 return this._customerLogin(token);
             })
-            //assign anonymous cart id to customer
-            .then(loginResult => {
-                //NOT YET IMPLEMENTED
-                return loginResult;
-            })
             // get the customer cart and add it to login response
             .then(loginResult => {
                 return this._customerCart(cartClient, loginResult);

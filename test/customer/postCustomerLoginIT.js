@@ -36,8 +36,6 @@ describe('magento postCustomerLogin', function() {
         this.slow(env.slow);
         this.timeout(env.timeout);
 
-        const email = 'smaftei@adobe.com';
-        const password = 'Adobe1234';
         const productVariantId = 'eqbisumas-10';
 
         it('successfully login a customer', function() {
@@ -45,15 +43,15 @@ describe('magento postCustomerLogin', function() {
                 .get(env.customersPackage + 'postCustomerLogin')
                 .set('Cache-Control', 'no-cache')
                 .query({
-                    email: email,
-                    password: password
+                    email: env.magentoCustomerName,
+                    password: env.magentoCustomerPwd
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
 
                     requiredFields.verifyLoginResult(res.body);
-                    expect(res.body.customer.email).to.equal(email);
+                    expect(res.body.customer.email).to.equal(env.magentoCustomerName);
                     expect(res.body.cart).to.not.be.undefined;
                     //check cookie is set
                     let accessToken = extractToken(res);
@@ -69,8 +67,8 @@ describe('magento postCustomerLogin', function() {
                 .get(env.customersPackage + 'postCustomerLogin')
                 .set('Cache-Control', 'no-cache')
                 .query({
-                    email: email,
-                    password: password
+                    email: env.magentoCustomerName,
+                    password: env.magentoCustomerPwd
                 })
                 //verify the login and store the accessToken
                 .then(function (res) {
@@ -78,7 +76,7 @@ describe('magento postCustomerLogin', function() {
                     expect(res).to.have.status(HttpStatus.OK);
 
                     requiredFields.verifyLoginResult(res.body);
-                    expect(res.body.customer.email).to.equal(email);
+                    expect(res.body.customer.email).to.equal(env.magentoCustomerName);
                     expect(res.body.cart).to.not.be.undefined;
                     //check cookie is set
                     accessToken = extractToken(res);
@@ -155,7 +153,7 @@ describe('magento postCustomerLogin', function() {
                 .set('Cache-Control', 'no-cache')
                 .query({
                     email: 'unexisting@false.com',
-                    password: password
+                    password: env.magentoCustomerPwd
                 })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.UNAUTHORIZED);

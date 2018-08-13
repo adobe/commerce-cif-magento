@@ -102,12 +102,8 @@ describe('Magento putCartEntry', () => {
             });
         });
 
-        it('updates an existing cart entry with new quantity', () => {
-
-            let specs = specsBuilder();
-
-            specs.forEach(spec => {
-
+        specsBuilder().forEach(spec => {
+            it(`updates an existing ${spec.name} cart entry with new quantity`, () => {
                 spec.args.cartEntryId = 17;
                 spec.args.quantity = 2;
 

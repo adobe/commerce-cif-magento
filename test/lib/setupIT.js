@@ -41,6 +41,9 @@ module.exports.setup = function() {
     env.productsPackage = mainPackage;
     env.ordersPackage = mainPackage;
 
+    env.magentoCustomerName = process.env.MAGENTO_CUSTOMER_NAME;
+    env.magentoCustomerPwd = process.env.MAGENTO_CUSTOMER_PWD;
+
     return env;
 
 };

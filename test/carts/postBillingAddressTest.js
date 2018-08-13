@@ -45,16 +45,13 @@ describe('Magento postBillingAddress', () => {
         it('fails while updating a cart if billing address has wrong format', () => {
             return addressTests.wrongAddress();
         });
-        
-        it('successfully returns a cart after the billing address was added', () => {
 
-            let specs = specsBuilder('address', addressTests.testCIFAddress());
+        specsBuilder('address', addressTests.testCIFAddress()).forEach(spec => {
+            it(`successfully returns a ${spec.name} cart after the billing address was added`, () => {
 
-            let body = {
-                address: addressTests.testMagentoAddress()
-            };
-
-            specs.forEach(spec => {
+                let body = {
+                    address: addressTests.testMagentoAddress()
+                };
                 let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/billing-address`),
                     'POST', spec.token);
                 postRequestWithBody.body = body;

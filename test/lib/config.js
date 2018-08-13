@@ -54,6 +54,11 @@ module.exports.categoriesConfig = {
     }
 };
 
+/**
+ * Configures different magento base endpoints for guest and customer cart.
+ * This is a temporary solution and saves duplicating Unit Test code that is almost the same. Will be removed with
+ * graph QL cart.
+ */
 module.exports.specsBuilder = function(propName, propValue) {
 
     let baseGuestCart = 'guest-carts';
@@ -64,6 +69,7 @@ module.exports.specsBuilder = function(propName, propValue) {
 
     let specs = [
         {
+            name: 'guest',
             args: {
                 id: `${cartId}`
             },
@@ -73,6 +79,7 @@ module.exports.specsBuilder = function(propName, propValue) {
             token: config.MAGENTO_AUTH_ADMIN_TOKEN,
         },
         {
+            name: 'customer',
             args: {
                 id: `${cartId}`,
                 __ow_headers: {
@@ -86,7 +93,7 @@ module.exports.specsBuilder = function(propName, propValue) {
         }
     ];
 
-    if(propName && propValue) {
+    if (propName && propValue) {
         specs.forEach(spec => {
             spec.args[propName] = propValue;
         });

@@ -39,15 +39,12 @@ describe('Magento deleteBillingAddress', () => {
             return addressTests.missingCartId();
         });
 
-        it('successfully returns a cart after the billing address was deleted', () => {
+        specsBuilder().forEach(spec => {
+            it(`successfully returns a ${spec.name} cart after the billing address was deleted`, () => {
 
-            let specs = specsBuilder();
-
-            let body = {
-                "address": {}
-            };
-
-            specs.forEach(spec => {
+                let body = {
+                    "address": {}
+                };
                 let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/billing-address`),
                     'POST', spec.token);
                 postRequestWithBody.body = body;

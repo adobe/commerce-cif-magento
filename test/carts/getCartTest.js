@@ -34,11 +34,8 @@ describe('Magento getCart', () => {
         
         //validates that the response object is valid
         //cart properties and values are validated on object mapper tests
-        it('successfully returns a cart', () => {
-
-            let specs = specsBuilder();
-
-            specs.forEach(spec => {
+        specsBuilder().forEach(spec => {
+        it(`successfully returns a ${spec.name} cart`, () => {
                 const expectedArgs =
                     requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
                         'GET', spec.token);

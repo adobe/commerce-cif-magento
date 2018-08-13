@@ -33,13 +33,9 @@ describe('magento postCoupon', () => {
         
         //build the helper in the context of '.this' suite
         setup(this, __dirname, 'postCoupon');
-        
-        it('returns the cart with the added coupon when called with valid cart id and valid coupon code', () => {
 
-            let specs = specsBuilder('code', 'coupon1');
-
-            specs.forEach(spec => {
-
+        specsBuilder('code', 'coupon1').forEach(spec => {
+        it(`returns the ${spec.name} cart with the added coupon when called with valid cart id and valid coupon code`, () => {
                 const expectedArgs = [
                     requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/coupons/${spec.args.code}`),
                         'PUT', spec.token),

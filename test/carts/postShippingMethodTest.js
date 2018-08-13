@@ -67,19 +67,16 @@ describe('Magento postShippingMethod', () => {
                 });
         });
 
-        it('successfully returns a cart after the shipping method was added', () => {
+        specsBuilder('shippingMethodId', 'flatrate_flatrate').forEach(spec => {
+            it(`successfully returns a ${spec.name} cart after the shipping method was added`, () => {
 
-            let specs = specsBuilder('shippingMethodId', 'flatrate_flatrate');
-            let body = {
-                addressInformation: {
-                    shipping_address: addressTests.testMagentoAddress(),
-                    shipping_method_code: 'flatrate',
-                    shipping_carrier_code: 'flatrate'
-                }
-            };
-
-            specs.forEach(spec => {
-
+                let body = {
+                    addressInformation: {
+                        shipping_address: addressTests.testMagentoAddress(),
+                        shipping_method_code: 'flatrate',
+                        shipping_carrier_code: 'flatrate'
+                    }
+                };
                 let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/shipping-information`),
                     'POST', spec.token);
                 postRequestWithBody.body = body;

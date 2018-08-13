@@ -48,7 +48,7 @@ function putCartEntry(args) {
 
     //delete the entry if quantity is 0. this is only temporary solution and will be removed once
     //Magento fixes the implementation to remove the entry when quantity eq 0.
-    if( parseFloat(args.quantity) === 0 ) {
+    if ( parseFloat(args.quantity) === 0 ) {
         return cart.byId(args.id).deleteItem(args.cartEntryId).then(function () {
             return cart.byId(args.id).get();
         }).catch(error => {

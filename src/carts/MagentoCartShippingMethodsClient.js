@@ -43,7 +43,7 @@ class MagentoCartShippingMethodsClient extends MagentoClientBase {
      */
     getShippingMethods(address, currency) {
         //change the endpoint based on the customer login token
-        if(this.customerToken) {
+        if (this.customerToken) {
             this.baseEndpoint = 'carts';
         } else {
             this.baseEndpoint = 'guest-carts';

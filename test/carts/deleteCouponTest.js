@@ -32,12 +32,9 @@ describe('magento deleteCoupon', () => {
         
         //build the helper in the context of '.this' suite
         setup(this, __dirname, 'deleteCoupon');
-        
-        it('returns the cart without the removed coupon when called with valid cart id and any coupon code', () => {
 
-            let specs = specsBuilder('code', 'anycoupon');
-
-            specs.forEach(spec => {
+        specsBuilder('code', 'anycoupon').forEach( spec => {
+        it(`returns the ${spec.name} cart without the removed coupon when called with valid cart id and any coupon code`, () => {
                 const expectedArgs = [
                     requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/coupons`), 'DELETE', spec.token),
                     requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,

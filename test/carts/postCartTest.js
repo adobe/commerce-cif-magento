@@ -33,12 +33,9 @@ describe('Magento postCart', () => {
         
         //build the helper in the context of '.this' suite
         setup(this, __dirname, 'postCartEntry');
-        
-        it('creates a new empty guest cart', () => {
 
-            let specs = specsBuilder();
-
-            specs.forEach(spec => {
+        specsBuilder().forEach(spec => {
+            it(`creates a new empty ${spec.name} cart`, () => {
                 const expectedArgs = [
                     requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseCart}`), 'POST', spec.token),
                     requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
@@ -66,12 +63,9 @@ describe('Magento postCart', () => {
                     });
             });
         });
-        
-        it('adds a single product to an existing cart', () => {
 
-            let specs = specsBuilder();
-
-            specs.forEach(spec => {
+        specsBuilder().forEach(spec => {
+            it(`adds a single product to an existing ${spec.name} cart`, () => {
                 spec.args.productVariantId = 'eqbisucos-L';
                 spec.args.quantity = 3;
 
@@ -110,12 +104,8 @@ describe('Magento postCart', () => {
             });
         });
 
-        it('creates a new guest cart and adds one product item', () => {
-
-            let specs = specsBuilder();
-
-            specs.forEach(spec => {
-
+        specsBuilder().forEach(spec => {
+            it(`reates a new ${spec.name} cart and adds one product item`, () => {
                 spec.args.productVariantId = 'eqbisucos-L';
                 spec.args.quantity = 1;
 

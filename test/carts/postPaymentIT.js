@@ -71,7 +71,7 @@ describe('Magento postPayment', function () {
                 .post(env.cartsPackage + 'postCartEntry')
                 .query({
                     currency: 'USD',
-                    quantity: 1,
+                    quantity: 5,
                     productVariantId: productVariantId
                 })
                 .then(function (res) {

@@ -45,12 +45,8 @@ describe('Magento postPayment', () => {
                 });
         });
 
-        it('returns a cart with a payment method', () => {
-
-            let specs = specsBuilder('payment', {'method': 'creditcard'});
-
-            specs.forEach(spec => {
-
+        specsBuilder('payment', {'method': 'creditcard'}).forEach(spec => {
+            it(`returns a ${spec.name} cart with a payment method`, () => {
                 let postPaymentRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/selected-payment-method`),
                     'PUT', spec.token);
                 postPaymentRequest.body = {
@@ -81,6 +77,5 @@ describe('Magento postPayment', () => {
                     });
             });
         });
-
     });
 });

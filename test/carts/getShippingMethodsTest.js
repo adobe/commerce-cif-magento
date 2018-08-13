@@ -33,11 +33,9 @@ describe('Magento getShippingMethods for a cart', () => {
         setup(this, __dirname, 'getShippingMethods');
 
         //validates that the response object is valid
-        it('successfully returns a list of shipping methods for a cart', () => {
+        specsBuilder().forEach(spec => {
+            it(`successfully returns a list of shipping methods for a ${spec.name} cart`, () => {
 
-            let specs = specsBuilder();
-
-            specs.forEach(spec => {
                 let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/estimate-shipping-methods`),
                     'POST', spec.token);
                 postRequestWithBody.body = {

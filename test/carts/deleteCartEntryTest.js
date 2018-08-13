@@ -31,12 +31,9 @@ describe('magento deleteCartEntry', () => {
         
         //build the helper in the context of '.this' suite
         setup(this, __dirname, 'deleteCartEntry');
-        
-        it('returns the cart without the removed entry when called with valid cart id and entry id', () => {
 
-            let specs = specsBuilder('cartEntryId', '2');
-
-            specs.forEach(spec => {
+        specsBuilder('cartEntryId', '2').forEach(spec => {
+            it(`returns the ${spec.name} cart without the removed entry when called with valid cart id and entry id`, () => {
                 const expectedArgs = [
                     requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/items/${spec.args.cartEntryId}`), 'DELETE',
                         spec.token),
