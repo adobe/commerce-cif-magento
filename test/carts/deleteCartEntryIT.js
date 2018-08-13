@@ -57,9 +57,6 @@ describe('magento deleteCartEntry', function() {
                     cartId = res.body.id;
                     // Store cart entry id
                     cartEntryId = res.body.entries[0].id;
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -109,9 +106,6 @@ describe('magento deleteCartEntry', function() {
                     // Verify that only original product is still in the cart
                     expect(res.body.entries).to.have.lengthOf(1);
                     expect(res.body.entries[0].id).to.equal(cartEntryId);
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
     
@@ -128,9 +122,6 @@ describe('magento deleteCartEntry', function() {
                 
                     requiredFields.verifyCart(res.body);
                     expect(res.body.entries).to.have.lengthOf(0);
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
         
@@ -141,10 +132,10 @@ describe('magento deleteCartEntry', function() {
                     id: cartId,
                     cartEntryId: 'INVALID ENTRY |D'
                 })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -155,10 +146,10 @@ describe('magento deleteCartEntry', function() {
                     id: cartId,
                     cartEntryId: 'does-not-exist'
                 })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -169,20 +160,20 @@ describe('magento deleteCartEntry', function() {
                     id: 'does-not-exist',
                     cartEntryId: cartEntryId
                 })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
         it('returns a 400 error for missing parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'deleteCartEntry')
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 

@@ -59,9 +59,6 @@ describe('magento postCoupon', function () {
                     // Store cart id
                     cartId = res.body.id;
                     cartEntryId = res.body.entries[0].id;
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -89,9 +86,6 @@ describe('magento postCoupon', function () {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
                     expect(res.body.entries).to.have.lengthOf(0);
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -102,10 +96,10 @@ describe('magento postCoupon', function () {
                     id: 'non-existing-cart-id',
                     code: couponCode
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -115,10 +109,10 @@ describe('magento postCoupon', function () {
                 .query({
                     id: cartId
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -129,10 +123,10 @@ describe('magento postCoupon', function () {
                     id: cartId,
                     code: 'non-existing-coupon-code'
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -154,8 +148,6 @@ describe('magento postCoupon', function () {
                     let coupon = res.body.coupons[0];
                     requiredFields.verifyCoupon(coupon);
                     expect(coupon.code).to.equal(couponCode);
-                }).catch(err => {
-                    throw(err);
                 });
         });
 

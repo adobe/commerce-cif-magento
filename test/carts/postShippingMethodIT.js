@@ -55,9 +55,6 @@ describe('Magento postShippingMethod', function () {
                     // Store cart id
                     cartId = res.body.id;
                     cartEntryId = res.body.entries[0].id;
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -73,9 +70,6 @@ describe('Magento postShippingMethod', function () {
                     expect(res).to.have.status(HttpStatus.OK);
 
                     expect(res.body.entries).to.have.lengthOf(0);
-                })
-                .catch(function (err) {
-                    throw err;
                 });
         });
 
@@ -86,10 +80,10 @@ describe('Magento postShippingMethod', function () {
                     id: 'non-existing-cart-id',
                     shippingMethodId: 'flatrate_flatrate'
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -99,10 +93,10 @@ describe('Magento postShippingMethod', function () {
                 .query({
                     id: cartId
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -113,10 +107,10 @@ describe('Magento postShippingMethod', function () {
                     id: cartId,
                     shippingMethodId: 'xyz'
                 })
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 

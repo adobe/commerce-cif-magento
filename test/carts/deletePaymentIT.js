@@ -39,10 +39,10 @@ describe('Magento deletePayment', function () {
         it('returns 501 error', function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'deletePayment')
-                .catch(function (err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_IMPLEMENTED);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_IMPLEMENTED);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 

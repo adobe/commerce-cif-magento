@@ -58,35 +58,32 @@ describe('magento postCartEntry', function() {
                     // Store cart id
                     cartId = res.body.id;
                     cartEntryId = res.body.entries[0].id;
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
         /** Delete cart entry. */
         after(function() {
             return chai.request(env.openwhiskEndpoint)
-                    .post(env.cartsPackage + 'deleteCartEntry')
-                    .query({
-                        id: cartId,
-                        cartEntryId: cartEntryId
-                    }).then(res => {
-                        expect(res).to.be.json;
-                        expect(res).to.have.status(HttpStatus.OK);
-                        expect(res.body.entries).to.have.lengthOf(1);
+                .post(env.cartsPackage + 'deleteCartEntry')
+                .query({
+                    id: cartId,
+                    cartEntryId: cartEntryId
+                }).then(res => {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res.body.entries).to.have.lengthOf(1);
 
-                        return chai.request(env.openwhiskEndpoint)
-                            .post(env.cartsPackage + 'deleteCartEntry')
-                            .query({
-                                id: cartId,
-                                cartEntryId: cartEntryIdSecond
-                            });
-                    }).then(function (res) {
-                        expect(res).to.be.json;
-                        expect(res).to.have.status(HttpStatus.OK);
-                        expect(res.body.entries).to.have.lengthOf(0);
-                    });
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'deleteCartEntry')
+                        .query({
+                            id: cartId,
+                            cartEntryId: cartEntryIdSecond
+                        });
+                }).then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res.body.entries).to.have.lengthOf(0);
+                });
         });
 
         it('creates an empty cart', function() {
@@ -107,9 +104,6 @@ describe('magento postCartEntry', function() {
                     expect(res.body).to.have.own.property('lastModifiedAt');
                     expect(res.body).to.have.own.property('createdAt');
                     expect(res.body.entries).to.have.lengthOf(0);
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -142,9 +136,6 @@ describe('magento postCartEntry', function() {
                         }
                     }
                     expect(addedEntry.quantity).to.equal(2);
-                })
-                .catch(function(err) {
-                    throw err;
                 });
         });
 
@@ -173,22 +164,6 @@ describe('magento postCartEntry', function() {
                     const entry = res.body.entries[0];
                     expect(entry.quantity).to.equal(2);
                     expect(entry.productVariant.sku).to.equal(productVariantId);
-                })
-                .catch(function(err) {
-                    throw err;
-                });
-        });
-
-        it('returns a 400 error for an invalid currency', function() {
-            return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
-                    currency: 'EURO'
-                })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
                 });
         });
 
@@ -200,10 +175,10 @@ describe('magento postCartEntry', function() {
                     id: cartId,
                     productVariantId: productVariantIdSecond
                 })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
@@ -215,10 +190,10 @@ describe('magento postCartEntry', function() {
                     id: cartId,
                     productVariantId: 'does-not-exists'
                 })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         })
 
@@ -230,20 +205,10 @@ describe('magento postCartEntry', function() {
                     id: 'does-not-exist',
                     productVariantId: productVariantId
                 })
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.NOT_FOUND);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
-                });
-        });
-
-        it('returns a 400 error for missing parameters', function() {
-            return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .catch(function(err) {
-                    expect(err.response).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(err.response).to.be.json;
-                    requiredFields.verifyErrorResponse(err.response.body);
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 
