@@ -20,6 +20,7 @@ const config = require('../lib/config').config;
 const payment400 = require('../resources/payment-400');
 const samplecart = require('../resources/sample-cart');
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
 
 describe('Magento postCartPayment', () => {
     describe('Unit tests', () => {
@@ -44,33 +45,29 @@ describe('Magento postCartPayment', () => {
                 });
         });
 
-        it('returns a cart with a payment method', () => {
-            let args = {
-                id: 'dummy-id',
-                payment: {
-                    "method": "creditcard"
-                }
-            };
-
-            let postCartPaymentRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/selected-payment-method`), 'PUT');
-            postCartPaymentRequest.body = {
+        specsBuilder('payment', {'method': 'creditcard'}).forEach(spec => {
+            it(`returns a ${spec.name} cart with a payment method`, () => {
+                let postCartPaymentRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/selected-payment-method`),
+                    'PUT', spec.token);
+                postCartPaymentRequest.body = {
                 method: { 
                     method: 'creditcard'
                 }
             };
 
             const expectedArgs = [
-                postCartPaymentRequest,
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
+                    postCartPaymentRequest,
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                    'GET', spec.token)
             ];
 
             return this.prepareResolveMultipleResponse(["0", samplecart], expectedArgs)
-                .execute(Object.assign(args, config))
+                    .execute(Object.assign(spec.args, config))
                 .then(result => {
                     assert.isDefined(result.response);
                     assert.strictEqual(result.response.statusCode, 200);
                     assert.isDefined(result.response.body);
-                    assert.strictEqual(result.response.body.id, args.id);
+                        assert.strictEqual(result.response.body.id, spec.args.id);
 
                     // Check payment in cart
                     let cart = result.response.body;
@@ -86,7 +83,7 @@ describe('Magento postCartPayment', () => {
                     assert.equal(cart.payments[0].methodId, "checkmo");
                 });
 
+            });
         });
-
     });
 });

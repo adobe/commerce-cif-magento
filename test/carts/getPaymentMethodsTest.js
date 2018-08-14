@@ -18,6 +18,7 @@ const assert = require('chai').assert;
 const setup = require('../lib/setupTest').setup;
 const requestConfig = require('../lib/config').requestConfig;
 const config = require('../lib/config').config;
+const specsBuilder = require('../lib/config').specsBuilder;
 
 /**
  * Describes the unit tests for Magento get available payment methods list operation.
@@ -30,20 +31,19 @@ describe('Magento getPaymentMethods for a cart', () => {
         setup(this, __dirname, 'getPaymentMethods');
 
         //validates that the response object is valid
-        it('successfully returns a list of payment methods for a cart', () => {
-            let args = {
-                id: 'dummy-id'
-            };
+        specsBuilder().forEach(spec => {
+            it(`successfully returns a list of payment methods for a ${spec.name} cart`, () => {
 
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/payment-methods`), 'GET');
+            let getRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/payment-methods`),
+                'GET', spec.token);
 
             const expectedArgs = [
-                postRequestWithBody
+                getRequestWithBody
             ];
 
             let mockedResponse = [{"id":"checkmo","name":"Check / Money order"}];
 
-            return this.prepareResolve(mockedResponse, expectedArgs).execute(Object.assign(args, config))
+            return this.prepareResolve(mockedResponse, expectedArgs).execute(Object.assign(spec.args, config))
                 .then(result => {
                     assert.isDefined(result.response);
                     assert.isDefined(result.response.statusCode);
@@ -51,6 +51,7 @@ describe('Magento getPaymentMethods for a cart', () => {
                     assert.isArray(result.response.body);
                     assert.lengthOf(result.response.body, 1);
                 });
+            });
         });
 
         it('returns empty list for unexpected response', () => {

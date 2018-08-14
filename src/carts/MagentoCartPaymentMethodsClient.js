@@ -39,6 +39,12 @@ class MagentoCartPaymentMethodsClient extends MagentoClientBase {
      * @return {Promise}
      */
     getPaymentMethods() {
+        //change the endpoint based on the customer login token
+        if (this.customerToken) {
+            this.baseEndpoint = 'carts';
+        } else {
+            this.baseEndpoint = 'guest-carts';
+        }
         return this.withEndpoint("payment-methods")._execute('GET').then(result => {
             return this._handleSuccess(this.mapper(result));
         });
