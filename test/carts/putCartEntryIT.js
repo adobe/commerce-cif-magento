@@ -35,7 +35,7 @@ describe('magento putCartEntry', function () {
         this.slow(env.slow);
         this.timeout(env.timeout);
         
-        const productVariantId = 'eqbisumas-10';
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
         
         let cartId;
         let cartEntryId;
