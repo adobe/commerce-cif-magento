@@ -20,6 +20,7 @@ const config = require('../lib/config').config;
 const payment400 = require('../resources/payment-400');
 const samplecart = require('../resources/sample-cart');
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
 
 describe('Magento postPayment', () => {
     describe('Unit tests', () => {
@@ -44,42 +45,37 @@ describe('Magento postPayment', () => {
                 });
         });
 
-        it('returns a cart with a payment method', () => {
-            let args = {
-                id: 'dummy-id',
-                payment: {
-                    "method": "creditcard"
-                }
-            };
+        specsBuilder('payment', {'method': 'creditcard'}).forEach(spec => {
+            it(`returns a ${spec.name} cart with a payment method`, () => {
+                let postPaymentRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/selected-payment-method`),
+                    'PUT', spec.token);
+                postPaymentRequest.body = {
+                    method: {
+                        method: 'creditcard'
+                    }
+                };
 
-            let postPaymentRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/selected-payment-method`), 'PUT');
-            postPaymentRequest.body = {
-                method: { 
-                    method: 'creditcard'
-                }
-            };
+                const expectedArgs = [
+                    postPaymentRequest,
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
 
-            const expectedArgs = [
-                postPaymentRequest,
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
-            ];
+                return this.prepareResolveMultipleResponse(["0", samplecart], expectedArgs)
+                    .execute(Object.assign(spec.args, config))
+                    .then(result => {
+                        assert.isDefined(result.response);
+                        assert.strictEqual(result.response.statusCode, 200);
+                        assert.isDefined(result.response.body);
+                        assert.strictEqual(result.response.body.id, spec.args.id);
 
-            return this.prepareResolveMultipleResponse(["0", samplecart], expectedArgs)
-                .execute(Object.assign(args, config))
-                .then(result => {
-                    assert.isDefined(result.response);
-                    assert.strictEqual(result.response.statusCode, 200);
-                    assert.isDefined(result.response.body);
-                    assert.strictEqual(result.response.body.id, args.id);
-
-                    // Check payment in cart
-                    let cart = result.response.body;
-                    assert.isDefined(cart.payment);
-                    assert.isDefined(cart.payment.method);
-                    assert.equal(cart.payment.method, "checkmo");
-                });
-
+                        // Check payment in cart
+                        let cart = result.response.body;
+                        assert.isDefined(cart.payment);
+                        assert.isDefined(cart.payment.method);
+                        assert.equal(cart.payment.method, "checkmo");
+                    });
+            });
         });
-
     });
 });

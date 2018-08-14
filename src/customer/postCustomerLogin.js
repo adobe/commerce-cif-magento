@@ -48,8 +48,6 @@ function login(args) {
         password: args.password
     };
 
-    data.anonymousCartId = args.anonymousCartId || data.anonymousCartId;
-
     const magentoCustomer = new MagentoCustomerLogin(args, customerMapper.mapCustomerLogin);
     return magentoCustomer.login(data);
 }

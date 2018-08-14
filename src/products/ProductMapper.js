@@ -154,9 +154,9 @@ class ProductMapper {
         // TODO: Get actual value from backend
         let available = true;
         let prices = [];
-        if (product.price && product.price.regularPrice) {
+        if (variant.price && variant.price.regularPrice) {
             prices = [
-                this._mapPrice(product.price.regularPrice)
+                this._mapPrice(variant.price.regularPrice)
             ];
         }
         let v = new ProductVariant.Builder()

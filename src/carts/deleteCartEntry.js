@@ -43,7 +43,7 @@ function deleteCartEntry(args) {
     }
 
     const cart = new MagentoCart(args, cartMapper.mapCart, 'guest-carts');
-    return cart.deleteItem(args.id, args.cartEntryId).then(function () {
+    return cart.byId(args.id).deleteItem(args.cartEntryId).then(function () {
         return cart.byId(args.id).get();
     }).catch(error => {
         return cart.handleError(error);

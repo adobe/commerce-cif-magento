@@ -20,7 +20,7 @@ const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
 const customerResponseMock = require('../resources/sample-customer');
 const sampleCustomerLogin401 = require('../resources/sample-customer-login-401');
-
+const sampleCart = require('../resources/sample-cart');
 /**
  * Describes the unit tests for magento customer login operation.
  */
@@ -31,7 +31,7 @@ describe('Magento postCustomerLogin', () => {
         let customerToken = 'qwtuyr382svfjt7l5abufyuxqsp4sknv';
         setup(this, __dirname, 'postCustomerLogin');
 
-        it('performs customer login and returns customer data', () => { 
+        it('successful customer login', () => {
             let body = {
                 username: 'a@a.com',
                 password: 'password'
@@ -39,14 +39,16 @@ describe('Magento postCustomerLogin', () => {
             let postRequestWithBody = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/integration/customer/token`, 'POST');
             postRequestWithBody.body = body;
             let getRequestWithCustomerToken = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/customers/me`), 'GET');
-            getRequestWithCustomerToken.headers.authorization = 'Bearer ' + customerToken;
+            let getCustomerCart = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/customer-aggregated-carts/mine?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,'GET');
+            getCustomerCart.headers.authorization = getRequestWithCustomerToken.headers.authorization = 'Bearer ' + customerToken;
             
             const expectedArgs = [
                 postRequestWithBody,
-                getRequestWithCustomerToken
+                getRequestWithCustomerToken,
+                getCustomerCart
             ];
             
-            let mockedResponses = [customerToken, customerResponseMock];
+            let mockedResponses = [customerToken, customerResponseMock, sampleCart];
             
             return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs)
                 .execute(
@@ -57,6 +59,45 @@ describe('Magento postCustomerLogin', () => {
                 ).then(result => {
                     assert.strictEqual(result.response.statusCode, 200);
                     assert.isDefined(result.response.body.customer);
+                    assert.isDefined(result.response.body.cart);
+                    assert.isDefined(result.response.headers['Set-Cookie']);
+                    assert.isTrue(result.response.headers['Set-Cookie'].includes(customerToken));
+                });
+        });
+
+        it.skip('successful customer login and cart assign', () => {
+            let body = {
+                username: 'a@a.com',
+                password: 'password'
+            };
+            let postRequestWithBody = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/integration/customer/token`, 'POST');
+            postRequestWithBody.body = body;
+            let getRequestWithCustomerToken = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/customers/me`), 'GET');
+            let assignCartRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/${sampleCart.cart_details.id}`), 'PUT');
+            assignCartRequest.body = {'customerId': 4};
+            let getCustomerCart = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/customer-aggregated-carts/mine?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,'GET');
+            assignCartRequest.headers.authorization = getCustomerCart.headers.authorization = getRequestWithCustomerToken.headers.authorization = 'Bearer ' + customerToken;
+
+            const expectedArgs = [
+                postRequestWithBody,
+                getRequestWithCustomerToken,
+                getCustomerCart,
+                assignCartRequest
+            ];
+
+            let mockedResponses = [customerToken, customerResponseMock, sampleCart];
+
+            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs)
+                .execute(
+                    Object.assign(config, {
+                        email: 'a@a.com',
+                        password: 'password',
+                        anonymousCartId: sampleCart.cart_details.id
+                    })
+                ).then(result => {
+                    assert.strictEqual(result.response.statusCode, 200);
+                    assert.isDefined(result.response.body.customer);
+                    assert.isDefined(result.response.body.cart);
                     assert.isDefined(result.response.headers['Set-Cookie']);
                     assert.isTrue(result.response.headers['Set-Cookie'].includes(customerToken));
                 });
@@ -70,6 +111,26 @@ describe('Magento postCustomerLogin', () => {
             return this.prepareReject(sampleCustomerLogin401).execute(args).then(result => {
                 assert.strictEqual(result.response.error.name, 'CommerceServiceUnauthorizedError');
                 assert.strictEqual(result.response.error.message, 'Unauthorized Request');
+            });
+        });
+
+        it('returns proper error when email is missing', () => {
+            let args = {
+                password: 'bad password'
+            };
+            return this.prepareReject(sampleCustomerLogin401).execute(args).then(result => {
+                assert.strictEqual(result.response.error.name, 'MissingPropertyError');
+                assert.strictEqual(result.response.error.message, 'Parameter \'email\' is missing.');
+            });
+        });
+
+        it('returns proper error when password is missing', () => {
+            let args = {
+                email: 'a@a.com'
+            };
+            return this.prepareReject(sampleCustomerLogin401).execute(args).then(result => {
+                assert.strictEqual(result.response.error.name, 'MissingPropertyError');
+                assert.strictEqual(result.response.error.message, 'Parameter \'password\' is missing.');
             });
         });
     });

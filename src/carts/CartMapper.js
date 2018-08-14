@@ -51,7 +51,6 @@ class CartMapper {
         if (!magentoCart.cart_details) {
             return cart;
         }
-
         cart = CartMapper._mapCart(magentoCart, id, mediaBaseUrl, productAttributes);
 
         if (magentoCart.payment_method) {
@@ -94,7 +93,7 @@ class CartMapper {
         let cart = new Cart.Builder()
             .withCurrency(currency)
             .withEntries(cartEntries)
-            .withId(id)
+            .withId(id || magentoCart.cart_details.id)
             .withProductTotalPrice(productTotalPrice)
             .build();
         cart.lastModifiedAt = formatDate(magentoCart.cart_details.updated_at);

@@ -65,7 +65,7 @@ module.exports.setup = function (ctx, testDirName, actionName) {
                                                        ' match the actual');
             }
             for(let i = 0; i < expectedArgs.length; i++) {
-                if(JSON.stringify(args) === JSON.stringify(expectedArgs[i])) {
+                if (JSON.stringify(args) === JSON.stringify(expectedArgs[i])) {
                     return Promise.resolve(mockedResponses[i]);
                 }
             }
