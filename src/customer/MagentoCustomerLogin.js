@@ -18,6 +18,7 @@ const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoCli
 const MagentoCartClient = require('../carts/MagentoCartClient');
 const cartMapper = require('../carts/CartMapper');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
+const HttpStatusCodes = require('http-status-codes');
 
 class MagentoCustomerLogin extends MagentoClientBase {
 
@@ -74,10 +75,19 @@ class MagentoCustomerLogin extends MagentoClientBase {
             'Set-Cookie': MagentoClientBase.const().CCS_MAGENTO_CUSTOMER_TOKEN + '=' + cartClient.customerToken + ';Path=/;Max-Age=' + this.args.MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME
         };
         // no need to provide the id for a customer cart
-        return cartClient.byId().get().then(result => {
-            loginResult.cart = result.response.body;
-            return this._handleSuccess(loginResult, headers);
-        });
+        return cartClient.byId().get()
+            .then(result => {
+                loginResult.cart = result.response.body;
+                return this._handleSuccess(loginResult, headers);
+            })
+            .catch(err => {
+                //TODO - this will be replaced with 404 (customer cart not found) when magento will fix the code
+                //https://github.com/adobe/commerce-cif-magento-extension/issues/5
+                if (err.statusCode === HttpStatusCodes.BAD_REQUEST) {
+                    return this._handleSuccess(loginResult, headers);
+                }
+                throw err;
+            });
     }
 
 }
