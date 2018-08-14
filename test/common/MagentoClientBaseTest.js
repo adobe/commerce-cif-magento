@@ -15,17 +15,23 @@
 'use strict';
 
 const assert = require('chai').assert;
+const sinon = require('sinon');
+const setup = require('../lib/setupTest').setup;
+
 const MagentoClientBase = require('../../src/common/MagentoClientBase');
 
 describe('Magento Common MagentoClientBase', () => {
 
     describe('Unit tests', () => {
-  
-        it('returns the activation id in debug mode.', () => {
 
-            let args = {
-                DEBUG: 1
-            };
+        // Add helpers to context
+        setup(this, __dirname, 'MagentoClientBase');
+
+        let args = {
+            DEBUG: 1
+        };
+
+        it('returns the activation id in debug mode', () => {
             let id = 'testId';
             process.env.__OW_ACTIVATION_ID = id;
 
@@ -35,6 +41,60 @@ describe('Magento Common MagentoClientBase', () => {
                 assert.isDefined(res.response.headers);
                 assert.isDefined(res.response.headers['OW-Activation-Id']);
                 assert.equal(res.response.headers['OW-Activation-Id'], id);
+            });
+        });
+
+        it('profiles a successful request', () => {
+            let sampleOutput = 'sampleOutput';
+            let clientBase = new MagentoClientBase(args);
+            let spy = sinon.spy(clientBase, '_logRequest');
+            this.prepareResolve(sampleOutput);
+
+            return clientBase._profileRequest({}).then((res) => {
+                assert.equal(res, sampleOutput);
+                assert.isTrue(spy.calledOnce);
+            });
+        });
+
+        it('profiles a failing request', () => {
+            let sampleOutput = 'sampleOutput';
+            let clientBase = new MagentoClientBase(args);
+            let spy = sinon.spy(clientBase, '_logRequest');
+            this.prepareReject(sampleOutput);
+
+            return clientBase._profileRequest({})
+                .then(() => {
+                    assert.fail();
+                })
+                .catch((res) => {
+                    assert.equal(res, sampleOutput);
+                    assert.isTrue(spy.calledOnce);
+                });
+        });
+
+        it('profiles requests only in debug mode', () => {
+            let clientBase = new MagentoClientBase(args);
+            let sampleOutput = 'sampleOutput';
+            this.prepareResolve(sampleOutput);
+
+            let spy = sinon.spy(clientBase, '_profileRequest');
+
+            return clientBase._execute().then((res) => {
+                assert.equal(res, sampleOutput);
+                assert.isTrue(spy.calledOnce);
+            });
+        });
+
+        it('does not profile requests if not in debug mode', () => {
+            let clientBase = new MagentoClientBase({});
+            let sampleOutput = 'sampleOutput';
+            this.prepareResolve(sampleOutput);
+
+            let spy = sinon.spy(clientBase, '_profileRequest');
+
+            return clientBase._execute().then((res) => {
+                assert.equal(res, sampleOutput);
+                assert.isTrue(spy.notCalled);
             });
         });
 

@@ -160,7 +160,7 @@ class MagentoClientBase {
      */
     _logRequest(options, start, passed) {
         let end = process.hrtime(start);
-        let duration = end[0] * 1000000 + end[1] / 1000;
+        let duration = Math.round(((end[0] * 1e9) + end[1]) / 1e6);
         console.debug("BACKEND-CALL", options.method, options.uri, duration, passed ? "PASS" : "FAIL");
     }
 
