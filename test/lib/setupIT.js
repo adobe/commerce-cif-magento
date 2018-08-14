@@ -44,7 +44,7 @@ module.exports.setup = function() {
     env.magentoCustomerName = process.env.MAGENTO_CUSTOMER_NAME;
     env.magentoCustomerPwd = process.env.MAGENTO_CUSTOMER_PWD;
 
-    //this 2 products are configured to not be checked with the inventory
+    //these 2 products are configured to not be checked with the inventory
     //in order to avoid failing tests when product available qty <= 0 we have to use only these 2 in our tests
     //if new need new products in our tests we should make sure the magento instance is also updated
     env.PRODUCT_VARIANT_EQBISUMAS_10 = 'eqbisumas-10';
