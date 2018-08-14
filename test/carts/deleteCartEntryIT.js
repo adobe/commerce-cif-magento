@@ -35,8 +35,8 @@ describe('magento deleteCartEntry', function() {
         this.slow(env.slow);
         this.timeout(env.timeout);
 
-        const productVariantId = 'eqbisumas-10';
-        const productVariantIdSecond = 'eqbisumas-11';
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
+        const productVariantIdSecond = env.PRODUCT_VARIANT_EQBISUMAS_11;
 
         let cartId;
         let cartEntryId;
