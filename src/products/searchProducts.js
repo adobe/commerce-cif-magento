@@ -15,6 +15,7 @@
 'use strict';
 
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
+const req = require('request-promise-native');
 const ProductGraphQlRequestBuilder = require('./ProductGraphQlRequestBuilder');
 const ProductMapper = require('./ProductMapper');
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
@@ -56,7 +57,13 @@ function searchProducts(args) {
         return client.handleError(e);
     }
 
-    return client._profileRequest(options).then((response) => {
+    let request;
+    if (args.DEBUG) {
+        request = client._profileRequest(options);
+    } else {
+        request = req(options);
+    }
+    return request.then((response) => {
         let imageUrlPrefix = `${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/${args.MAGENTO_MEDIA_PATH}`;
         let productMapper = new ProductMapper(imageUrlPrefix, args.GRAPHQL_PRODUCT_ATTRIBUTES);
         return client._handleSuccess(productMapper.mapGraphQlResponse(response.body), {}, response.statusCode);
