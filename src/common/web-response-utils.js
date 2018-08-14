@@ -46,8 +46,8 @@ function respondWithServiceError(error, args, resolve, errorType) {
     };
 
     if (args.DEBUG) {
-        args.headers = args.headers || {};
-        args.headers['OW-Activation-Id'] = process.env.__OW_ACTIVATION_ID;
+        args.response.headers = args.headers || {};
+        args.response.headers['OW-Activation-Id'] = process.env.__OW_ACTIVATION_ID;
     }
 
     return resolve(args);
