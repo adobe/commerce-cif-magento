@@ -37,7 +37,7 @@ describe('magento deleteCoupon', function () {
         this.slow(env.slow);
         this.timeout(env.timeout);
 
-        const productVariantId = 'eqbisumas-10';
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
         const couponCode = 'coupon10';
 
         let cartId;

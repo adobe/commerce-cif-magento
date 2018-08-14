@@ -37,7 +37,7 @@ describe('Magento postShippingMethod', function () {
 
         let cartId;
         let cartEntryId;
-        const productVariantId = 'eqbisumas-10';
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
 
         // Create new cart with one product
         before(function () {
