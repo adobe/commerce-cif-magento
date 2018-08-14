@@ -1,3 +1,9 @@
+---
+name: Issue report
+about: Having an issue? Please create a report to explain what it is about.
+
+---
+
 ### Expected Behaviour
 
 ### Actual Behaviour

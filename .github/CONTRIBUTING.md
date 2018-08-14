@@ -19,6 +19,11 @@ New code contributions should be made primarily using GitHub pull requests. This
 See how to perform pull requests at https://help.github.com/articles/using-pull-requests.
 
 Please follow the [pull request template](PULL_REQUEST_TEMPLATE.md) when submitting a pull request!
+
+## New Feature request
+Please follow the [feature template](ISSUE_TEMPLATE/FEATURE_REQUEST.md) to open new feature requests. 
+
+
 ## Issues
 
-Please follow the [issue template](ISSUE_TEMPLATE.md) to open new [issues](https://github.com/adobe/commerce-cif-magento/issues) and join the conversations to provide feedback. 
+Please follow the [issue template](ISSUE_TEMPLATE/BUG_REPORT.md) to open new [issues](https://github.com/adobe/commerce-cif-magento/issues) and join the conversations to provide feedback. 
