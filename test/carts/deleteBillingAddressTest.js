@@ -20,6 +20,7 @@ const samplecart = require('../resources/sample-cart');
 const samplecart404 = require('../resources/sample-cart-404');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
 
 /**
  * Describes the unit tests for Magento put cart entry operation.
@@ -38,35 +39,36 @@ describe('Magento deleteBillingAddress', () => {
             return addressTests.missingCartId();
         });
 
-        it('successfully returns a cart after the billing address was deleted', () => {
-            const args = {
-                id: '12345-7'
-            };
-            let body = {
-                "address": {}
-            };
-    
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/billing-address`), 'POST');
-            postRequestWithBody.body = body;
-    
-            const expectedArgs = [
-                postRequestWithBody,
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
-            ];
-    
-            let sampleCartNoAddress = JSON.parse(JSON.stringify(samplecart.cart_details));
-            delete sampleCartNoAddress['billing_address'];
-    
-            return this.prepareResolve(sampleCartNoAddress, expectedArgs)
-                .execute(Object.assign(args,config))
-                .then(result => {
-                    assert.isUndefined(result.response.error, JSON.stringify(result.response.error));
-                    assert.isDefined(result.response);
-                    assert.strictEqual(result.response.statusCode, 200);
-                    assert.isDefined(result.response.body);
-                    assert.isUndefined(result.response.body['billingAddress'],
-                        'Expected undefined result.response.body[billingAddress]');
-                });
+        specsBuilder().forEach(spec => {
+            it(`successfully returns a ${spec.name} cart after the billing address was deleted`, () => {
+
+                let body = {
+                    "address": {}
+                };
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/billing-address`),
+                    'POST', spec.token);
+                postRequestWithBody.body = body;
+
+                const expectedArgs = [
+                    postRequestWithBody,
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+
+                let sampleCartNoAddress = JSON.parse(JSON.stringify(samplecart.cart_details));
+                delete sampleCartNoAddress['billing_address'];
+
+                return this.prepareResolve(sampleCartNoAddress, expectedArgs)
+                    .execute(Object.assign(spec.args, config))
+                    .then(result => {
+                        assert.isUndefined(result.response.error, JSON.stringify(result.response.error));
+                        assert.isDefined(result.response);
+                        assert.strictEqual(result.response.statusCode, 200);
+                        assert.isDefined(result.response.body);
+                        assert.isUndefined(result.response.body['billingAddress'],
+                            'Expected undefined result.response.body[billingAddress]');
+                    });
+            });
         });
 
         it('returns 404 for a non-existing cart', () => {

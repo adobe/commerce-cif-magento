@@ -19,6 +19,7 @@ const assert = require('chai').assert;
 const samplecart = require('../resources/sample-cart');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
 
 /**
  * Describes the unit tests for Magento post billing address operation.
@@ -44,26 +45,25 @@ describe('Magento postBillingAddress', () => {
         it('fails while updating a cart if billing address has wrong format', () => {
             return addressTests.wrongAddress();
         });
-        
-        it('successfully returns a cart after the billing address was added', () => {
-            const args = {
-                id: '12345-7',
-                address: addressTests.testCIFAddress()
-            };
-            let body = {
-                address: addressTests.testMagentoAddress()
-            };
-    
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/billing-address`), 'POST');
-            postRequestWithBody.body = body;
-    
-            const expectedArgs = [
-                postRequestWithBody,
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
-            ];
-     
-            return this.prepareResolve(samplecart, expectedArgs)
-                .execute(Object.assign(args, config))
+
+        specsBuilder('address', addressTests.testCIFAddress()).forEach(spec => {
+            it(`successfully returns a ${spec.name} cart after the billing address was added`, () => {
+
+                let body = {
+                    address: addressTests.testMagentoAddress()
+                };
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/billing-address`),
+                    'POST', spec.token);
+                postRequestWithBody.body = body;
+
+                const expectedArgs = [
+                    postRequestWithBody,
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+
+                return this.prepareResolve(samplecart, expectedArgs)
+                    .execute(Object.assign(spec.args, config))
                     .then(result => {
                         assert.isUndefined(result.response.error, JSON.stringify(result.response.error));
                         assert.isDefined(result.response);
@@ -71,6 +71,7 @@ describe('Magento postBillingAddress', () => {
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.billingAddress);
                     });
+            });
         });
     });
 });

@@ -22,6 +22,8 @@ const samplecart404nocounpon = require('../resources/sample-cart-404-no-coupon')
 const samplecart404noproduct = require('../resources/sample-cart-404-no-product');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
+
 /**
  * Describes the unit tests for magento cart operation.
  */
@@ -31,22 +33,21 @@ describe('magento postCoupon', () => {
         
         //build the helper in the context of '.this' suite
         setup(this, __dirname, 'postCoupon');
-        
-        it('returns the cart with the added coupon when called with valid cart id and valid coupon code', () => {
-            let args = {
-                id: 'dummy-id',
-                code: 'coupon1',
-            };
-            const expectedArgs = [
-                requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/coupons/${args.code}`), 'PUT'),
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
-            ];
-            
-            let mockedResponses = [];
-            mockedResponses.push('true');
-            mockedResponses.push(samplecartempty);
-            
-            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
+
+        specsBuilder('code', 'coupon1').forEach(spec => {
+        it(`returns the ${spec.name} cart with the added coupon when called with valid cart id and valid coupon code`, () => {
+                const expectedArgs = [
+                    requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/coupons/${spec.args.code}`),
+                        'PUT', spec.token),
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+
+                let mockedResponses = [];
+                mockedResponses.push('true');
+                mockedResponses.push(samplecartempty);
+
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
                     .then(result => {
                         assert.isDefined(result.response);
                         assert.strictEqual(result.response.statusCode, 200);
@@ -54,8 +55,9 @@ describe('magento postCoupon', () => {
                         assert.isDefined(result.response.body.id);
                         assert.isDefined(result.response.body.coupons);
                         assert.lengthOf(result.response.body.coupons, 1);
-                        assert.strictEqual(result.response.body.coupons[0].code, args.code);
+                        assert.strictEqual(result.response.body.coupons[0].code, spec.args.code);
                     });
+            });
         });
         
         it('returns missing property error when no cart id is provided', () => {

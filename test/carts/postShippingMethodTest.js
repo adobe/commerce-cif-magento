@@ -20,6 +20,7 @@ const samplecart = require('../resources/sample-cart');
 const samplecartNoAddress = require('../resources/sample-cart-no-address');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
 
 /**
  * Describes the unit tests for Magento post shipping method operation.
@@ -66,36 +67,36 @@ describe('Magento postShippingMethod', () => {
                 });
         });
 
-        it('successfully returns a cart after the shipping method was added', () => {
-            const args = {
-                id: '12345-7',
-                shippingMethodId: 'flatrate_flatrate'
-            };
-            let body = {
-                addressInformation: {
-                    shipping_address: addressTests.testMagentoAddress(),
-                    shipping_method_code: 'flatrate',
-                    shipping_carrier_code: 'flatrate'
-                }
-            };
+        specsBuilder('shippingMethodId', 'flatrate_flatrate').forEach(spec => {
+            it(`successfully returns a ${spec.name} cart after the shipping method was added`, () => {
 
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/shipping-information`), 'POST');
-            postRequestWithBody.body = body;
+                let body = {
+                    addressInformation: {
+                        shipping_address: addressTests.testMagentoAddress(),
+                        shipping_method_code: 'flatrate',
+                        shipping_carrier_code: 'flatrate'
+                    }
+                };
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/shipping-information`),
+                    'POST', spec.token);
+                postRequestWithBody.body = body;
 
-            const expectedArgs = [
-                postRequestWithBody,
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
-            ];
+                const expectedArgs = [
+                    postRequestWithBody,
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
 
-            return this.prepareResolve(samplecart, expectedArgs)
-                .execute(Object.assign(args, config))
-                .then(result => {
-                    assert.isUndefined(result.response.error, JSON.stringify(result.response.error));
-                    assert.isDefined(result.response);
-                    assert.strictEqual(result.response.statusCode, 200);
-                    assert.isDefined(result.response.body);
-                    assert.isDefined(result.response.body.shippingAddress);
-                });
+                return this.prepareResolve(samplecart, expectedArgs)
+                    .execute(Object.assign(spec.args, config))
+                    .then(result => {
+                        assert.isUndefined(result.response.error, JSON.stringify(result.response.error));
+                        assert.isDefined(result.response);
+                        assert.strictEqual(result.response.statusCode, 200);
+                        assert.isDefined(result.response.body);
+                        assert.isDefined(result.response.body.shippingAddress);
+                    });
+            });
         });
     });
 });

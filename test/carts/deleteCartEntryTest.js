@@ -20,6 +20,8 @@ const samplecartempty = require('../resources/sample-cart-empty');
 const samplecart404 = require('../resources/sample-cart-404');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
+const specsBuilder = require('../lib/config').specsBuilder;
+
 /**
  * Describes the unit tests for magento cart operation.
  */
@@ -29,28 +31,28 @@ describe('magento deleteCartEntry', () => {
         
         //build the helper in the context of '.this' suite
         setup(this, __dirname, 'deleteCartEntry');
-        
-        it('returns the cart without the removed entry when called with valid cart id and entry id', () => {
-            let args = {
-                id: 'dummy-id',
-                cartEntryId: '2',
-            }
-            const expectedArgs = [
-                requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/items/${args.cartEntryId}`), 'DELETE'),
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
-            ];
-            
-            let mockedResponses = [];
-            mockedResponses.push('true');
-            mockedResponses.push(samplecartempty);
-            
-            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
+
+        specsBuilder('cartEntryId', '2').forEach(spec => {
+            it(`returns the ${spec.name} cart without the removed entry when called with valid cart id and entry id`, () => {
+                const expectedArgs = [
+                    requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/items/${spec.args.cartEntryId}`), 'DELETE',
+                        spec.token),
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+
+                let mockedResponses = [];
+                mockedResponses.push('true');
+                mockedResponses.push(samplecartempty);
+
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
                     .then(result => {
                         assert.isDefined(result.response);
                         assert.strictEqual(result.response.statusCode, 200);
                         assert.isDefined(result.response.body);
                         assert.isDefined(result.response.body.id);
                     });
+            });
         });
         
         it('returns missing property error when no cart id is provided', () => {

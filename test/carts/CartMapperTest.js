@@ -52,7 +52,6 @@ describe('Magento CartMapper', () => {
 
             //asserts shipping and billing address
             assertEqualAddress(mappedCart['billingAddress'], sampleCartDetails['billing_address']);
-
             assert.strictEqual(mappedCart.id, args.id);
             assert.strictEqual(mappedCart.entries.length, sampleCartDetails.items.length);
             assert.strictEqual(mappedCart.currency, sampleCartTotals.quote_currency_code);
