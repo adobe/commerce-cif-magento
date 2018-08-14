@@ -66,7 +66,7 @@ describe('Magento getPaymentMethodsIT for a cart', function () {
                     expect(res).to.have.status(HttpStatus.OK);
 
                     // Verify payment methods structure
-                    expect(res.body).to.be.an('array').with.length(1);
+                    expect(res.body).to.be.an('array').with.length(2);
                     res.body.forEach(paymentMethod => {
                         requiredFields.verifyPaymentMethod(paymentMethod);
                     });
