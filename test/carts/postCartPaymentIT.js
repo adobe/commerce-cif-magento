@@ -38,10 +38,10 @@ describe('Magento postCartPayment', function () {
 
         let cartId;
         let cartEntryId;
-        const productVariantId = 'eqbisumas-10';
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
         let ccifPayment = {
             token: '1234',
-            method: 'checkmo',
+            methodId: 'checkmo',
             statusCode: '1',
             status: 'Paid',
             amount: {
@@ -127,7 +127,7 @@ describe('Magento postCartPayment', function () {
                 });
         });
 
-        it('returns 400 for posting to payment without payment', function () {
+        it('returns 400 for posting the payment without payment', function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postCartPayment')
                 .query({
@@ -154,14 +154,13 @@ describe('Magento postCartPayment', function () {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
                     requiredFields.verifyCart(res.body);
-                    let payment = res.body.payment;
-                    requiredFields.verifyPayment(payment);
 
+                    expect(res.body).to.have.property('payments');
                     let payments = res.body.payments;
                     expect(payments).to.be.an('array').with.length(1);
-                    payment = res.body.payments[0];
+                    let payment = res.body.payments[0];
                     requiredFields.verifyPayment(payment);
-                    expect(payment.method).to.equal('checkmo');
+                    expect(payment.methodId).to.equal('checkmo');
                 });
         });
     });

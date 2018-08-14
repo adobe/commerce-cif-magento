@@ -54,7 +54,7 @@ describe('Magento getPaymentMethods for a cart', () => {
             });
         });
 
-        it('returns empty list for unexpected response', () => {
+        it('returns unexpected error for unexpected response', () => {
             let args = {
                 id: 'dummy-id'
             };
@@ -69,11 +69,7 @@ describe('Magento getPaymentMethods for a cart', () => {
 
             return this.prepareResolve(mockedResponse, expectedArgs).execute(Object.assign(args, config))
                 .then(result => {
-                    assert.isDefined(result.response);
-                    assert.isDefined(result.response.statusCode);
-                    assert.isDefined(result.response.body);
-                    assert.isArray(result.response.body);
-                    assert.lengthOf(result.response.body, 0);
+                    assert.strictEqual(result.response.error.name, 'UnexpectedError');
                 });
         });
 

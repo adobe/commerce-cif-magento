@@ -38,14 +38,14 @@ describe('Magento postCartPayment', () => {
             return this.prepareReject(payment400)
                 .execute(Object.assign({
                     'id': 'dummy-1',
-                    'payment': { "method": "play-money" }
+                    'payment': { "methodId": "play-money" }
                 }, config))
                 .then(result => {
                     assert.strictEqual(result.response.error.name, 'UnexpectedError');
                 });
         });
 
-        specsBuilder('payment', {'method': 'creditcard'}).forEach(spec => {
+        specsBuilder('payment', {'methodId': 'creditcard'}).forEach(spec => {
             it(`returns a ${spec.name} cart with a payment method`, () => {
                 let postCartPaymentRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/selected-payment-method`),
                     'PUT', spec.token);
@@ -71,15 +71,10 @@ describe('Magento postCartPayment', () => {
 
                     // Check payment in cart
                     let cart = result.response.body;
-                    assert.isDefined(cart.payment);
-                    assert.isDefined(cart.payment.method);
-                    assert.isDefined(cart.payment.method);
-                    assert.equal(cart.payment.method, "checkmo");
-                    assert.equal(cart.payment.methodId, "checkmo");
                     assert.isDefined(cart.payments);
                     assert.isArray(cart.payments);
                     assert.lengthOf(cart.payments, 1);
-                    assert.equal(cart.payments[0].method, "checkmo");
+                    assert.isDefined(cart.payments[0].methodId);
                     assert.equal(cart.payments[0].methodId, "checkmo");
                 });
 

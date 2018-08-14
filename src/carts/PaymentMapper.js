@@ -29,7 +29,11 @@ class PaymentMapper {
         }
 
         let magentoPayment = {};
-        magentoPayment.method = payment.method;
+        if (payment.methodId){
+            magentoPayment.method = payment.methodId;
+        } else {
+            magentoPayment.method = payment.method;
+        }
 
         return magentoPayment;
     }

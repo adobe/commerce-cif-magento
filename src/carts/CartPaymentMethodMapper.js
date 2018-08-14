@@ -28,11 +28,7 @@ class CartPaymentMethodMapper {
      * @returns {PaymentMethod[]}          An array of CIF payment methods.
      */
     static mapPaymentMethods(magentoPaymentMethods) {
-        if (magentoPaymentMethods instanceof Array) {
-            return magentoPaymentMethods.map(magentoPaymentMethod => CartPaymentMethodMapper._mapPaymentMethod(magentoPaymentMethod));
-        } else { // we have a unexpected result from Magento and can not map it.
-            return [];
-        }
+        return magentoPaymentMethods.map(magentoPaymentMethod => CartPaymentMethodMapper._mapPaymentMethod(magentoPaymentMethod));
     }
 
     /**
