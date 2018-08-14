@@ -38,8 +38,8 @@ describe('magento postCartEntry', function() {
         let cartId;
         let cartEntryId;
         let cartEntryIdSecond;
-        const productVariantId = 'eqbisumas-10';
-        const productVariantIdSecond = 'eqbisumas-11';
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
+        const productVariantIdSecond = env.PRODUCT_VARIANT_EQBISUMAS_11;
 
         /** Create cart. */
         before(function() {

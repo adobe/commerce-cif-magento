@@ -36,7 +36,7 @@ describe('magento postCustomerLogin', function() {
         this.slow(env.slow);
         this.timeout(env.timeout);
 
-        const productVariantId = 'eqbisumas-10';
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
 
         it('successfully login a customer', function() {
             return chai.request(env.openwhiskEndpoint)

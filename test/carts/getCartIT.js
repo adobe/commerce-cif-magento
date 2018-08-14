@@ -37,7 +37,7 @@ describe('magento getCart', function() {
         this.timeout(env.timeout);
 
         let cartId;
-        const productVariantId = 'eqbisumas-10';
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
 
         /** Create cart. */
         before(function() {

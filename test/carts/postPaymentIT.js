@@ -38,7 +38,7 @@ describe('Magento postPayment', function () {
 
         let cartId;
         let cartEntryId;
-        const productVariantId = 'eqbisumas-10';
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
         let ccifPayment = {
             token: '1234',
             method: 'checkmo',
