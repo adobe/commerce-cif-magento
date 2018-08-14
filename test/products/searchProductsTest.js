@@ -30,7 +30,7 @@ describe('Unit tests', () => {
         let consoleSpy;
 
         before(() => {
-            consoleSpy = sinon.spy(console, 'debug');
+            consoleSpy = sinon.spy(console, 'log');
         });
 
         after(() => {
