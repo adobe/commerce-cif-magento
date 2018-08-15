@@ -36,6 +36,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         this.timeout(env.timeout);
 
         let cartId;
+        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
 
         const addr = {
             title: 'Work',
@@ -86,7 +87,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                 .query({
                     quantity: 2,
                     id: cartId,
-                    productVariantId: 'eqbisumas-10'
+                    productVariantId: productVariantId
                 })
                 .then(function (res) {
                     expect(res).to.be.json;

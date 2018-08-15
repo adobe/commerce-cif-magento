@@ -49,7 +49,7 @@ module.exports.tests = function (ctx, addressType) {
     ctx.slow(env.slow);
     ctx.timeout(env.timeout);
     
-    const productVariantId = 'eqbisumas-10';
+    const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
     let cartId;
     let cartEntryId;
     /** Create empty cart - same for all address ITs */
