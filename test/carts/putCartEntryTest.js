@@ -19,6 +19,8 @@ const setup = require('../lib/setupTest').setup;
 const samplecart = require('../resources/sample-cart');
 const samplecartentry = require('../resources/sample-cart-entry');
 const samplecart404 = require('../resources/sample-cart-404');
+const samplecartempty = require('../resources/sample-cart-empty');
+const sampleInternalServerError = require('../resources/sample-internal-server-error');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
 const specsBuilder = require('../lib/config').specsBuilder;
@@ -140,5 +142,60 @@ describe('Magento putCartEntry', () => {
                     });
             });
         });
+
+        specsBuilder().forEach(spec => {
+            it(`deletes successfully an existing ${spec.name} cart entry when quantity is 0`, () => {
+                spec.args.cartEntryId = 17;
+                spec.args.quantity = 0;
+
+                const expectedArgs = [
+                    requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/items/${spec.args.cartEntryId}`), 'DELETE',
+                        spec.token),
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+
+                let mockedResponses = [];
+                mockedResponses.push('true');
+                mockedResponses.push(samplecartempty);
+
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
+                    .then(result => {
+                        assert.isDefined(result.response);
+                        assert.strictEqual(result.response.statusCode, 200);
+                        assert.isDefined(result.response.body);
+                        assert.isDefined(result.response.body.id);
+                    });
+
+            });
+        });
+
+        specsBuilder().forEach(spec => {
+            it(`return correct fails when deleting an existing ${spec.name} cart entry when quantity is 0`, () => {
+                spec.args.cartEntryId = 17;
+                spec.args.quantity = 0;
+
+                const expectedArgs = [
+                    requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/items/${spec.args.cartEntryId}`), 'DELETE',
+                        spec.token),
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+
+                let mockedResponses = [];
+                mockedResponses.push('true');
+                mockedResponses.push(Promise.reject(sampleInternalServerError));
+
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
+                    .then(result => {
+                        assert.strictEqual(result.response.error.name, 'UnexpectedError');
+                        assert.strictEqual(result.response.error.message, 'Unknown error while communicating with Magento');
+                        assert.strictEqual(result.response.error.cause.statusCode, sampleInternalServerError.statusCode);
+                        assert.strictEqual(result.response.error.cause.message, sampleInternalServerError.message);
+                    });
+
+            });
+        });
+
     });
 });

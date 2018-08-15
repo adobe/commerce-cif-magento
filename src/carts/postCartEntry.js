@@ -95,7 +95,7 @@ function postCartEntry(args) {
                 qty: quantity
             };
             return cart.create().then(function (result) {
-                id = data.cartItem.quote_id = result.response.body;
+                id = data.cartItem.quote_id = result.response.body.cart_details.id;
                 return cart.byId(id).addItem(data).then((result) => {
                     let headers = {'Location': `carts/${id}/entries/${result.response.body.item_id}`};
                     return cart.byId(id).get(headers, 201);
