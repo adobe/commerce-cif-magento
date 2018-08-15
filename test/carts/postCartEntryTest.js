@@ -29,7 +29,7 @@ const specsBuilder = require('../lib/config').specsBuilder;
 /**
  * Describes the unit tests for Magento cart operation.
  */
-describe('Magento postCart', () => {
+describe('Magento postCartEntry', () => {
     
     describe('Unit Tests', () => {
         
@@ -162,12 +162,13 @@ describe('Magento postCart', () => {
 
                 //build the responses
                 let mockedResponses = [];
-                mockedResponses.push(samplecartempty);
+                mockedResponses.push(body.cartItem.quote_id);
                 mockedResponses.push(samplecartentry);
                 mockedResponses.push(samplecart);
 
                 return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
                     .then(result => {
+                        console.log(JSON.stringify(result, null, 2));
                         assert.isDefined(result.response);
                         assert.strictEqual(result.response.statusCode, 201);
                         assert.isDefined(result.response.headers);
@@ -251,7 +252,7 @@ describe('Magento postCart', () => {
 
                 //build the responses
                 let mockedResponses = [];
-                mockedResponses.push(samplecartempty);
+                mockedResponses.push(body.cartItem.quote_id);
                 mockedResponses.push(Promise.reject(sampleInternalServerError));
                 mockedResponses.push(samplecart);
 
