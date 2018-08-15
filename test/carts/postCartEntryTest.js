@@ -180,7 +180,7 @@ describe('Magento postCart', () => {
         });
 
         specsBuilder().forEach(spec => {
-            it(`returns correct error when creation of a new cart fails for a new empty ${spec.name} cart and entry`, () => {
+            it(`returns correct error when the creation of cart fails for a new empty ${spec.name} cart and entry`, () => {
                 spec.args.productVariantId = 'eqbisucos-L';
                 spec.args.quantity = 1;
 
@@ -223,7 +223,7 @@ describe('Magento postCart', () => {
         });
 
         specsBuilder().forEach(spec => {
-            it(`returns correct error when creation of a cart entry fails for a new empty ${spec.name} cart and entry`, () => {
+            it(`returns correct error when the creation of cart entry fails for a new empty ${spec.name} cart and entry`, () => {
                 spec.args.productVariantId = 'eqbisucos-L';
                 spec.args.quantity = 1;
 

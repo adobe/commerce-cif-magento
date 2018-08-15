@@ -171,7 +171,7 @@ describe('Magento putCartEntry', () => {
         });
 
         specsBuilder().forEach(spec => {
-            it(`return correct fails when deleting an existing ${spec.name} cart entry when quantity is 0`, () => {
+            it(`returns correct error when deleting an existing ${spec.name} cart entry when quantity is 0`, () => {
                 spec.args.cartEntryId = 17;
                 spec.args.quantity = 0;
 
