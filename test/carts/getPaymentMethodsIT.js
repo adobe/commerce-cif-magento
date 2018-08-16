@@ -51,11 +51,6 @@ describe('Magento getPaymentMethodsIT for a cart', function () {
                 });
         });
 
-        /** Delete cart. */
-        afterEach(function () {
-            // TODO(mabecker): Delete cart with id = cartId
-        });
-
         it('returns the list of available payment methods for the cart', function () {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.cartsPackage + 'getPaymentMethods')

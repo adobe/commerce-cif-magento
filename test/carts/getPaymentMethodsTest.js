@@ -54,23 +54,21 @@ describe('Magento getPaymentMethods for a cart', () => {
             });
         });
 
-        it('returns unexpected error for unexpected response', () => {
-            let args = {
-                id: 'dummy-id'
-            };
+        specsBuilder().forEach(spec => {
+            it(`returns unexpected error for unexpected response for a ${spec.name} cart`, () => {
+                let getRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/payment-methods`), 'GET', spec.token);
 
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/payment-methods`), 'GET');
+                const expectedArgs = [
+                    getRequestWithBody
+                ];
 
-            const expectedArgs = [
-                postRequestWithBody
-            ];
+                let mockedResponse = {dummy: "dummy"};
 
-            let mockedResponse = {dummy: "dummy"};
-
-            return this.prepareResolve(mockedResponse, expectedArgs).execute(Object.assign(args, config))
-                .then(result => {
-                    assert.strictEqual(result.response.error.name, 'UnexpectedError');
-                });
+                return this.prepareResolve(mockedResponse, expectedArgs).execute(Object.assign(spec.args, config))
+                    .then(result => {
+                        assert.strictEqual(result.response.error.name, 'UnexpectedError');
+                    });
+            });
         });
 
         it('returns unexpected error', () => {
