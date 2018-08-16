@@ -37,15 +37,19 @@ module.exports.tests = function (ctx) {
     };
 
     /**
-     * Verifies that the correct error is returned when the no address field is provided. Used from post/delete unit tests.
+     * Verifies that the correct error is returned when the address field is empty. Used from post/delete unit tests.
      */
     that.emptyAddress = function () {
-        return ctx.execute({ 'id': '12345-1', 'address' : { 'invalid': 'value'} })
-            .then(result => {
-                assert.isDefined(result.response);
-                assert.isDefined(result.response.error);
-                assert.strictEqual(result.response.error.name, 'MissingPropertyError');
-            });
+        return ctx.execute({
+            'id': '12345-1',
+            'address': {},
+            'default_method': 'default_method',
+            'default_carrier': 'default_carrier'
+        }).then(result => {
+            assert.isDefined(result.response);
+            assert.isDefined(result.response.error);
+            assert.strictEqual(result.response.error.name, 'MissingPropertyError');
+        });
     };
 
     /**

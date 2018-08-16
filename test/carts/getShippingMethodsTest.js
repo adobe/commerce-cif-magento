@@ -21,7 +21,8 @@ const sampleShippingMethods = require('../resources/sample-shippingmethods');
 const requestConfig = require('../lib/config').requestConfig;
 const config = require('../lib/config').config;
 const specsBuilder = require('../lib/config').specsBuilder;
-
+const httpStatusCodes = require('http-status-codes');
+const utils = require('../lib/utils');
 /**
  * Describes the unit tests for Magento get available shipping methods list operation.
  */
@@ -63,34 +64,37 @@ describe('Magento getShippingMethods for a cart', () => {
             });
         });
 
-        //validates that the response object is valid
-        it('successfully returns an empty list of shipping methods for a cart without shipping address', () => {
-            let args = {
-                id: 'dummy-id'
-            };
+        specsBuilder().forEach(spec => {
+            it('successfully returns 400 when cart has no shipping address', () => {
+                console.log(spec);
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/estimate-shipping-methods`),
+                    'POST', spec.token);
+                postRequestWithBody.body = {
+                    address: samplecart.cart_details.extension_attributes.shipping_assignments[0].shipping.address
+                };
+                let sampleCartNoShippingAddress = utils.clone(samplecart);
+                delete sampleCartNoShippingAddress.cart_details.extension_attributes.shipping_assignments;
 
-            let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/estimate-shipping-methods`), 'POST');
-            postRequestWithBody.body = {
-                address: samplecart.cart_details.extension_attributes.shipping_assignments[0].shipping.address
-            };
-            
-            const expectedArgs = [
-                requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET'),
-                postRequestWithBody
-            ];
+                const expectedArgs = [
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token),
+                    postRequestWithBody
+                ];
 
-            let mockedResponses = [];
-            mockedResponses.push(samplecart);
-            mockedResponses.push('[]');
-            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(args, config))
-                .then(result => {
-                    assert.isDefined(result.response);
-                    assert.isDefined(result.response.statusCode);
-                    assert.isDefined(result.response.body);
-                    assert.isArray(result.response.body);
-                    assert.lengthOf(result.response.body, 0);
-                });
+                let mockedResponses = [];
+                mockedResponses.push(sampleCartNoShippingAddress);
+                mockedResponses.push(sampleShippingMethods);
+                return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
+                    .then(res => {
+                        assert.isDefined(res.response.error);
+                        assert.strictEqual(res.response.error.name, 'CommerceServiceBadRequestError');
+                        assert.strictEqual(res.response.error.message, 'Bad Magento Request');
+                        assert.strictEqual(res.response.error.cause.statusCode, httpStatusCodes.BAD_REQUEST);
+                        assert.strictEqual(res.response.error.cause.message, 'The shipping address is missing. Set the address and try again.');
+                    });
+            });
         });
+
 
         it('returns unexpected error', () => {
             return this.prepareReject({ 'code': 'UNKNOWN' }).execute({ 'id': 'dummy' }).then(result => {
