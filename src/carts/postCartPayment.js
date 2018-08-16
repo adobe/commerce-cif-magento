@@ -34,10 +34,8 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * @param   {Payment} args.payment                  payment object
  * 
  * @return  {Promise}                               the cart with the payment
- *
- * @deprecated use postCartPayment()
  */
-function postPayment(args) {
+function postCartPayment(args) {
     const validator = new InputValidator(args, ERROR_TYPE);
     validator
         .checkArguments()
@@ -62,4 +60,4 @@ function postPayment(args) {
 
 }
 
-module.exports.main = decorateActionForSequence(postPayment);
+module.exports.main = decorateActionForSequence(postCartPayment);

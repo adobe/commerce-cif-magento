@@ -162,6 +162,7 @@ class RequiredFields {
     verifyPayment(o) {
         expect(o).to.have.own.property("id");
         expect(o).to.have.own.property("method");
+        expect(o).to.have.own.property("methodId");
     }
 
     verifyPrice(o) {
@@ -232,6 +233,11 @@ class RequiredFields {
         expect(o).to.have.own.property("cost");
         if (!rec) return;
         this.verifyPrice(o.cost);
+    }
+
+    verifyPaymentMethod(o) {
+        expect(o).to.have.own.property("id");
+        expect(o).to.have.own.property("name");
     }
 
 }
