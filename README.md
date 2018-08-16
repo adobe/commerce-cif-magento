@@ -141,9 +141,9 @@ If you run OpenWhisk locally it is possible to get detailed logs by using the `w
 To get some detailed logging info, just use `wskadmin syslog get -g activation-id` with the `activation-id` of the action you want to debug. Then identify the tag `tid_XXX` in the output, and use `wskadmin syslog get -t XXX` to get some detailed information about that so-called transaction.
 
 ### Contributing
- 
- Contributions are welcomed! Read the [Contributing Guide](.github/CONTRIBUTING.md) for more information.
- 
- ### Licensing
- 
- This project is licensed under the Apache V2 License. See [LICENSE](.github/LICENSE) for more information.
+
+Contributions are welcomed! Read the [Contributing Guide](.github/CONTRIBUTING.md) for more information.
+
+### Licensing
+
+This project is licensed under the Apache V2 License. See [LICENSE](.github/LICENSE) for more information.
