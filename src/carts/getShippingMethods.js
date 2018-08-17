@@ -19,7 +19,6 @@ const MagentoCartShippingMethodsClient = require('./MagentoCartShippingMethodsCl
 const MagentoCartClient = require('./MagentoCartClient');
 const CartMapper = require('./CartMapper');
 const CartShippingMethodMapper = require('./CartShippingMethodMapper');
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 /**
@@ -60,4 +59,4 @@ function getShippingMethods(args) {
     });
 }
 
-module.exports.main = decorateActionForSequence(getShippingMethods);
+module.exports.main = getShippingMethods;

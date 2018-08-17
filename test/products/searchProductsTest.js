@@ -17,6 +17,7 @@
 const assert = require('chai').assert;
 const setup = require('../lib/setupTest').setup;
 const config = require('../lib/config').config;
+const sinon = require('sinon');
 const sampleProductSearch = require('../resources/sample-product-search');
 
 describe('Unit tests', () => {
@@ -25,6 +26,16 @@ describe('Unit tests', () => {
 
         // Add helpers to context
         setup(this, __dirname, 'searchProducts');
+
+        let consoleSpy;
+
+        before(() => {
+            consoleSpy = sinon.spy(console, 'log');
+        });
+
+        after(() => {
+            consoleSpy.restore();
+        });
 
         it('performs a product search with fulltext search', () => {
             return this.prepareResolve(sampleProductSearch, (actualsArgs) => {
@@ -41,6 +52,20 @@ describe('Unit tests', () => {
                 }, config))
                 .then(result => {
                     assert.isDefined(result.response.body);
+                });
+        });
+
+        it('performs a profiled product search in debug mode', () => {
+            return this.prepareResolve(sampleProductSearch)
+                .execute(Object.assign({
+                    'text': 'shirt',
+                    'MAGENTO_SCHEMA': 'http',
+                    'DEBUG': true
+                }, config))
+                .then(result => {
+                    assert.isTrue(consoleSpy.withArgs('BACKEND-CALL').calledOnce);
+                    assert.isDefined(result.response.body);
+                    
                 });
         });
 

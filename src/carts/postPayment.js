@@ -15,7 +15,6 @@
 'use strict';
 
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const cartMapper = require('./CartMapper');
 const MagentoCartClient = require('./MagentoCartClient');
 const PaymentMapper = require('./PaymentMapper');
@@ -62,4 +61,4 @@ function postPayment(args) {
 
 }
 
-module.exports.main = decorateActionForSequence(postPayment);
+module.exports.main = postPayment;

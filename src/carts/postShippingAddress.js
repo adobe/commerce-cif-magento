@@ -14,7 +14,6 @@
 
 'use strict';
 
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const MagentoCartClient = require('./MagentoCartClient');
 const MagentoAddressHelper = require('./MagentoAddressHelper');
 const cartMapper = require('./CartMapper');
@@ -73,4 +72,4 @@ function postShippingAddress(args) {
     });
 }
 
-module.exports.main = decorateActionForSequence(postShippingAddress);
+module.exports.main = postShippingAddress;
