@@ -17,7 +17,6 @@
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
 const customerMapper = require('./CustomerMapper');
 const MagentoCustomer = require('./MagentoCustomer');
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 /**
@@ -43,4 +42,4 @@ function getCustomerById(args) {
     return magentoCustomer.getCustomerById(args.id);
 }
 
-module.exports.main = decorateActionForSequence(getCustomerById);
+module.exports.main = getCustomerById;
