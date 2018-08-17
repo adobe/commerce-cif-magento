@@ -14,20 +14,20 @@
 
 'use strict';
 
-const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
-const ERROR_TYPE = require('./constants').ERROR_TYPE;
+const assert = require('chai').assert;
+const setup = require('../lib/setupTest').setup;
 
-/**
- * Removes the payment from a cart.
- * 
- * NOT AVAILABLE IN MAGENTO.
- *
- * @return  {Promise}       error message
- *
- * @deprecated use deleteCartPayment()
- */
-function deletePayment(args) {
-    return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
-}
+describe('Magento deleteCartPayment', () => {
+    describe('Unit tests', () => {
 
-module.exports.main = deletePayment;
+        // Add helpers to context
+        setup(this, __dirname, 'deleteCartPayment');
+
+        it('returns a not implemented error', () => {
+            return this.execute(null).then(result => {
+                assert.strictEqual(result.response.error.name, 'NotImplementedError');
+            });
+        });
+
+    });
+});

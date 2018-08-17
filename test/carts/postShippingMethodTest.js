@@ -21,7 +21,8 @@ const samplecartNoAddress = require('../resources/sample-cart-no-address');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
 const specsBuilder = require('../lib/config').specsBuilder;
-
+const httpStatusCodes = require('http-status-codes');
+const utils = require('../lib/utils');
 /**
  * Describes the unit tests for Magento post shipping method operation.
  */
@@ -98,5 +99,41 @@ describe('Magento postShippingMethod', () => {
                     });
             });
         });
+
+        specsBuilder('shippingMethodId', 'flatrate_flatrate').forEach(spec => {
+            it(`successfully returns 404 when a  ${spec.name} cart has no shipping address set`, () => {
+
+                let body = {
+                    addressInformation: {
+                        shipping_address: addressTests.testMagentoAddress(),
+                        shipping_method_code: 'flatrate',
+                        shipping_carrier_code: 'flatrate'
+                    }
+                };
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/shipping-information`),
+                    'POST', spec.token);
+                postRequestWithBody.body = body;
+
+                const expectedArgs = [
+                    postRequestWithBody,
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+
+                let sampleCartNoShippingAddress = utils.clone(samplecart);
+                delete sampleCartNoShippingAddress.cart_details.extension_attributes.shipping_assignments;
+
+                return this.prepareResolve(sampleCartNoShippingAddress, expectedArgs)
+                    .execute(Object.assign(spec.args, config))
+                    .then(res => {
+                        assert.isDefined(res.response.error);
+                        assert.strictEqual(res.response.error.name, 'CommerceServiceBadRequestError');
+                        assert.strictEqual(res.response.error.message, 'Bad Magento Request');
+                        assert.strictEqual(res.response.error.cause.statusCode, httpStatusCodes.BAD_REQUEST);
+                        assert.strictEqual(res.response.error.cause.message, 'The shipping address is missing. Set the address and try again.');
+                    });
+            });
+        });
+
     });
 });

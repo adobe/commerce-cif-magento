@@ -13,21 +13,10 @@
  ******************************************************************************/
 
 'use strict';
+const httpStatusCodes = require('http-status-codes');
 
-const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
-const ERROR_TYPE = require('./constants').ERROR_TYPE;
-
-/**
- * Removes the payment from a cart.
- * 
- * NOT AVAILABLE IN MAGENTO.
- *
- * @return  {Promise}       error message
- *
- * @deprecated use deleteCartPayment()
- */
-function deletePayment(args) {
-    return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
-}
-
-module.exports.main = deletePayment;
+module.exports = {
+    "name": "StatusCodeError",
+    "statusCode": httpStatusCodes.INTERNAL_SERVER_ERROR,
+    "message": 'faked'
+};
