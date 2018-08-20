@@ -147,6 +147,45 @@ describe('magento postCustomerLogin', function() {
                 });
         });
 
+        //this test is based on the previous test which removes all entries from a customer cart
+        //it might fail if the customer cart is not empty
+        it('successfully login a customer & merge a cart', function() {
+            //creates an anonymous cart
+            return chai.request(env.openwhiskEndpoint)
+                .post(env.cartsPackage + 'postCartEntry')
+                .query({
+                    currency: 'EUR',
+                    quantity: 1,
+                    productVariantId: productVariantId
+                }).then(response => {
+                    expect(response.body.id).to.not.be.undefined;
+                    expect(response.body.entries).to.have.lengthOf(1);
+                    return response.body.id;
+                //customer login with cart merge
+                }).then((anonymousCartId) => {
+                    return chai.request(env.openwhiskEndpoint)
+                        .get(env.customersPackage + 'postCustomerLogin')
+                        .set('Cache-Control', 'no-cache')
+                        .query({
+                            email: env.magentoCustomerName,
+                            password: env.magentoCustomerPwd,
+                            anonymousCartId: anonymousCartId
+                        });
+                })
+                //verify the login and store the accessToken
+                .then(function (response) {
+                    expect(response).to.be.json;
+                    expect(response).to.have.status(HttpStatus.OK);
+
+                    requiredFields.verifyLoginResult(response.body);
+                    expect(response.body.customer.email).to.equal(env.magentoCustomerName);
+                    expect(response.body.cart).to.not.be.undefined;
+                    //check cookie is set
+                    expect(extractToken(response)).to.not.be.undefined;
+                    expect(response.body.cart.entries).to.have.lengthOf(1);
+                });
+        });
+
         it('returns a 401 for an non existing customer email', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.customersPackage + 'postCustomerLogin')

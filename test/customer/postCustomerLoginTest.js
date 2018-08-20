@@ -73,7 +73,7 @@ describe('Magento postCustomerLogin', () => {
             let postRequestWithBody = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/integration/customer/token`, 'POST');
             postRequestWithBody.body = body;
             let getRequestWithCustomerToken = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/customers/me`), 'GET');
-            let assignCartRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/customer-carts/mine/merge-with-guest-cart/${sampleCart.cart_details.id}`), 'PUT');
+            let assignCartRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/mine/merge-with-guest-cart/${sampleCart.cart_details.id}`), 'PUT');
             let getCustomerCart = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/customer-aggregated-carts/mine?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,'GET');
             assignCartRequest.headers.authorization = getCustomerCart.headers.authorization = getRequestWithCustomerToken.headers.authorization = 'Bearer ' + customerToken;
 

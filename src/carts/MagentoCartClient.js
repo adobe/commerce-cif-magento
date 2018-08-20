@@ -159,7 +159,7 @@ class MagentoCartClient extends MagentoClientBase {
      * @param {*} anonymousCartId      The cart id to be merged to the customer.
      */
     mergeCart(anonymousCartId) {
-        this.baseEndpoint = 'customer-carts';
+        this.baseEndpoint = 'carts';
         return this.withEndpoint(`merge-with-guest-cart/${anonymousCartId}`)._execute('PUT');
     }
 
