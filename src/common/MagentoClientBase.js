@@ -100,19 +100,16 @@ class MagentoClientBase {
      */
 
     _execute(method, data) {
-
         let uri = this.restApiBaseURL;
         if (this.baseEndpoint) {
             uri = `${uri}/${this.baseEndpoint}`
         }
-
         if (this.endpoint) {
             uri = `${uri}/${this.endpoint}`
         }
         if (this.queryString) {
             uri = `${uri}?${this.queryString}`
         }
-
         //make sure we are sending the customer token when available
         if (this.customerToken) {
             this.withAuthorizationHeader(this.customerToken);
@@ -128,7 +125,6 @@ class MagentoClientBase {
         if (this.args.DEBUG) {
             return this._profileRequest(options);
         }
-
         return requestPromise(options);
     }
 
