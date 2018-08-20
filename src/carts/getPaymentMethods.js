@@ -14,24 +14,38 @@
 
 'use strict';
 
-const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
+const InputValidator = require('@adobe/commerce-cif-common/input-validator');
+const MagentoCartPaymentMethodsClient = require('./MagentoCartPaymentMethodsClient');
+const CartPaymentMethodMapper = require('./CartPaymentMethodMapper');
+const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 /**
- * This action deletes a cart shipping method.
- * 
- * NOT AVAILABLE IN MAGENTO.
+ * This action gets the available payment methods for a cart from Magento.
  *
  * @param   {string} args.MAGENTO_HOST              Magento hostname
  * @param   {string} args.MAGENTO_SCHEMA            optional Magento schema
  * @param   {string} args.MAGENTO_API_VERSION       optional Magento api version
  * @param   {string} args.MAGENTO_AUTH_ADMIN_TOKEN  optional Magento authentication token
- * @param   {string} args.id                        cart id;
  *
- * @return  {Promise}       error message
+ * @param   {string}  args.id                       cart id
+ *
+ * @return  {Promise}                               the list of payment methods
  */
-function deleteShippingMethod(args) {
-    return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
+function getPaymentMethods(args) {
+    const validator = new InputValidator(args, ERROR_TYPE);
+    validator
+        .checkArguments()
+        .mandatoryParameter('id');
+    if (validator.error) {
+        return validator.buildErrorResponse();
+    }
+
+    const paymentMethods = new MagentoCartPaymentMethodsClient(args, CartPaymentMethodMapper.mapPaymentMethods, 'guest-carts');
+
+    return paymentMethods.byId(args.id).getPaymentMethods().catch(error => {
+        return paymentMethods.handleError(error);
+    });
 }
 
-module.exports.main = deleteShippingMethod;
+module.exports.main = decorateActionForSequence(getPaymentMethods);

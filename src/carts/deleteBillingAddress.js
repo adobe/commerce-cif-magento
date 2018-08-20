@@ -14,7 +14,6 @@
 
 'use strict';
 
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const MagentoCartClient = require('./MagentoCartClient');
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
 const cartMapper = require('./CartMapper');
@@ -51,4 +50,4 @@ function deleteBillingAddress(args) {
     });
 }
 
-module.exports.main = decorateActionForSequence(deleteBillingAddress);
+module.exports.main = deleteBillingAddress;

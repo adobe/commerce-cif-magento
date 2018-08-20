@@ -14,21 +14,20 @@
 
 'use strict';
 
-const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
-const ERROR_TYPE = require('./constants').ERROR_TYPE;
+const assert = require('chai').assert;
+const setup = require('../lib/setupTest').setup;
 
-/**
- * This action deletes a cart shipping address.
- * 
- * NOT AVAILABLE IN MAGENTO.
- *
- * @param   {string} args.MAGENTO_HOST          magento project key
- * @param   {string} args.id                    cart id;
- *
- * @return  {Promise}       error message
- */
-function deleteShippingAddress(args) {
-    return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
-}
+describe('Magento deleteCartPayment', () => {
+    describe('Unit tests', () => {
 
-module.exports.main = deleteShippingAddress;
+        // Add helpers to context
+        setup(this, __dirname, 'deleteCartPayment');
+
+        it('returns a not implemented error', () => {
+            return this.execute(null).then(result => {
+                assert.strictEqual(result.response.error.name, 'NotImplementedError');
+            });
+        });
+
+    });
+});

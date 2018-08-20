@@ -14,7 +14,6 @@
 
 'use strict';
 
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
@@ -24,9 +23,11 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * NOT AVAILABLE IN MAGENTO.
  *
  * @return  {Promise}       error message
+ *
+ * @deprecated use deleteCartPayment()
  */
 function deletePayment(args) {
     return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
 }
 
-module.exports.main = decorateActionForSequence(deletePayment);
+module.exports.main = deletePayment;

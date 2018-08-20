@@ -10,9 +10,9 @@
     "serverless": "1.29.0",
     "serverless-openwhisk": "0.13.0"
   },
-  "customer-namespace": "smaftei",
+  "customer-namespace": "cif-customer",
   "customer-package": "magento",
-  "bindings-namespace": "smaftei-core",
+  "bindings-namespace": "cif-core",
   "scripts": {
     "postinstall": "node ./postinstall.js && chmod +x $(npm bin)/serverless",
     "deploy": "$(npm bin)/serverless deploy",

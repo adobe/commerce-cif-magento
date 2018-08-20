@@ -16,7 +16,7 @@
 
 module.exports = {
     "cart_details": {
-        "id": 256,
+        "id": "12345-7",
         "created_at": "2018-06-27 08:47:54",
         "updated_at": "2018-06-27 08:47:54",
         "is_active": true,

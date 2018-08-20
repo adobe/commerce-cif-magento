@@ -16,7 +16,6 @@
 
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
 const MagentoCart = require('./MagentoCartClient');
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const cartMapper = require('./CartMapper');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
@@ -50,4 +49,4 @@ function postCoupon(args) {
     });
 }
 
-module.exports.main = decorateActionForSequence(postCoupon);
+module.exports.main = postCoupon;
