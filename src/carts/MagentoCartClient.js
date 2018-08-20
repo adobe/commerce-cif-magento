@@ -150,7 +150,17 @@ class MagentoCartClient extends MagentoClientBase {
      * @param {*} data      The cart payment data.
      */
     updatePayment(data) {
-        return this.withEndpoint("selected-payment-method")._execute('PUT', data);
+        return this.withEndpoint('selected-payment-method')._execute('PUT', data);
+    }
+
+    /**
+     * Merge an anonymous cart to a customer. The customer is identified based on the customer token.
+     *
+     * @param {*} anonymousCartId      The cart id to be merged to the customer.
+     */
+    mergeCart(anonymousCartId) {
+        this.baseEndpoint = 'customer-carts';
+        return this.withEndpoint(`merge-with-guest-cart/${anonymousCartId}`)._execute('PUT');
     }
 
     /**

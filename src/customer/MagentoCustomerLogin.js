@@ -46,6 +46,18 @@ class MagentoCustomerLogin extends MagentoClientBase {
                 cartClient.customerToken = token;
                 return this._customerLogin(token);
             })
+            //merge the anonymous cart if it has been provided
+            .then(loginResult => {
+                if (data.anonymousCartId) {
+                    return this._mergeCart(cartClient, data.anonymousCartId)
+                        //don't need the cart merge result;
+                        .then(() => {
+                            return loginResult;
+                        });
+                } else {
+                    return loginResult;
+                }
+            })
             // get the customer cart and add it to login response
             .then(loginResult => {
                 return this._customerCart(cartClient, loginResult);
@@ -78,6 +90,11 @@ class MagentoCustomerLogin extends MagentoClientBase {
             loginResult.cart = result.response.body;
             return this._handleSuccess(loginResult, headers);
         });
+    }
+
+    _mergeCart(cartClient, anonymousCartId) {
+        // no need to provide the id for a customer cart
+        return cartClient.byId().mergeCart(anonymousCartId);
     }
 
 }
