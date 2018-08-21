@@ -116,7 +116,7 @@ describe('Magento CartMapper', () => {
                 assert.strictEqual(cartEntry.productVariant.sku, sampleCartProduct.sku);
                 assert.strictEqual(cartEntry.productVariant.id, sampleCartProduct.sku);
                 assert.strictEqual(cartEntry.productVariant.name, sampleCartProduct.name);
-                assert.strictEqual(cartEntry.productVariant.description, cartMapper._getCustomAttributeValue(sampleCartProduct.custom_attributes, 'description'));
+                assert.strictEqual(cartEntry.productVariant.description, cartMapper._getCustomAttributeValue(sampleCartProduct.custom_attributes, 'summary'));
                 cartEntry.productVariant.prices.forEach(price => {
                     assertPrice(price, cartEntry.unitPrice.amount, mappedCart.currency);
                 });
