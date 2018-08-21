@@ -166,10 +166,7 @@ describe('magento postCustomerLogin', function() {
                     expect(response.body.id).to.not.be.undefined;
                     expect(response.body.entries).to.have.lengthOf(1);
                     anonymousCartId = response.body.id;
-                    return Promise.resolve();
-                })
-                //post a customer login without merge
-                .then( () => {
+                    //post a customer login without merge
                     return chai.request(env.openwhiskEndpoint)
                         .get(env.customersPackage + 'postCustomerLogin')
                         .set('Cache-Control', 'no-cache')
@@ -190,10 +187,7 @@ describe('magento postCustomerLogin', function() {
                     accessToken = extractToken(res);
                     expect(accessToken).to.not.be.undefined;
                     customerCartId = res.body.cart.id;
-                    return Promise.resolve();
-                })
-                //add a cart entry
-                .then(function () {
+                    //add a cart entry
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.cartsPackage + 'postCartEntry')
                         .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
