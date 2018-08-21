@@ -36,7 +36,8 @@ describe('magento postCustomerLogin', function() {
         this.slow(env.slow);
         this.timeout(env.timeout);
 
-        const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
+        const productVariantEqbisumas10 = env.PRODUCT_VARIANT_EQBISUMAS_10;
+        const productVariantEqbisumas11 = env.PRODUCT_VARIANT_EQBISUMAS_11;
 
         it('successfully login a customer', function() {
             return chai.request(env.openwhiskEndpoint)
@@ -93,7 +94,7 @@ describe('magento postCustomerLogin', function() {
                             id: cartId,
                             currency: 'EUR',
                             quantity: 1,
-                            productVariantId: productVariantId
+                            productVariantId: productVariantEqbisumas10
                         });
                 })
                 //delete the entry
@@ -147,23 +148,62 @@ describe('magento postCustomerLogin', function() {
                 });
         });
 
-        //this test is based on the previous test which removes all entries from a customer cart
-        //it might fail if the customer cart is not empty
         it('successfully login a customer & merge a cart', function() {
             let anonymousCartId;
+            let accessToken;
+            let customerCartId;
             //creates an anonymous cart
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postCartEntry')
                 .query({
                     currency: 'EUR',
                     quantity: 1,
-                    productVariantId: productVariantId
-                }).then(response => {
+                    productVariantId: productVariantEqbisumas11
+
+                })
+                //verify anonymous cart
+                .then(response => {
                     expect(response.body.id).to.not.be.undefined;
                     expect(response.body.entries).to.have.lengthOf(1);
-                    return anonymousCartId = response.body.id;
+                    anonymousCartId = response.body.id;
+                })
+                //post a customer login without merge
+                .then( () => {
+                    return chai.request(env.openwhiskEndpoint)
+                        .get(env.customersPackage + 'postCustomerLogin')
+                        .set('Cache-Control', 'no-cache')
+                        .query({
+                            email: env.magentoCustomerName,
+                            password: env.magentoCustomerPwd
+                        });
+                })
+                //verify the login
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+
+                    requiredFields.verifyLoginResult(res.body);
+                    expect(res.body.customer.email).to.equal(env.magentoCustomerName);
+                    expect(res.body.cart).to.not.be.undefined;
+                    //check cookie is set
+                    accessToken = extractToken(res);
+                    expect(accessToken).to.not.be.undefined;
+                    customerCartId = res.body.cart.id;
+                })
+                //add a cart entry
+                .then(function () {
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postCartEntry')
+                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .query({
+                            id: customerCartId,
+                            currency: 'EUR',
+                            quantity: 1,
+                            productVariantId: productVariantEqbisumas10
+                        });
+                })
                 //customer login with cart merge
-                }).then((anonymousCartId) => {
+                .then(() => {
                     return chai.request(env.openwhiskEndpoint)
                         .get(env.customersPackage + 'postCustomerLogin')
                         .set('Cache-Control', 'no-cache')
@@ -173,19 +213,22 @@ describe('magento postCustomerLogin', function() {
                             anonymousCartId: anonymousCartId
                         });
                 })
-                //verify the login and store the accessToken
+                //verify the merge operation
                 .then(function (response) {
                     expect(response).to.be.json;
                     expect(response).to.have.status(HttpStatus.OK);
-
                     requiredFields.verifyLoginResult(response.body);
                     expect(response.body.customer.email).to.equal(env.magentoCustomerName);
                     expect(response.body.cart).to.not.be.undefined;
                     //check cookie is set
                     expect(extractToken(response)).to.not.be.undefined;
-                    expect(response.body.cart.entries).to.have.lengthOf(1);
-                    expect(response.body.cart.entries[0].productVariant.id).to.be.equal(productVariantId);
+                    expect(response.body.cart.entries).to.have.lengthOf(2);
+                    expect(response.body.cart.entries
+                        .find(o => {return o.productVariant.sku === productVariantEqbisumas10})).to.not.be.undefined;
+                    expect(response.body.cart.entries
+                        .find(o => {return o.productVariant.sku === productVariantEqbisumas11})).to.not.be.undefined;
                     expect(response.body.cart.id).to.not.be.equal(anonymousCartId);
+                    expect(response.body.cart.id).to.be.equal(customerCartId);
                 });
         });
 
