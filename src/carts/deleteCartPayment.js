@@ -14,24 +14,19 @@
 
 'use strict';
 
+const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 /**
- * This action deletes a cart shipping method.
+ * Removes a payment from a cart.
  * 
  * NOT AVAILABLE IN MAGENTO.
  *
- * @param   {string} args.MAGENTO_HOST              Magento hostname
- * @param   {string} args.MAGENTO_SCHEMA            optional Magento schema
- * @param   {string} args.MAGENTO_API_VERSION       optional Magento api version
- * @param   {string} args.MAGENTO_AUTH_ADMIN_TOKEN  optional Magento authentication token
- * @param   {string} args.id                        cart id;
- *
  * @return  {Promise}       error message
  */
-function deleteShippingMethod(args) {
+function deleteCartPayment(args) {
     return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
 }
 
-module.exports.main = deleteShippingMethod;
+module.exports.main = decorateActionForSequence(deleteCartPayment);

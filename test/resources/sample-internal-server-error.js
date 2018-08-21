@@ -13,22 +13,10 @@
  ******************************************************************************/
 
 'use strict';
+const httpStatusCodes = require('http-status-codes');
 
-const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
-const ERROR_TYPE = require('./constants').ERROR_TYPE;
-
-/**
- * This action deletes a cart shipping address.
- * 
- * NOT AVAILABLE IN MAGENTO.
- *
- * @param   {string} args.MAGENTO_HOST          magento project key
- * @param   {string} args.id                    cart id;
- *
- * @return  {Promise}       error message
- */
-function deleteShippingAddress(args) {
-    return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
-}
-
-module.exports.main = deleteShippingAddress;
+module.exports = {
+    "name": "StatusCodeError",
+    "statusCode": httpStatusCodes.INTERNAL_SERVER_ERROR,
+    "message": 'faked'
+};

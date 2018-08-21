@@ -14,21 +14,27 @@
 
 'use strict';
 
-const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
-const ERROR_TYPE = require('./constants').ERROR_TYPE;
+const assert = require('chai').assert;
+const respondWithServiceError = require('../../src/common/web-response-utils').respondWithServiceError;
 
-/**
- * This action deletes a cart shipping address.
- * 
- * NOT AVAILABLE IN MAGENTO.
- *
- * @param   {string} args.MAGENTO_HOST          magento project key
- * @param   {string} args.id                    cart id;
- *
- * @return  {Promise}       error message
- */
-function deleteShippingAddress(args) {
-    return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
-}
+describe('Magento Common Web Response Utils', () => {
 
-module.exports.main = deleteShippingAddress;
+    describe('Unit tests', () => {
+  
+        it('returns the activation id in debug mode.', () => {
+
+            let args = {
+                DEBUG: 1
+            };
+            let id = 'testId';
+            process.env.__OW_ACTIVATION_ID = id;
+
+            return respondWithServiceError(null, args, Promise.resolve.bind(Promise), null).then((res) => {
+                assert.isDefined(res.response.headers);
+                assert.isDefined(res.response.headers['OW-Activation-Id']);
+                assert.equal(res.response.headers['OW-Activation-Id'], id);
+            });
+        });
+
+    });
+});

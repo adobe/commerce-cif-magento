@@ -17,7 +17,6 @@
 const CategoryMapper = require('./CategoryMapper');
 const MagentoCategories = require('./MagentoCategories');
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 
@@ -97,4 +96,4 @@ function splitSortParameter(sortString) {
     };
 }
 
-module.exports.main = decorateActionForSequence(getCategories);
+module.exports.main = getCategories;

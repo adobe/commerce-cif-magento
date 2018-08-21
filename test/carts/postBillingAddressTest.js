@@ -20,6 +20,7 @@ const samplecart = require('../resources/sample-cart');
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
 const specsBuilder = require('../lib/config').specsBuilder;
+const samplecart404 = require('../resources/sample-cart-404');
 
 /**
  * Describes the unit tests for Magento post billing address operation.
@@ -44,6 +45,30 @@ describe('Magento postBillingAddress', () => {
 
         it('fails while updating a cart if billing address has wrong format', () => {
             return addressTests.wrongAddress();
+        });
+
+        specsBuilder('address', addressTests.testCIFAddress()).forEach(spec => {
+            it(`returns 404 for a non-existing ${spec.name} cart`, () => {
+                let body = {
+                    address: addressTests.testMagentoAddress()
+                };
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/billing-address`),
+                    'POST', spec.token);
+                postRequestWithBody.body = body;
+
+                const expectedArgs = [
+                    postRequestWithBody,
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
+                ];
+                return this.prepareResolve(Promise.reject(samplecart404), expectedArgs)
+                    .execute(Object.assign(spec.args, config))
+                    .then(result => {
+                        assert.isDefined(result.response);
+                        assert.isDefined(result.response.error);
+                        assert.strictEqual(result.response.error.name, 'CommerceServiceResourceNotFoundError');
+                    });
+            });
         });
 
         specsBuilder('address', addressTests.testCIFAddress()).forEach(spec => {

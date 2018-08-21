@@ -41,6 +41,7 @@ describe('Magento PaymentMapper', () => {
 
             let expected = new Payment.Builder()
                 .withMethod('creditcard')
+                .withMethodId('creditcard')
                 .withId('creditcard')
                 .build();
             assert.deepEqual(cifPayment, expected);
@@ -67,6 +68,10 @@ describe('Magento PaymentMapper', () => {
             cart = paymentMapper._fillPayment(payment, cart);
             assert.isDefined(cart.payment);
             assert.deepEqual(cart.payment, payment);
+            assert.isDefined(cart.payments);
+            assert.isArray(cart.payments);
+            assert.lengthOf(cart.payments, 1);
+            assert.deepEqual(cart.payments[0], payment);
         });
 
     });
