@@ -272,7 +272,7 @@ class CartMapper {
             .withSku(item.sku)
             .build();
 
-        let desc = CartMapper._getCustomAttributeValue(item.custom_attributes, 'description');
+        let desc = CartMapper._getCustomAttributeValue(item.custom_attributes, 'summary');
         if (desc) {
             productVariant.description = desc;
         }
@@ -311,10 +311,9 @@ class CartMapper {
      */
     static _getNameValueForAttributeCode(attributeCode, attributeCodeValue, magentoAttributes) {
         // first find the attributes based on the attribute code (i.e. color)
-        let attr = magentoAttributes.items.find(attr => {
-            return attr.attribute_code === attributeCode;
+        let attr = magentoAttributes.find(attr => {
+            return attr.code === attributeCode;
         });
-
         // second find the attribute value label
         let label = attr.options.find(attr => {
             return attr.value === attributeCodeValue;

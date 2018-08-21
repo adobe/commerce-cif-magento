@@ -14,33 +14,48 @@
 
 'use strict';
 
-module.exports = {
+module.exports ={
     "cart_details": {
-        "id": 2,
-        "created_at": "2018-06-05 16:11:33",
-        "updated_at": "2018-06-26 08:47:05",
+        "id": 4851,
+        "created_at": "2018-08-20 12:49:34",
+        "updated_at": "2018-08-20 14:33:35",
         "is_active": true,
         "is_virtual": false,
         "items": [
             {
-                "item_id": 1,
-                "sku": "eqbisucos-L",
-                "qty": 2,
-                "name": "eqbisucos-L",
-                "price": 30,
+                "item_id": 4577,
+                "sku": "eqbisumas-10",
+                "qty": 4,
+                "name": "Marin Mountain Bike Shoes",
+                "price": 110,
                 "product_type": "simple",
-                "quote_id": "2"
+                "quote_id": "4851"
             }
         ],
         "items_count": 1,
-        "items_qty": 2,
+        "items_qty": 4,
         "customer": {
-            "email": null,
-            "firstname": null,
-            "lastname": null
+            "id": 7,
+            "group_id": 1,
+            "default_billing": "0",
+            "default_shipping": "0",
+            "created_at": "2018-08-20 12:47:03",
+            "updated_at": "2018-08-20 12:48:43",
+            "created_in": "Default Store View",
+            "email": "ricksanc@adobe.com",
+            "firstname": "Rick",
+            "lastname": "Sanchez",
+            "gender": 0,
+            "store_id": 1,
+            "website_id": 1,
+            "addresses": [],
+            "disable_auto_group_change": 0,
+            "extension_attributes": {
+                "is_subscribed": false
+            }
         },
         "billing_address": {
-            "id": 3,
+            "id": 10589,
             "region": null,
             "region_id": null,
             "region_code": null,
@@ -53,7 +68,8 @@ module.exports = {
             "city": null,
             "firstname": null,
             "lastname": null,
-            "email": null,
+            "customer_id": 7,
+            "email": "ricksanc@adobe.com",
             "same_as_billing": 0,
             "save_in_address_book": 0
         },
@@ -97,15 +113,15 @@ module.exports = {
                     },
                     "items": [
                         {
-                            "item_id": 1,
-                            "sku": "eqbisucos-L",
-                            "qty": 2,
-                            "name": "eqbisucos-L",
-                            "price": 30,
+                            "item_id": 4577,
+                            "sku": "eqbisumas-10",
+                            "qty": 4,
+                            "name": "Marin Mountain Bike Shoes",
+                            "price": 110,
                             "product_type": "simple",
-                            "quote_id": "2"
+                            "quote_id": "4851"
                         }
-                    ]
+                    ],
                 }
             ]
         }
@@ -114,16 +130,16 @@ module.exports = {
         "method": "checkmo"
     },
     "totals": {
-        "grand_total": 70,
-        "base_grand_total": 70,
-        "subtotal": 60,
-        "base_subtotal": 60,
+        "grand_total": 1039,
+        "base_grand_total": 1039,
+        "subtotal": 1039,
+        "base_subtotal": 1039,
         "discount_amount": 0,
         "base_discount_amount": 0,
-        "subtotal_with_discount": 60,
-        "base_subtotal_with_discount": 60,
-        "shipping_amount": 10,
-        "base_shipping_amount": 10,
+        "subtotal_with_discount": 1039,
+        "base_subtotal_with_discount": 1039,
+        "shipping_amount": 0,
+        "base_shipping_amount": 0,
         "shipping_discount_amount": 0,
         "base_shipping_discount_amount": 0,
         "tax_amount": 0,
@@ -131,21 +147,21 @@ module.exports = {
         "weee_tax_applied_amount": null,
         "shipping_tax_amount": 0,
         "base_shipping_tax_amount": 0,
-        "subtotal_incl_tax": 60,
-        "shipping_incl_tax": 10,
-        "base_shipping_incl_tax": 10,
+        "subtotal_incl_tax": 1039,
+        "shipping_incl_tax": 39,
+        "base_shipping_incl_tax": 39,
         "base_currency_code": "USD",
         "quote_currency_code": "USD",
+        "items_qty": 5,
         "coupon_code": "coupon1",
-        "items_qty": 2,
         "items": [
             {
-                "item_id": 1,
-                "price": 30,
-                "base_price": 30,
-                "qty": 2,
-                "row_total": 60,
-                "base_row_total": 60,
+                "item_id": 4577,
+                "price": 110,
+                "base_price": 110,
+                "qty": 4,
+                "row_total": 440,
+                "base_row_total": 440,
                 "row_total_with_discount": 0,
                 "tax_amount": 0,
                 "base_tax_amount": 0,
@@ -153,26 +169,45 @@ module.exports = {
                 "discount_amount": 85,
                 "base_discount_amount": 85,
                 "discount_percent": 0,
-                "price_incl_tax": 30,
-                "base_price_incl_tax": 30,
-                "row_total_incl_tax": 60,
-                "base_row_total_incl_tax": 60,
+                "price_incl_tax": 110,
+                "base_price_incl_tax": 110,
+                "row_total_incl_tax": 440,
+                "base_row_total_incl_tax": 440,
                 "options": "[]",
                 "weee_tax_applied_amount": null,
                 "weee_tax_applied": null,
-                "name": "eqbisucos-L"
+                "name": "Marin Mountain Bike Shoes"
             }
         ],
         "total_segments": [
             {
                 "code": "subtotal",
                 "title": "Subtotal",
-                "value": 60
+                "value": 1039
+            },
+            {
+                "code": "giftwrapping",
+                "title": "Gift Wrapping",
+                "value": null,
+                "extension_attributes": {
+                    "gw_item_ids": [],
+                    "gw_price": "0.0000",
+                    "gw_base_price": "0.0000",
+                    "gw_items_price": "0.0000",
+                    "gw_items_base_price": "0.0000",
+                    "gw_card_price": "0.0000",
+                    "gw_card_base_price": "0.0000"
+                }
             },
             {
                 "code": "shipping",
-                "title": "Shipping & Handling (Flat Rate - Fixed)",
-                "value": 10
+                "title": "Shipping & Handling",
+                "value": 0
+            },
+            {
+                "code": "discount",
+                "title": "Discount (17 off)",
+                "value": -85
             },
             {
                 "code": "tax",
@@ -183,71 +218,77 @@ module.exports = {
                 }
             },
             {
-                "code": "discount",
-                "title": "Discount (17 off)",
-                "value": -85
-            },
-            {
                 "code": "grand_total",
                 "title": "Grand Total",
-                "value": 70,
+                "value": 1039,
                 "area": "footer"
+            },
+            {
+                "code": "customerbalance",
+                "title": "Store Credit",
+                "value": 0
+            },
+            {
+                "code": "reward",
+                "title": "0 Reward points",
+                "value": 0
             }
-        ]
+        ],
+        "extension_attributes": {
+            "reward_points_balance": 0,
+            "reward_currency_amount": 0,
+            "base_reward_currency_amount": 0
+        }
     },
     "products": {
         "items": [
             {
-                "id": 10,
-                "sku": "eqbisucos-L",
-                "name": "eqbisucos-L",
+                "id": 548,
+                "sku": "eqbisumas-10",
+                "name": "Marin Mountain Bike Shoes",
                 "attribute_set_id": 4,
-                "price": 30,
+                "price": 110,
                 "status": 1,
                 "visibility": 1,
                 "type_id": "simple",
-                "created_at": "2018-06-05 13:22:31",
-                "updated_at": "2018-06-05 13:22:31",
-                "weight": 1,
+                "created_at": "2018-07-05 11:43:19",
+                "updated_at": "2018-07-05 11:43:19",
+                "weight": 5,
                 "product_links": [],
                 "tier_prices": [],
                 "custom_attributes": [
                     {
-                        "attribute_code": "description",
-                        "value": "<p>Comfort Gel bike gloves offer cooling comfort, UV protection and bump-damping support. Just what you need for a long day on the road. \"features=Anatomically positioned gel pads on palms absorb shock, protecting nerves in wrists Mesh palms help reduce overheating and perspiration Polyester stretch fabric on back of hands wicks moisture and enhances ventilation\"</p>"
-                    },
-                    {
                         "attribute_code": "meta_title",
-                        "value": "Comfort Gel Gloves"
+                        "value": "Marin Mountain Bike Shoes"
                     },
                     {
                         "attribute_code": "meta_keyword",
-                        "value": "Comfort Gel Gloves"
+                        "value": "Marin Mountain Bike Shoes"
                     },
                     {
                         "attribute_code": "meta_description",
-                        "value": "Comfort Gel Gloves <p>Comfort Gel bike gloves offer cooling comfort, UV protection and bump-damping support. Just what you need for a long day on the road. \"features=Anatomically positioned gel pads on palms absorb shock, protecting nerves in wrists Mesh "
+                        "value": "Marin Mountain Bike Shoes <p>Marin mountain bike shoes offer a supportive fit with a supple upper and a stiff, lugged sole to enhance pedal efficiency when grinding uphill and through the dirt.</p>\n<p>Microfiber synthetic leather and nylon mesh uppers gi"
                     },
                     {
                         "attribute_code": "image",
-                        "value": "/c/o/comfort_gel.jpg"
+                        "value": "/m/a/marin.jpg"
                     },
                     {
                         "attribute_code": "small_image",
-                        "value": "/c/o/comfort_gel.jpg"
+                        "value": "/m/a/marin.jpg"
                     },
                     {
                         "attribute_code": "thumbnail",
-                        "value": "/c/o/comfort_gel.jpg"
+                        "value": "/m/a/marin.jpg"
                     },
                     {
                         "attribute_code": "color",
-                        "value": "36"
+                        "value": "13"
                     },
                     {
                         "attribute_code": "category_ids",
                         "value": [
-                            "9"
+                            "11"
                         ]
                     },
                     {
@@ -264,23 +305,31 @@ module.exports = {
                     },
                     {
                         "attribute_code": "url_key",
-                        "value": "eqbisucos-l"
+                        "value": "eqbisumas-10"
                     },
                     {
                         "attribute_code": "msrp_display_actual_price_type",
                         "value": "0"
                     },
                     {
-                        "attribute_code": "swatch_image",
-                        "value": "/c/o/comfort_gel.jpg"
-                    },
-                    {
                         "attribute_code": "tax_class_id",
                         "value": "2"
                     },
                     {
+                        "attribute_code": "is_returnable",
+                        "value": "2"
+                    },
+                    {
+                        "attribute_code": "swatch_image",
+                        "value": "/m/a/marin.jpg"
+                    },
+                    {
                         "attribute_code": "size",
-                        "value": "5"
+                        "value": "34"
+                    },
+                    {
+                        "attribute_code": "summary",
+                        "value": "<p>Marin mountain bike shoes offer a supportive fit with a supple upper and a stiff, lugged sole to enhance pedal efficiency when grinding uphill and through the dirt.</p>\n<p>Microfiber synthetic leather and nylon mesh uppers give a glovelike fit with excellent breathability</p>\n<p>Carbon composite road soles offer more rigidity than a nylon sole, providing a direct connection with the pedal, solid power transfer and excellent aerodynamics<br />High traction lugs on outsoles enhance grip and durability in muddy conditions</p>"
                     }
                 ]
             }
@@ -292,7 +341,8 @@ module.exports = {
                         {
                             "field": "sku",
                             "value": [
-                                "eqbisucos-L"
+                                "eqwrsnbd",
+                                "eqbisumas-10"
                             ],
                             "condition_type": "in"
                         }
@@ -300,275 +350,193 @@ module.exports = {
                 }
             ]
         },
-        "total_count": 1
+        "total_count": 2
     },
-    "product_attributes": {
-        "items": [
-            {
-                "is_wysiwyg_enabled": false,
-                "is_html_allowed_on_front": false,
-                "used_for_sort_by": false,
-                "is_filterable": true,
-                "is_filterable_in_search": false,
-                "is_used_in_grid": true,
-                "is_visible_in_grid": false,
-                "is_filterable_in_grid": true,
-                "position": 0,
-                "apply_to": [
-                    "simple",
-                    "virtual",
-                    "configurable"
-                ],
-                "is_searchable": "1",
-                "is_visible_in_advanced_search": "1",
-                "is_comparable": "1",
-                "is_used_for_promo_rules": "0",
-                "is_visible_on_front": "0",
-                "used_in_product_listing": "0",
-                "is_visible": true,
-                "scope": "global",
-                "attribute_id": 93,
-                "attribute_code": "color",
-                "frontend_input": "select",
-                "entity_type_id": "4",
-                "is_required": false,
-                "options": [
-                    {
-                        "label": " ",
-                        "value": ""
-                    },
-                    {
-                        "label": "Black",
-                        "value": "36"
-                    },
-                    {
-                        "label": "Yellow",
-                        "value": "37"
-                    },
-                    {
-                        "label": "Green",
-                        "value": "38"
-                    },
-                    {
-                        "label": "Red",
-                        "value": "39"
-                    },
-                    {
-                        "label": "Orange",
-                        "value": "40"
-                    },
-                    {
-                        "label": "Blue",
-                        "value": "41"
-                    },
-                    {
-                        "label": "Purple",
-                        "value": "42"
-                    },
-                    {
-                        "label": "Multi",
-                        "value": "43"
-                    }
-                ],
-                "is_user_defined": true,
-                "default_frontend_label": "Color",
-                "frontend_labels": null,
-                "backend_type": "int",
-                "source_model": "Magento\\Eav\\Model\\Entity\\Attribute\\Source\\Table",
-                "default_value": "",
-                "is_unique": "0",
-                "validation_rules": []
-            },
-            {
-                "is_wysiwyg_enabled": false,
-                "is_html_allowed_on_front": true,
-                "used_for_sort_by": false,
-                "is_filterable": false,
-                "is_filterable_in_search": false,
-                "is_used_in_grid": true,
-                "is_visible_in_grid": true,
-                "is_filterable_in_grid": true,
-                "position": 0,
-                "apply_to": [],
-                "is_searchable": "0",
-                "is_visible_in_advanced_search": "0",
-                "is_comparable": "0",
-                "is_used_for_promo_rules": "0",
-                "is_visible_on_front": "0",
-                "used_in_product_listing": "0",
-                "is_visible": true,
-                "scope": "global",
-                "attribute_id": 135,
-                "attribute_code": "size",
-                "frontend_input": "select",
-                "entity_type_id": "4",
-                "is_required": false,
-                "options": [
-                    {
-                        "label": " ",
-                        "value": ""
-                    },
-                    {
-                        "label": "55 cm",
-                        "value": "4"
-                    },
-                    {
-                        "label": "L",
-                        "value": "5"
-                    },
-                    {
-                        "label": "S",
-                        "value": "6"
-                    },
-                    {
-                        "label": "M",
-                        "value": "7"
-                    },
-                    {
-                        "label": "XL",
-                        "value": "8"
-                    },
-                    {
-                        "label": "XS",
-                        "value": "9"
-                    },
-                    {
-                        "label": "XXL",
-                        "value": "10"
-                    },
-                    {
-                        "label": "XXS",
-                        "value": "11"
-                    },
-                    {
-                        "label": "7",
-                        "value": "12"
-                    },
-                    {
-                        "label": "8",
-                        "value": "13"
-                    },
-                    {
-                        "label": "9",
-                        "value": "14"
-                    },
-                    {
-                        "label": "10",
-                        "value": "15"
-                    },
-                    {
-                        "label": "11",
-                        "value": "16"
-                    },
-                    {
-                        "label": "12",
-                        "value": "17"
-                    },
-                    {
-                        "label": "28",
-                        "value": "18"
-                    },
-                    {
-                        "label": "29",
-                        "value": "19"
-                    },
-                    {
-                        "label": "30",
-                        "value": "20"
-                    },
-                    {
-                        "label": "31",
-                        "value": "21"
-                    },
-                    {
-                        "label": "32",
-                        "value": "22"
-                    },
-                    {
-                        "label": "34",
-                        "value": "23"
-                    },
-                    {
-                        "label": "36",
-                        "value": "24"
-                    },
-                    {
-                        "label": "38",
-                        "value": "25"
-                    },
-                    {
-                        "label": "40",
-                        "value": "26"
-                    },
-                    {
-                        "label": "XXXL",
-                        "value": "27"
-                    },
-                    {
-                        "label": "13",
-                        "value": "28"
-                    },
-                    {
-                        "label": "XXXS",
-                        "value": "29"
-                    },
-                    {
-                        "label": "44",
-                        "value": "30"
-                    },
-                    {
-                        "label": "46",
-                        "value": "31"
-                    },
-                    {
-                        "label": "42",
-                        "value": "32"
-                    },
-                    {
-                        "label": "16",
-                        "value": "33"
-                    },
-                    {
-                        "label": "3",
-                        "value": "34"
-                    },
-                    {
-                        "label": "6",
-                        "value": "35"
-                    },
-                    {
-                        "label": "o",
-                        "value": "44"
-                    }
-                ],
-                "is_user_defined": true,
-                "default_frontend_label": "Size",
-                "frontend_labels": null,
-                "backend_type": "int",
-                "source_model": "Magento\\Eav\\Model\\Entity\\Attribute\\Source\\Table",
-                "default_value": "",
-                "is_unique": "0",
-                "validation_rules": []
-            }
-        ],
-        "search_criteria": {
-            "filter_groups": [
+    "product_attributes": [
+        {
+            "code": "color",
+            "label": "Color",
+            "options": [
                 {
-                    "filters": [
-                        {
-                            "field": "attribute_code",
-                            "value": "color",
-                            "condition_type": "eq"
-                        },
-                        {
-                            "field": "attribute_code",
-                            "value": "size",
-                            "condition_type": "eq"
-                        }
-                    ]
+                    "value": "",
+                    "label": " "
+                },
+                {
+                    "value": "13",
+                    "label": "Black"
+                },
+                {
+                    "value": "14",
+                    "label": "Yellow"
+                },
+                {
+                    "value": "15",
+                    "label": "Green"
+                },
+                {
+                    "value": "16",
+                    "label": "Red"
+                },
+                {
+                    "value": "17",
+                    "label": "Orange"
+                },
+                {
+                    "value": "18",
+                    "label": "Blue"
+                },
+                {
+                    "value": "19",
+                    "label": "Purple"
+                },
+                {
+                    "value": "20",
+                    "label": "Multi"
                 }
             ]
         },
-        "total_count": 2
-    }
+        {
+            "code": "size",
+            "label": "Size",
+            "options": [
+                {
+                    "value": "",
+                    "label": " "
+                },
+                {
+                    "value": "21",
+                    "label": "55 cm"
+                },
+                {
+                    "value": "22",
+                    "label": "L"
+                },
+                {
+                    "value": "23",
+                    "label": "S"
+                },
+                {
+                    "value": "24",
+                    "label": "M"
+                },
+                {
+                    "value": "25",
+                    "label": "XL"
+                },
+                {
+                    "value": "26",
+                    "label": "XS"
+                },
+                {
+                    "value": "27",
+                    "label": "XXL"
+                },
+                {
+                    "value": "28",
+                    "label": "XXS"
+                },
+                {
+                    "value": "29",
+                    "label": "XXXL"
+                },
+                {
+                    "value": "30",
+                    "label": "XXXS"
+                },
+                {
+                    "value": "31",
+                    "label": "7"
+                },
+                {
+                    "value": "32",
+                    "label": "8"
+                },
+                {
+                    "value": "33",
+                    "label": "9"
+                },
+                {
+                    "value": "34",
+                    "label": "10"
+                },
+                {
+                    "value": "35",
+                    "label": "11"
+                },
+                {
+                    "value": "36",
+                    "label": "12"
+                },
+                {
+                    "value": "37",
+                    "label": "13"
+                },
+                {
+                    "value": "38",
+                    "label": "16"
+                },
+                {
+                    "value": "39",
+                    "label": "28"
+                },
+                {
+                    "value": "40",
+                    "label": "30"
+                },
+                {
+                    "value": "41",
+                    "label": "29"
+                },
+                {
+                    "value": "42",
+                    "label": "31"
+                },
+                {
+                    "value": "43",
+                    "label": "32"
+                },
+                {
+                    "value": "44",
+                    "label": "34"
+                },
+                {
+                    "value": "45",
+                    "label": "36"
+                },
+                {
+                    "value": "46",
+                    "label": "38"
+                },
+                {
+                    "value": "47",
+                    "label": "40"
+                },
+                {
+                    "value": "48",
+                    "label": "42"
+                },
+                {
+                    "value": "49",
+                    "label": "44"
+                },
+                {
+                    "value": "50",
+                    "label": "46"
+                },
+                {
+                    "value": "51",
+                    "label": "3"
+                },
+                {
+                    "value": "53",
+                    "label": "6"
+                },
+                {
+                    "value": "52",
+                    "label": "o"
+                }
+            ]
+        }
+    ],
+    "configurable_parent_relations": []
 };
