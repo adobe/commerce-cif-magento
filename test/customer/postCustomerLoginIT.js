@@ -166,6 +166,7 @@ describe('magento postCustomerLogin', function() {
                     expect(response.body.id).to.not.be.undefined;
                     expect(response.body.entries).to.have.lengthOf(1);
                     anonymousCartId = response.body.id;
+                    return Promise.resolve();
                 })
                 //post a customer login without merge
                 .then( () => {
@@ -189,6 +190,7 @@ describe('magento postCustomerLogin', function() {
                     accessToken = extractToken(res);
                     expect(accessToken).to.not.be.undefined;
                     customerCartId = res.body.cart.id;
+                    return Promise.resolve();
                 })
                 //add a cart entry
                 .then(function () {
