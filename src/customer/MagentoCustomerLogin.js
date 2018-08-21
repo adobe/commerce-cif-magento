@@ -50,13 +50,13 @@ class MagentoCustomerLogin extends MagentoClientBase {
             .then(loginResult => {
                 if (data.anonymousCartId) {
                     return this._mergeCart(cartClient, data.anonymousCartId)
-                        //don't need the cart merge result;
+                        //this returns only the customer cart id so we
+                        //don't need it; the cart is fetched in the next iteration and added to the login result.
                         .then(() => {
-                            return loginResult;
+                            return Promise.resolve(loginResult);
                         });
-                } else {
-                    return loginResult;
                 }
+                return Promise.resolve(loginResult);
             })
             // get the customer cart and add it to login response
             .then(loginResult => {

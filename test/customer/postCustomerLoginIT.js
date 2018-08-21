@@ -150,6 +150,7 @@ describe('magento postCustomerLogin', function() {
         //this test is based on the previous test which removes all entries from a customer cart
         //it might fail if the customer cart is not empty
         it('successfully login a customer & merge a cart', function() {
+            let anonymousCartId;
             //creates an anonymous cart
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postCartEntry')
@@ -160,7 +161,7 @@ describe('magento postCustomerLogin', function() {
                 }).then(response => {
                     expect(response.body.id).to.not.be.undefined;
                     expect(response.body.entries).to.have.lengthOf(1);
-                    return response.body.id;
+                    return anonymousCartId = response.body.id;
                 //customer login with cart merge
                 }).then((anonymousCartId) => {
                     return chai.request(env.openwhiskEndpoint)
@@ -183,6 +184,8 @@ describe('magento postCustomerLogin', function() {
                     //check cookie is set
                     expect(extractToken(response)).to.not.be.undefined;
                     expect(response.body.cart.entries).to.have.lengthOf(1);
+                    expect(response.body.cart.entries[0].productVariant.id).to.be.equal(productVariantId);
+                    expect(response.body.cart.id).to.not.be.equal(anonymousCartId);
                 });
         });
 
