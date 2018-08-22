@@ -144,6 +144,25 @@ describe('magento searchProducts', function() {
                 });
         });
 
+        it('returns a valid response with 2 SKUs', function() {
+            const sku1 = 'meskwielt';
+            const sku2 = 'mesusupis';
+            return chai.request(env.openwhiskEndpoint)
+                .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
+                .query({
+                    filter: `variants.sku:"${sku1}","${sku2}"`
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
+                    expect(res.body.count).to.equal(2);
+                    expect(res.body.results.find(p => p.sku === sku1)).to.not.be.null;
+                    expect(res.body.results.find(p => p.sku === sku2)).to.not.be.null;
+                });
+        });
+
         it('returns products matching a search string', function() {
             const searchTerm = 'jacket';
             return chai.request(env.openwhiskEndpoint)

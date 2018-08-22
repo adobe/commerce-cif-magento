@@ -179,6 +179,22 @@ describe('Magento ProductGraphQlRequestBuilder', () => {
             });
         });
 
+        it('parses a filter parameter with multiple values', () => {
+            let b = new ProductGraphQlRequestBuilder('', '', {
+                filter: 'variants.sku:"abc","def"'
+            });
+            b._parseFilter();
+
+            assert.deepEqual(b.context, {
+                filter: [
+                    {
+                        field: 'sku',
+                        values: ['abc', 'def']
+                    }
+                ]
+            });
+        });
+
         it('rejects invalid filter parameters', () => {
             let b = new ProductGraphQlRequestBuilder('', '', {
                 filter: 'categories.subtree:14|bad.filter.sku:"abc|categories.id:14'
