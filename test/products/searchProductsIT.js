@@ -163,6 +163,23 @@ describe('magento searchProducts', function() {
                 });
         });
 
+        it('returns a valid response with a filter parameter and search string', function() {
+            return chai.request(env.openwhiskEndpoint)
+                .get(env.productsPackage + 'searchProducts')
+                .set('Cache-Control', 'no-cache')
+                .query({
+                    filter: 'categories.id:"11"', // category alone has 6 matches
+                    text: 'gloves' // search has 4 matches
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    requiredFields.verifyPagedResponse(res.body);
+                    // Combined request has a single match
+                    expect(res.body.count).to.equal(1);
+                });
+        });
+
         it('returns products matching a search string', function() {
             const searchTerm = 'jacket';
             return chai.request(env.openwhiskEndpoint)
