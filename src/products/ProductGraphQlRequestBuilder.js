@@ -82,7 +82,7 @@ class ProductGraphQlRequestBuilder {
                     if (parts.length > 1) {
                         values = parts;
                     } else {
-                        value = matches[1];
+                        value = parts[0];
                     }
                 }
             }
