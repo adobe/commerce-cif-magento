@@ -3,7 +3,12 @@
         filter: {
             {{#each filter}}
             {{field}}: {
+                {{#if value}}
                 eq: "{{value}}"
+                {{/if}}
+                {{#if values}}
+                in: [{{#each values}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}]
+                {{/if}}
             }
             {{/each}}
         }

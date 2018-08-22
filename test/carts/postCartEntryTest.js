@@ -168,7 +168,6 @@ describe('Magento postCartEntry', () => {
 
                 return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs).execute(Object.assign(spec.args, config))
                     .then(result => {
-                        console.log(JSON.stringify(result, null, 2));
                         assert.isDefined(result.response);
                         assert.strictEqual(result.response.statusCode, 201);
                         assert.isDefined(result.response.headers);
