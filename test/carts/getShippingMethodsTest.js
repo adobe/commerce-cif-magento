@@ -66,7 +66,6 @@ describe('Magento getShippingMethods for a cart', () => {
 
         specsBuilder().forEach(spec => {
             it('successfully returns 400 when cart has no shipping address', () => {
-                console.log(spec);
                 let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/estimate-shipping-methods`),
                     'POST', spec.token);
                 postRequestWithBody.body = {

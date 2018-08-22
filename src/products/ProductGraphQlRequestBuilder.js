@@ -72,17 +72,27 @@ class ProductGraphQlRequestBuilder {
 
             // Parse value
             let value;
+            let values;
             let split = filterArg.split(':');
             if (split.length == 2) {
                 let val = split[1];
-                let matches = val.match(/.*?"(.*?)".*/);
+                let matches = val.match(/.*?"(.*)".*/);
                 if (matches) {
-                    value = matches[1];
+                    let parts = matches[1].replace(/"/g, "").split(',');
+                    if (parts.length > 1) {
+                        values = parts;
+                    } else {
+                        value = parts[0];
+                    }
                 }
             }
 
-            if (field && value) {
-                filterFields.push({field: field, value: value});
+            if (field) {
+                if (value) {
+                    filterFields.push({field: field, value: value});
+                } else if (values) {
+                    filterFields.push({field: field, values: values});
+                } 
             }
         });
 
