@@ -58,6 +58,10 @@ describe('Magento ProductMapper', () => {
             assert.strictEqual(product.lastModifiedAt, formatDate(magentoProduct.updated_at));
             assert.lengthOf(product.variants, magentoProduct.variants.length);
             assert.lengthOf(product.categories, magentoProduct.categories.length);
+            product.categories.forEach(category => {
+                assert.isDefined(category.id);
+                assert.isString(category.id);
+            });
 
             assert.strictEqual(product.attributes.length, 2);
             product.attributes.forEach(attr => {
