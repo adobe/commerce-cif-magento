@@ -251,7 +251,7 @@ class ProductMapper {
      */
     _mapCategories(categories) {
         return categories.map(category => {
-            return new Category.Builder().withId(category.id).build();
+            return new Category.Builder().withId(category.id.toString()).build();
         });
     }
 }

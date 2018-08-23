@@ -48,14 +48,14 @@ describe('magento searchProducts', function() {
                     type: 'tree'
                 })
                 .then(function (res) {
-                    MEN_CATEGORY_ID = parseInt(res.body.results.find(o => {
+                    MEN_CATEGORY_ID = res.body.results.find(o => {
                         return o.name === categoriesConfig.MEN.name
-                    }).id);
-                    WOMENSHORTS_CATEGORY_ID = parseInt(res.body.results.find(o => {
+                    }).id.toString();
+                    WOMENSHORTS_CATEGORY_ID = res.body.results.find(o => {
                         return o.name === categoriesConfig.WOMEN.name
                     }).children.find(o => {
                         return o.name === categoriesConfig.WOMEN.SHORTS.name;
-                    }).id);
+                    }).id.toString();
                 });
         });
 
