@@ -58,6 +58,10 @@ if ("test-it" in pkg.scripts && process.env.CORE_WSK_AUTH_STRING) {
                 ci.withWskCredentials(process.env.WSK_API_HOST, process.env.CUSTOMER_WSK_NAMESPACE, process.env.CUSTOMER_WSK_AUTH_STRING, () => {
                     ci.withCredentials(process.env.BACKEND_CREDENTIALS, () => {
                         ci.sh('npm install');
+
+                        // Fix serverless permissions
+                        ci.sh('npm run fix-serverless-permission');
+
                         let params = '--customer-package magento@' + process.env.OW_PACKAGE_SUFFIX + ' --customer-namespace ' + process.env.CUSTOMER_WSK_NAMESPACE + ' --bindings-namespace ' + process.env.CORE_WSK_NAMESPACE;
                         ci.sh('$(npm bin)/serverless deploy ' + params);
                     });
