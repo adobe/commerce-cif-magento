@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "eslint": "3.19.0",
-    "eslint-plugin-header": "1.2.0"
+    "eslint-plugin-header": "git+https://github.com/herzog31/eslint-plugin-header.git"
   },
   "eslintConfig": {
     "extends": "../.eslintrc.js"
