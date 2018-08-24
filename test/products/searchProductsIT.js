@@ -90,8 +90,7 @@ describe('magento searchProducts', function() {
                 });
         });
 
-        //https://github.com/magento/graphql-ce/issues/89
-        it.skip('returns products in a category and all its children', function() {
+        it('returns products in a category and all its children', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
                 .set('Cache-Control', 'no-cache')
@@ -102,9 +101,9 @@ describe('magento searchProducts', function() {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
                     requiredFields.verifyPagedResponse(res.body);
-                    expect(res.body.count).to.equal(25);
-                    expect(res.body.results).to.have.lengthOf(25);
-                    for(let result of res.body.results) {
+                    expect(res.body.count).to.equal(21);
+                    expect(res.body.results).to.have.lengthOf(21);
+                    for (let result of res.body.results) {
                         expect(result.categories).to.have.lengthOf.at.least(1);
                         requiredFields.verifyProduct(result);
                     }
@@ -242,14 +241,13 @@ describe('magento searchProducts', function() {
                 });
         });
 
-        //https://github.com/magento/graphql-ce/issues/89
-        it.skip('returns a subset of products as defined by paging parameters', function() {
+        it('returns a subset of products as defined by paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:subtree("${MEN_CATEGORY_ID}")`,
-                    limit: 4,
+                    limit: 5,
                     offset: 20
                 })
                 .then(function (res) {
@@ -257,17 +255,16 @@ describe('magento searchProducts', function() {
                     expect(res).to.have.status(HttpStatus.OK);
                     requiredFields.verifyPagedResponse(res.body);
                     expect(res.body.offset).to.equal(20);
-                    expect(res.body.count).to.equal(4);
-                    expect(res.body.total).to.equal(100);
-                    expect(res.body.results).to.have.lengthOf(4);
+                    expect(res.body.count).to.equal(1);
+                    expect(res.body.total).to.equal(21);
+                    expect(res.body.results).to.have.lengthOf(1);
                     for(let result of res.body.results) {
                         requiredFields.verifyProduct(result);
                     }
                 });
         });
 
-        //TODO - review this when we agree and implement search syntax
-        it.skip('returns a 500 error for invalid paging parameters', function() {
+        it('returns a 400 error for invalid paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
                 .set('Cache-Control', 'no-cache')
