@@ -41,7 +41,11 @@ function searchProducts(args) {
     
     validator
         .checkArguments()
-        .atLeastOneParameter(['filter', 'text']);
+        .atLeastOneParameter(['filter', 'text'])
+        .isInteger('limit')
+        .isInsideInterval('limit', 1)
+        .isInteger('offset')
+        .isInsideInterval('offset', 0);
     if (validator.error) {
         return validator.buildErrorResponse();
     }
