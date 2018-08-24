@@ -16,7 +16,7 @@
   "scripts": {
     "postinstall": "node ./postinstall.js",
     "fix-serverless-permission": "chmod +x $(npm bin)/serverless",
-    "deploy": "$(npm bin)/serverless deploy",
-    "clean": "$(npm bin)/serverless remove"
+    "deploy": "serverless deploy",
+    "clean": "serverless remove"
   }
 }

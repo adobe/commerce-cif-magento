@@ -30,9 +30,9 @@
   },
   "scripts": {
     "fix-serverless-permission": "chmod +x $(npm bin)/serverless",
-    "lint": "$(npm bin)/eslint -f table --ignore-path ../../.eslintignore .",
-    "deploy": "$(npm bin)/serverless deploy",
-    "remove": "$(npm bin)/serverless remove",
+    "lint": "eslint -f table --ignore-path ../../.eslintignore .",
+    "deploy": "serverless deploy",
+    "remove": "serverless remove",
     "deploy-current": "npm run deploy -- --ow-package commerce-cif-magento-product@$npm_package_version --shared",
     "deploy-latest": "npm run deploy -- --ow-package commerce-cif-magento-product@latest --shared",
     "deploy-suffix": "npm run deploy -- --ow-package commerce-cif-magento-product@${OW_PACKAGE_SUFFIX} --shared",

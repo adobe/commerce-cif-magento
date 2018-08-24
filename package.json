@@ -39,17 +39,17 @@
     "all": true
   },
   "scripts": {
-    "pack": "$(npm bin)/lerna exec -- npm pack",
+    "pack": "lerna exec -- npm pack",
     "remove-pack": "find . -name \"*.tgz\" | grep -v node_modules | xargs rm -v",
-    "clean": "$(npm bin)/lerna clean",
-    "postinstall": "$(npm bin)/lerna bootstrap",
-    "deploy": "$(npm bin)/lerna run deploy-package --concurrency 1",
-    "remove": "$(npm bin)/lerna run remove-package --concurrency 1",
-    "globalinstall": "npm install -g lerna@2.0.0-rc.5",
-    "generate-cov-html": "$(npm bin)/nyc report --reporter=html",
-    "test": "$(npm bin)/lerna run lint && npm run test-cov && npm run generate-cov-html",
-    "test-cov": "XUNIT_FILE=test/results/unit/results.xml $(npm bin)/nyc $(npm bin)/mocha test/**/*Test.js -R xunit-file && $(npm bin)/nyc report --reporter=lcov",
-    "unit": "$(npm bin)/mocha test/**/*Test.js",
-    "test-it": "XUNIT_FILE=test/results/integration/results.xml $(npm bin)/mocha test/**/*IT.js -R xunit-file"
+    "clean": "lerna clean",
+    "postinstall": "lerna bootstrap",
+    "deploy": "lerna run deploy-package --concurrency 1",
+    "remove": "lerna run remove-package --concurrency 1",
+    "generate-cov-html": "nyc report --reporter=html",
+    "test": "lerna run lint && npm run test-cov && npm run generate-cov-html",
+    "test-cov": "XUNIT_FILE=test/results/unit/results.xml nyc mocha test/**/*Test.js -R xunit-file && npm run lcov-report",
+    "lcov-report": "nyc report --reporter=lcov",
+    "unit": "mocha test/**/*Test.js",
+    "test-it": "XUNIT_FILE=test/results/integration/results.xml mocha test/**/*IT.js -R xunit-file"
   }
 }

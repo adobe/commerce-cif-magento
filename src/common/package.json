@@ -26,11 +26,11 @@
     "extends": "../../.eslintrc.js"
   },
   "scripts": {
-    "lint": "$(npm bin)/eslint -f table --ignore-path ../../.eslintignore .",
+    "lint": "eslint -f table --ignore-path ../../.eslintignore .",
     "postinstall": "node ./deployment-install.js",
     "fix-serverless-permission": "chmod +x $(npm bin)/serverless",
-    "deploy": "$(npm bin)/serverless deploy",
-    "remove": "$(npm bin)/serverless remove",
+    "deploy": "serverless deploy",
+    "remove": "serverless remove",
     "deploy-current": "npm run deploy -- --ow-package commerce-cif-magento-common@$npm_package_version --shared",
     "deploy-latest": "npm run deploy -- --ow-package commerce-cif-magento-common@latest --shared",
     "deploy-suffix": "npm run deploy -- --ow-package commerce-cif-magento-common@${OW_PACKAGE_SUFFIX} --shared",
