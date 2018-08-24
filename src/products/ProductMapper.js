@@ -119,10 +119,15 @@ class ProductMapper {
             variants = product.variants.map(v => this._mapProductVariant(product, v.product));
             masterVariantId = variants[0].sku;
         } else {
-            variants = [{
-                id: product.sku,
-                sku: product.sku
-            }];
+            variants = [
+                new ProductVariant.Builder()
+                    .withAvailable(true) // TODO: Get actual value from backend
+                    .withId(product.sku)
+                    .withName(product.name || '')
+                    .withPrices([])
+                    .withSku(product.sku)
+                    .build()
+            ];
             masterVariantId = product.sku;
         }
 
@@ -162,7 +167,7 @@ class ProductMapper {
         let v = new ProductVariant.Builder()
             .withAvailable(available)
             .withId(variant.sku) // not a mistake, we use the SKU for the ID
-            .withName(variant.name)
+            .withName(variant.name || '')
             .withPrices(prices)
             .withSku(variant.sku)
             .build();
