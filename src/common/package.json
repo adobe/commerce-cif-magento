@@ -17,9 +17,11 @@
   "devDependencies": {
     "eslint": "3.19.0",
     "eslint-plugin-header": "1.2.0",
+    "mkdirp": "0.5.1",
     "serverless": "1.29.0",
     "serverless-openwhisk": "0.13.0",
     "serverless-webpack": "4.3.0",
+    "tar": "4.4.6",
     "webpack": "4.0.1"
   },
   "eslintConfig": {
