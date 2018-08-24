@@ -23,6 +23,6 @@
     "extends": "../.eslintrc.js"
   },
   "scripts": {
-    "lint": "$(npm bin)/eslint -f table --ignore-path ../.eslintignore ."
+    "lint": "eslint -f table --ignore-path ../.eslintignore ."
   }
 }
