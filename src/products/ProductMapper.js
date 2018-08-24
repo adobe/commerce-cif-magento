@@ -124,7 +124,7 @@ class ProductMapper {
                     .withAvailable(true) // TODO: Get actual value from backend
                     .withId(product.sku)
                     .withName(product.name || '')
-                    .withPrices([])
+                    .withPrices(prices)
                     .withSku(product.sku)
                     .build()
             ];
