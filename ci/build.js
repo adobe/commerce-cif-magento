@@ -46,6 +46,9 @@ if ("test-it" in pkg.scripts && process.env.CORE_WSK_AUTH_STRING) {
     process.env.OW_PACKAGE_SUFFIX = `magento-${branch}-${buildNum}`;
 
     try {
+        // Fix serverless permissions
+        ci.sh('$(npm bin)/lerna run fix-serverless-permission');
+
         ci.withWskCredentials(process.env.WSK_API_HOST, process.env.CORE_WSK_NAMESPACE, process.env.CORE_WSK_AUTH_STRING, () => {
             ci.sh('$(npm bin)/lerna run deploy-suffix --concurrency 1');
         });

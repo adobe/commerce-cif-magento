@@ -26,7 +26,7 @@
     "extends": "../../.eslintrc.js"
   },
   "scripts": {
-    "postinstall": "chmod +x $(npm bin)/serverless",
+    "fix-serverless-permission": "chmod +x $(npm bin)/serverless",
     "lint": "$(npm bin)/eslint -f table --ignore-path ../../.eslintignore .",
     "deploy": "$(npm bin)/serverless deploy",
     "remove": "$(npm bin)/serverless remove",

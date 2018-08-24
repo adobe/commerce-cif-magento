@@ -14,7 +14,8 @@
   "customer-package": "magento",
   "bindings-namespace": "cif-core",
   "scripts": {
-    "postinstall": "node ./postinstall.js && chmod +x $(npm bin)/serverless",
+    "postinstall": "node ./postinstall.js",
+    "fix-serverless-permission": "chmod +x $(npm bin)/serverless",
     "deploy": "$(npm bin)/serverless deploy",
     "clean": "$(npm bin)/serverless remove"
   }
