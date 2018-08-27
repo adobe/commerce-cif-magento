@@ -43,6 +43,9 @@ ci.sh(`git checkout '${gitTag}' `);
 // Provision
 ci.sh('npm install');
 
+// Fix serverless permissions
+ci.sh('$(npm bin)/lerna run fix-serverless-permission');
+
 ci.stage(`PERFORM DEPLOYMENT OF ${moduleToRelease}`);
 
 ci.dir(modules[moduleToRelease], () => {
