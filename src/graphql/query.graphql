@@ -1,0 +1,62 @@
+{
+  {{#each this}}
+  {{#ifCond @key '==' "searchProducts"}}
+  products(
+      {{#if args.filter}}
+      filter: {
+            {{#each args.filter}}
+            {{field}}: {
+                eq: "{{value}}"
+            }
+            {{/each}}
+        }
+      {{/if}}
+      {{#if args.text}}
+      search: "{{args.text}}"
+      {{/if}}
+      {{#ifCond args.limit '>=' 0}}
+      pageSize: {{args.limit}}
+      {{/ifCond}}
+      {{#ifCond args.currentPage '>=' 0}}
+      currentPage: {{args.currentPage}}
+      {{/ifCond}}
+  ) {
+      {{#ifCond total '||' count}}
+      total_count
+      {{/ifCond}}
+      {{#ifCond offset '||' count}}
+      page_info {
+        page_size
+        current_page
+      }
+      {{/ifCond}}
+      {{#if results}}
+      {{#with results}}
+      items {
+        {{> product}}
+        {{#if variants}}
+        ... on ConfigurableProduct {
+          {{#if configurable_options}}
+          configurable_options {
+            attribute_code
+            label
+            values {
+              value_index
+              label
+            }
+          }
+          {{/if}}
+          variants {
+            product {
+              {{> product variants}}
+            }
+          }
+        }
+      {{/if}}
+      {{/with}}
+    }
+    {{/if}}
+  }
+  {{/ifCond}}
+  {{/each}} 
+}

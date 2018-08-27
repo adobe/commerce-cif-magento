@@ -1,0 +1,19 @@
+{{#each simpleFields}}
+{{this}}        
+{{/each}}
+{{#if price}}
+price {
+    regularPrice {
+        amount {
+            {{#each price}}
+            {{this}}
+            {{/each}}
+        }
+    }
+}
+{{/if}}
+{{#if categories}}
+categories {
+    {{> product categories}}
+}
+{{/if}}

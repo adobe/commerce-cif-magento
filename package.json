@@ -51,5 +51,8 @@
     "test-cov": "XUNIT_FILE=test/results/unit/results.xml $(npm bin)/nyc $(npm bin)/mocha test/**/*Test.js -R xunit-file && $(npm bin)/nyc report --reporter=lcov",
     "unit": "$(npm bin)/mocha test/**/*Test.js",
     "test-it": "XUNIT_FILE=test/results/integration/results.xml $(npm bin)/mocha test/**/*IT.js -R xunit-file"
+  },
+  "dependencies": {
+    "graphql": "^0.13.2"
   }
 }
