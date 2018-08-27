@@ -16,20 +16,23 @@
   },
   "devDependencies": {
     "eslint": "3.19.0",
-    "eslint-plugin-header": "1.2.0",
+    "eslint-plugin-header": "git+https://github.com/herzog31/eslint-plugin-header.git",
+    "mkdirp": "0.5.1",
     "serverless": "1.29.0",
     "serverless-openwhisk": "0.13.0",
     "serverless-webpack": "4.3.0",
+    "tar": "4.4.6",
     "webpack": "4.0.1"
   },
   "eslintConfig": {
     "extends": "../../.eslintrc.js"
   },
   "scripts": {
-    "lint": "$(npm bin)/eslint -f table --ignore-path ../../.eslintignore .",
-    "postinstall": "node ./deployment-install.js && chmod +x $(npm bin)/serverless",
-    "deploy": "$(npm bin)/serverless deploy",
-    "remove": "$(npm bin)/serverless remove",
+    "lint": "eslint -f table --ignore-path ../../.eslintignore .",
+    "postinstall": "node ./deployment-install.js",
+    "fix-serverless-permission": "chmod +x $(npm bin)/serverless",
+    "deploy": "serverless deploy",
+    "remove": "serverless remove",
     "deploy-current": "npm run deploy -- --ow-package commerce-cif-magento-common@$npm_package_version --shared",
     "deploy-latest": "npm run deploy -- --ow-package commerce-cif-magento-common@latest --shared",
     "deploy-suffix": "npm run deploy -- --ow-package commerce-cif-magento-common@${OW_PACKAGE_SUFFIX} --shared",
