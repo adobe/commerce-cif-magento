@@ -32,7 +32,7 @@ const {
     invalidField
 } = require('../resources/queries');
 const { gqlToObject } = require('../../src/graphql/utils/graphqlUtils');
-const { parse } = require('graphql');
+const { parse } = require('../../src/graphql/node_modules/graphql');
 
 describe('magento graphql endpoint', function () {
     describe('Integration tests', function () {
