@@ -20,7 +20,6 @@ const assert = chai.assert;
 
 const setup = require('../lib/setupTest').setup;
 const config = require('../lib/config').config;
-const sinon = require('sinon');
 
 const {
     allFieldsQuery,
