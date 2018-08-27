@@ -37,17 +37,7 @@ describe('Unit tests', () => {
     describe('graphql', () => {
 
         setup(this, __dirname, 'graphql');
-
-        let consoleSpy;
-
-        before(() => {
-            consoleSpy = sinon.spy(console, 'log');
-        });
-
-        after(() => {
-            consoleSpy.restore();
-        });
-
+    
         it('performs a product search with fulltext search', () => {
             return this.prepareResolve(sampleProductSearch, (actualsArgs) => {
                     assert.equal(actualsArgs.method, "POST");

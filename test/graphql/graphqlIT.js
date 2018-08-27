@@ -47,7 +47,7 @@ describe('magento graphql endpoint', function () {
         // `{ searchProducts(text: "${sku}") { total }}`
 
         it('Returns executable Schema for introspection query', function () {
-            chai.request(env.openwhiskEndpoint)
+            return chai.request(env.openwhiskEndpoint)
                 .post(env.graphqlPackage + 'graphql')
                 .set('Cache-Control', 'no-cache')
                 .send({query: introSpectionQuery})
@@ -59,7 +59,7 @@ describe('magento graphql endpoint', function () {
         });
 
         it('returns all fields', function () {
-            return chai.request("https://192.168.33.16/api/v1/web/cif-customer")
+            return chai.request(env.openwhiskEndpoint)
                 .post(env.graphqlPackage + 'graphql')
                 .set('Cache-Control', 'no-cache')
                 .send({ query: allFieldsQuery })

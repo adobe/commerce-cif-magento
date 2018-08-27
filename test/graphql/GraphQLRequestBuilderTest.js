@@ -19,25 +19,27 @@ const requestBuilder = require('../../src/graphql/GraphQlRequestBuilder');
 
 describe('Magento request builder', () => {
     describe('Unit Tests', () => {
-        let endpoint = "end";
-        let context = {
-            obj: true
-        }
-        let b = new requestBuilder(endpoint, context);
-        let res = b.build();
-        assert.deepEqual(res, {
-            method: 'POST',
-            uri: endpoint,
-            body: {
-                query: '{\n}',
-                operationName: null,
-                variables: null
-            },
-            headers: {
-                'Store': 'default'
-            },
-            json: true,
-            resolveWithFullResponse: true
+        it('returns basic request parameters', function () {
+            let endpoint = "end";
+            let context = {
+                obj: true
+            }
+            let b = new requestBuilder(endpoint, context);
+            let res = b.build();
+            assert.deepEqual(res, {
+                method: 'POST',
+                uri: endpoint,
+                body: {
+                    query: '{\n}',
+                    operationName: null,
+                    variables: null
+                },
+                headers: {
+                    'Store': 'default'
+                },
+                json: true,
+                resolveWithFullResponse: true
+            });
         });
     });
 });
