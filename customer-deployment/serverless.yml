@@ -152,6 +152,14 @@ functions:
     annotations:
       web-export: true
 
+  getPaymentMethods:
+      name: ${self:custom.customer-package}/getPaymentMethods
+      sequence:
+        - ${self:custom.carts-actions}/getPaymentMethodsService
+        - ${self:custom.common-actions}/webActionTransformer
+      annotations:
+        web-export: true
+
   postPayment:
     name: ${self:custom.customer-package}/postPayment
     sequence:
@@ -160,6 +168,14 @@ functions:
     annotations:
       web-export: true
 
+  postCartPayment:
+      name: ${self:custom.customer-package}/postCartPayment
+      sequence:
+        - ${self:custom.carts-actions}/postCartPaymentService
+        - ${self:custom.common-actions}/webActionTransformer
+      annotations:
+        web-export: true
+
   deletePayment:
     name: ${self:custom.customer-package}/deletePayment
     sequence:
@@ -167,6 +183,14 @@ functions:
       - ${self:custom.common-actions}/webActionTransformer
     annotations:
       web-export: true
+
+  deleteCartPayment:
+      name: ${self:custom.customer-package}/deleteCartPayment
+      sequence:
+        - ${self:custom.carts-actions}/deleteCartPaymentService
+        - ${self:custom.common-actions}/webActionTransformer
+      annotations:
+        web-export: true
 
   postCoupon:
     name: ${self:custom.customer-package}/postCoupon

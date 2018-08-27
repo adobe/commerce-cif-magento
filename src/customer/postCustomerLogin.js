@@ -17,7 +17,6 @@
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
 const customerMapper = require('./CustomerMapper');
 const MagentoCustomerLogin = require('./MagentoCustomerLogin');
-const decorateActionForSequence = require('@adobe/commerce-cif-common/performance-measurement.js').decorateActionForSequence;
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
 /**
@@ -49,8 +48,12 @@ function login(args) {
         password: args.password
     };
 
+    if (args.anonymousCartId) {
+        data.anonymousCartId = args.anonymousCartId;
+    }
+
     const magentoCustomer = new MagentoCustomerLogin(args, customerMapper.mapCustomerLogin);
     return magentoCustomer.login(data);
 }
 
-module.exports.main = decorateActionForSequence(login);
+module.exports.main = login;

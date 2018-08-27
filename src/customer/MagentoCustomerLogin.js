@@ -47,6 +47,18 @@ class MagentoCustomerLogin extends MagentoClientBase {
                 cartClient.customerToken = token;
                 return this._customerLogin(token);
             })
+            //merge the anonymous cart if it has been provided
+            .then(loginResult => {
+                if (data.anonymousCartId) {
+                    return this._mergeCart(cartClient, data.anonymousCartId)
+                        //this returns only the customer cart id so we
+                        //don't need it; the cart is fetched in the next iteration and added to the login result.
+                        .then(() => {
+                            return Promise.resolve(loginResult);
+                        });
+                }
+                return Promise.resolve(loginResult);
+            })
             // get the customer cart and add it to login response
             .then(loginResult => {
                 return this._customerCart(cartClient, loginResult);
@@ -81,13 +93,16 @@ class MagentoCustomerLogin extends MagentoClientBase {
                 return this._handleSuccess(loginResult, headers);
             })
             .catch(err => {
-                //TODO - this will be replaced with 404 (customer cart not found) when magento will fix the code
-                //https://github.com/adobe/commerce-cif-magento-extension/issues/5
-                if (err.statusCode === HttpStatusCodes.BAD_REQUEST) {
+                if (err.statusCode === HttpStatusCodes.NOT_FOUND) {
                     return this._handleSuccess(loginResult, headers);
                 }
                 throw err;
             });
+    }
+
+    _mergeCart(cartClient, anonymousCartId) {
+        // no need to provide the id for a customer cart
+        return cartClient.byId().mergeCart(anonymousCartId);
     }
 
 }

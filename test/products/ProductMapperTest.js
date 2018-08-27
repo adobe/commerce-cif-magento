@@ -58,6 +58,10 @@ describe('Magento ProductMapper', () => {
             assert.strictEqual(product.lastModifiedAt, formatDate(magentoProduct.updated_at));
             assert.lengthOf(product.variants, magentoProduct.variants.length);
             assert.lengthOf(product.categories, magentoProduct.categories.length);
+            product.categories.forEach(category => {
+                assert.isDefined(category.id);
+                assert.isString(category.id);
+            });
 
             assert.strictEqual(product.attributes.length, 2);
             product.attributes.forEach(attr => {
@@ -113,6 +117,16 @@ describe('Magento ProductMapper', () => {
             assert.lengthOf(product.variants, 1);
             assert.strictEqual(variant.id, product.id);
             assert.strictEqual(variant.sku, product.sku);
+            assert.strictEqual(variant.name, product.name);
+            assert.isArray(variant.prices);
+            for (let i = 0, l = variant.prices.length; i < l; i++) {
+                let variantPrice = variant.prices[0];
+                let productPrice = product.prices[0];
+                assert.containsAllKeys(variantPrice, ['amount', 'currency']);
+                assert.isNumber(variantPrice.amount);
+                assert.strictEqual(variantPrice.amount, productPrice.amount);
+                assert.strictEqual(variantPrice.currency, productPrice.currency);
+            }
         });
 
         it('Maps Magento graphQL response into valid CIF Cloud prices', () => {

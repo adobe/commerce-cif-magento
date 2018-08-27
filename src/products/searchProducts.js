@@ -41,7 +41,11 @@ function searchProducts(args) {
     
     validator
         .checkArguments()
-        .atLeastOneParameter(['filter', 'text']);
+        .atLeastOneParameter(['filter', 'text'])
+        .isInteger('limit')
+        .isInsideInterval('limit', 1)
+        .isInteger('offset')
+        .isInsideInterval('offset', 0);
     if (validator.error) {
         return validator.buildErrorResponse();
     }
@@ -57,7 +61,13 @@ function searchProducts(args) {
         return client.handleError(e);
     }
 
-    return req(options).then((response) => {
+    let request;
+    if (args.DEBUG) {
+        request = client._profileRequest(options);
+    } else {
+        request = req(options);
+    }
+    return request.then((response) => {
         let imageUrlPrefix = `${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/${args.MAGENTO_MEDIA_PATH}`;
         let productMapper = new ProductMapper(imageUrlPrefix, args.GRAPHQL_PRODUCT_ATTRIBUTES);
         return client._handleSuccess(productMapper.mapGraphQlResponse(response.body), {}, response.statusCode);
