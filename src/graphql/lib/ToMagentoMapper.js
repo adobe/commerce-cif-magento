@@ -17,27 +17,25 @@
 /**
  * Meant for creating an object that can be used in templates afterwards.
  */
-class ObjectMapper {
+class ToMagentoMapper {
 
     /**
-     * @param {String[]}                simpleFields    basic repetative needed fields throughout a schema (ie. 'sku', 'lastModifiedAt', ...)
+     * @param {String[]}                simpleFields    simple scalar fields (e.g. 'sku', 'lastModifiedAt')
      * @param {Map<String, String>}     renameMap       defines patterns to be renamed
      * @param {String[]}                attributes      array with magento arguments
      * @param {String[]}                assets          array with magento assets
-     * @param {String[]}                categoryFields  array with supported category fields
      */
-    constructor(simpleFields, renameMap, attributes, assets, categoryFields) {
+    constructor(simpleFields, renameMap, attributes, assets) {
         this.simpleFields = simpleFields;
         this.renamers = renameMap;
         this.attributes = attributes;
         this.assets = assets;
-        this.categoryFields = categoryFields;
     }
 
     /**
      * Renames patterns globally using renamers map
      * 
-     * @param   {String} source     Cif graphql source int this case (could be any string though)
+     * @param   {String} source     CIF graphql source int this case (could be any string though)
      * @returns {String}            source with renamed patterns as defined in renamers
      */
     renameFields(source) {
@@ -106,22 +104,10 @@ class ObjectMapper {
      * @private
      */
     _addCategories(product) {
-        let categories = product.categories || product.children;
+        let categories = product.categories;
         if (categories) {
-            /*let cats =*/ categories.simpleFields = ['id'];
-            //as soon as ProductMapper can map the other fields as well :)
-            // this.simpleFields.concat(this.categoryFields).forEach(c => {
-            //     if(categories[c]) {
-            //         cats.push(c);
-            //         delete categories[c];
-            //     }
-            // });
-            // if (categories.children) {
-            //     this._addCategories(categories);
-            // }
-            // if(cats.length === 0) {
-            //     cats = ['id'];
-            // }
+            //TODO: handle rest of categoryFields (make children recursive)
+            categories.simpleFields = ['id'];
         }
     }
 
@@ -131,9 +117,9 @@ class ObjectMapper {
     _addPrice(product) {
         let cifPrice = product.prices
         if (cifPrice) {
-            let price = product.price = [];
+            let priceFields = product.priceFields = [];
             Object.keys(cifPrice).forEach(priceField => {
-                price.push(priceField);
+                priceFields.push(priceField);
             });
             delete product.prices;
         }
@@ -144,7 +130,7 @@ class ObjectMapper {
      */
     _addAssets(product) {
         if (product.assets) {
-            //in this case only one asset - image - with is a simple field in magento
+            //in this case only one asset - image - wich is a simple field in magento
             product.simpleFields = product.simpleFields.concat(this.assets);
             delete product.assets;
         }
@@ -179,4 +165,4 @@ class ObjectMapper {
     }
 }
 
-module.exports = ObjectMapper;
+module.exports = ToMagentoMapper;

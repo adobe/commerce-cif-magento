@@ -65,7 +65,7 @@ class ArgsHandler {
     }
 
     /**
-     * Handles not only the passed object but also it's properties
+     * Handles not only the passed object but also its properties
      * 
      * @param {Object} obj      object to deep handle arguments of
      * @param {String} objName  name of the object (root), in case of obligatoryArgsOnFields 

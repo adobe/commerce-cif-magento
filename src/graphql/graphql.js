@@ -15,20 +15,20 @@
 'use strict';
 
 const req = require('request-promise-native');
-const { parse, graphql, } = require('graphql');
+const { parse, graphql } = require('graphql');
 const {makeExecutableSchema} = require('graphql-tools');
 const graphqlSchema = require('@adobe/commerce-cif-model').graphqlSchema;
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 
-const ProductMapper = require('../products/ProductMapper');
+const ProductMapper = require('@adobe/commerce-cif-magento-product/ProductMapper');
 const { validateAndParseQuery, gqlToObject } = require('./utils/graphqlUtils');
-const GraphQlRequestBuilder = require('./GraphQlRequestBuilder');
+const GraphQlRequestBuilder = require('./MagentoGraphQlRequestBuilder');
 const ObjectMapper = require('./lib/ToMagentoMapper');
 const filter = require('./responseFilter').filter;
 const schema = makeExecutableSchema({typeDefs: graphqlSchema});
 
 /**
- * This action handles a GraphQL endpoint.
+ * This action handles incoming GraphQL queries.
  * @param   {GraphQLSource} args.query      //entering GraphQL query
  * 
  * @return  {Promise.<ExecutionResult>}
@@ -55,7 +55,7 @@ function main(args) {
         let originalQueryObject = gqlToObject(document.definitions[0]); //transform into JS object
         
         //create cif to magento mapper
-        let toMagento = new ObjectMapper(args.MAGENTO_SIMPLEFIELDS, new Map(args.GRAPHQL_SUBSTITUTIONS), args.GRAPHQL_PRODUCT_ATTRIBUTES, args.GRAPHQL_PRODUCT_ASSETS, args.MAGENTO_CATEGORYFIELDS);
+        let toMagento = new ObjectMapper(args.MAGENTO_SIMPLEFIELDS, new Map(args.GRAPHQL_FIELD_SUBSTITUTIONS), args.GRAPHQL_PRODUCT_ATTRIBUTES, args.GRAPHQL_PRODUCT_ASSETS);
         //rename cif field to corresponding magento fields
         let newQuery = toMagento.renameFields(query);
         //transform renamed query to a queryObject used to create magento query
@@ -66,7 +66,7 @@ function main(args) {
         try {
             options = builder.build();
         } catch(e) {
-            return client._handleSuccess({errors: [e]}, null);
+            return client.handleError(e);
         }
         return req(options)
             .then(response => {
@@ -75,7 +75,6 @@ function main(args) {
                 let pagedResponse = productMapper.mapGraphQlResponse(response.body);
                 //filter out only queried fields from originalQueryObject
                 let body = {data: filter(JSON.parse(JSON.stringify(pagedResponse)), originalQueryObject)};
-                console.log(options.body.query);
                 return client._handleSuccess(body, null, response.statusCode);
             })
             .catch((e) => {

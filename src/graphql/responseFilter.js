@@ -79,15 +79,15 @@ function filterProduct(product, queryObject) {
                 case "prices":
                 case "categories":
                 case "attributes":
-                case "assets": {
+                case "assets":
                     response[field] = arrayField(product[field], queryObject[field]);
-                } break;
-                case "variants": {
+                    break;
+                case "variants":
                     response.variants = product.variants.map(v => filterProduct(v, queryObject.variants));
-                } break;
-                default: {
+                    break;
+                default:
                     response[field] = product[field];
-                }
+                    break;
             }
         }
     });

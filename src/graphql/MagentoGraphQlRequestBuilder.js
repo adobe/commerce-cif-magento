@@ -15,21 +15,12 @@
 'use strict';
 
 const handlebars = require('handlebars');
-handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
-    switch (operator) {
-        case '==':
-            return (v1 == v2) ? options.fn(this) : options.inverse(this);
-        case '>=':
-            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-        case '||':
-            return (v1 || v2) ? options.fn(this) : options.inverse(this);
-        default:
-    }
-});
+const { ifCond } = require('./common/handlebarsHelpers');
+handlebars.registerHelper('ifCond', ifCond);
 const fs = require('fs');
 const ArgsHandler = require('./utils/ArgsHandler');
-const magentoArgs = require('./lib/MagentoArguments').magentoArguments;
-const obligatoryArgs = require('./lib/MagentoArguments').obligatoryArguments;
+const magentoArgs = require('./lib/CIFToMagentoArgsMapper').magentoArguments;
+const obligatoryArgs = require('./lib/CIFToMagentoArgsMapper').obligatoryArguments;
 
 /**
  * Uses magento templates to build a magento graphql query
@@ -37,7 +28,6 @@ const obligatoryArgs = require('./lib/MagentoArguments').obligatoryArguments;
 class GraphQlRequestBuilder {
 
     /**
-     * 
      * @param {string} endpoint     graphql endpoint for query
      * @param {object} context      context to use in template
      */
@@ -72,11 +62,7 @@ class GraphQlRequestBuilder {
 
     _handleArgs() {
         let handler = new ArgsHandler(magentoArgs, obligatoryArgs, "args");
-        try {
-            handler.handleWholeObject(this.context);
-        } catch(e) {
-            throw e;
-        }
+        handler.handleWholeObject(this.context);
     }
 
     _generateQuery() {

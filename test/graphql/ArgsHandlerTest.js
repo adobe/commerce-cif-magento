@@ -18,8 +18,8 @@ const chai = require('chai');
 chai.use(require('chai-string'));
 const assert = chai.assert;
 const ArgsHandler = require('../../src/graphql/utils/ArgsHandler');
-const magentoArgs = require('../../src/graphql/lib/MagentoArguments').magentoArguments;
-const obligatoryArgs = require('../../src/graphql/lib/MagentoArguments').obligatoryArguments;
+const magentoArgs = require('../../src/graphql/lib/CifToMagentoArgsMapper').magentoArguments;
+const obligatoryArgs = require('../../src/graphql/lib/CifToMagentoArgsMapper').obligatoryArguments;
 
 describe('ArgHandler', () => {
     let handler;
@@ -28,7 +28,7 @@ describe('ArgHandler', () => {
         handler = new ArgsHandler(magentoArgs, obligatoryArgs);
     });
 
-    it('handles arguments as defined andand doesn\t modify the rest', () => {
+    it('handles arguments as defined and doesn\t modify the rest', () => {
         let limit = -12;
         let offset = 12;
         let obj = {

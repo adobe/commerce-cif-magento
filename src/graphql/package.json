@@ -9,10 +9,11 @@
     "url": "https://github.com/adobe/commerce-cif-magento.git"
   },
   "dependencies": {
-    "@adobe/commerce-cif-common": "0.1.17",
+    "@adobe/commerce-cif-common": "1.0.0",
     "@adobe/commerce-cif-magento-common": "0.0.1",
     "@adobe/commerce-cif-model": "1.1.2",
-    "graphql-tools": "^3.1.1",
+    "@adobe/commerce-cif-magento-product": "0.0.1",
+    "graphql-tools": "3.1.1",
     "handlebars": "4.0.11",
     "request": "2.87.0",
     "request-promise-native": "1.0.5",
@@ -31,10 +32,10 @@
     "extends": "../../.eslintrc.js"
   },
   "scripts": {
-    "postinstall": "chmod +x $(npm bin)/serverless",
-    "lint": "$(npm bin)/eslint -f table --ignore-path ../../.eslintignore .",
-    "deploy": "$(npm bin)/serverless deploy",
-    "remove": "$(npm bin)/serverless remove",
+    "fix-serverless-permission": "chmod +x $(npm bin)/serverless",
+    "lint": "eslint -f table --ignore-path ../../.eslintignore .",
+    "deploy": "serverless deploy",
+    "remove": "serverless remove",
     "deploy-current": "npm run deploy -- --ow-package commerce-cif-magento-graphql@$npm_package_version --shared",
     "deploy-latest": "npm run deploy -- --ow-package commerce-cif-magento-graphql@latest --shared",
     "deploy-suffix": "npm run deploy -- --ow-package commerce-cif-magento-graphql@${OW_PACKAGE_SUFFIX} --shared",

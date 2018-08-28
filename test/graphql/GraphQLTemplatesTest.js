@@ -14,32 +14,12 @@
 
 'use strict';
 
-const cutIndex = __dirname.indexOf('test');
-const path = __dirname.substring(0, cutIndex) + 'src/graphql';
-const handlebars = require('handlebars');
-handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
-    switch (operator) {
-        case '==':
-            return (v1 == v2) ? options.fn(this) : options.inverse(this);
-        case '>=':
-            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-        case '||':
-            return (v1 || v2) ? options.fn(this) : options.inverse(this);
-        default:
-            return options.inverse(this);
-    }
-});
-const fs = require('fs');
 const assert = require('chai').assert;
 const {categoryQuery, priceQuery, placesArgsCorrectlyQuery, offsetQuery, countQuery, totalQuery, simpleQuery, noResultsQuery, simpleVariants, conf_options} = require('../resources/magentoQueries');
 
+const GraphQLRequestBuilder = require('../../src/graphql/MagentoGraphQlRequestBuilder');
+
 describe('Magento graphql templates', () => {
-
-    let productTemplate = fs.readFileSync(path + '/magentoProduct.graphql', 'utf8');
-    handlebars.registerPartial("product", productTemplate)
-    let queryTemplate = fs.readFileSync(path + '/query.graphql', 'utf8');
-    let compiledTemplate = handlebars.compile(queryTemplate);
-
     describe('Unit Tests', () => {
         let queryObj;
         let sf = ['jackets', 'shirts', 'pants', 'dress'];
@@ -59,29 +39,32 @@ describe('Magento graphql templates', () => {
         it('creates valid query without queried for results', () => {
             let sp = queryObj.searchProducts;
             sp.total = sp.count = sp.offset = true;
-
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
             assert.strictEqual(query.replace(/\s/g, ""), noResultsQuery.replace(/\s/g, ""));
         });
 
         it('creates valid query for total field', () => {
             queryObj.searchProducts.total = true;
 
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
             assert.strictEqual(query.replace(/\s/g, ""), totalQuery.replace(/\s/g, ""));
         });
 
         it('creates valid query count field', () => {
             queryObj.searchProducts.count = true;
 
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
             assert.strictEqual(query.replace(/\s/g, ""), countQuery.replace(/\s/g, ""));
         });
 
         it('creates valid query for offset field', () => {
             queryObj.searchProducts.offset = true;
 
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
             assert.strictEqual(query.replace(/\s/g, ""), offsetQuery.replace(/\s/g, ""));
         });
 
@@ -94,7 +77,8 @@ describe('Magento graphql templates', () => {
                 limit: limit,
                 currentPage: currentPage
             }
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
 
             assert.strictEqual(query.replace(/\s/g, ""), placesArgsCorrectlyQuery.replace(/\s/g, ""));
         });
@@ -104,7 +88,8 @@ describe('Magento graphql templates', () => {
                 simpleFields: sf
             };
 
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
             assert.strictEqual(query.replace(/\s/g, ""), simpleQuery.replace(/\s/g, ""));
         });
 
@@ -115,7 +100,8 @@ describe('Magento graphql templates', () => {
                 }
             };
 
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
             assert.strictEqual(query.replace(/\s/g, ""), simpleVariants.replace(/\s/g, ""));
         });
 
@@ -127,16 +113,18 @@ describe('Magento graphql templates', () => {
                 configurable_options: true
             };
 
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
             assert.strictEqual(query.replace(/\s/g, ""), conf_options.replace(/\s/g, ""));
         });
 
         it('handles price query', () => {
             queryObj.searchProducts.results = {
-                price: sf
+                priceFields: sf
             };
 
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
             assert.strictEqual(query.replace(/\s/g, ""), priceQuery.replace(/\s/g, ""));
         });
 
@@ -147,7 +135,8 @@ describe('Magento graphql templates', () => {
                 }
             };
 
-            let query = compiledTemplate(queryObj);
+            let builder = new GraphQLRequestBuilder('', queryObj);
+            let query = builder._generateQuery();
             assert.strictEqual(query.replace(/\s/g, ""), categoryQuery.replace(/\s/g, ""));
         });
     });

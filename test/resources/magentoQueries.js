@@ -150,4 +150,39 @@ const placesArgsCorrectlyQuery = `{
     }
   }`
 
-module.exports = {categoryQuery, priceQuery, placesArgsCorrectlyQuery, offsetQuery, countQuery, totalQuery, simpleQuery, noResultsQuery, simpleVariants, conf_options};
+const CIFFields = {
+  queryObject: {
+    searchProducts: {
+      results: {
+        prices: {
+          country: true
+        },
+        sku: true,
+        id: true,
+        variants: {
+          available: true
+        }
+      }
+    }
+  },
+  mockResponse: {
+    results: [{
+      prices: [{
+        country: 'CH',
+        amount: 123
+      }],
+      sku: "sku",
+      id: "lol",
+      anotherField: "haha",
+      obj: {
+        wh: "at"
+      },
+      variants: [{
+        sku: "variant",
+        guru: 1
+      }]
+    }]
+  }
+}
+
+module.exports = { CIFFields, categoryQuery, priceQuery, placesArgsCorrectlyQuery, offsetQuery, countQuery, totalQuery, simpleQuery, noResultsQuery, simpleVariants, conf_options };

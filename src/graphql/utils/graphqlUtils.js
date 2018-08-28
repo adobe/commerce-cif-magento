@@ -16,9 +16,6 @@
 
 const { parse } = require('graphql');
 const { validate } = require('graphql/validation');
-//const { DocumentNode, DefinitionNode } = require('@types/graphql/language/ast');
-//const { Source } = require('@types/graphql/language/source');
-//const { GraphQLSchema } = require('@types/graphql/type/definition');
 
 /**
  * Transforms an AST {@link DefinitionNode} into a a javascript object
@@ -31,7 +28,6 @@ function gqlToObject(node) {
     let object = {};
     if (node.selectionSet) {
         let selections = node.selectionSet.selections;
-        //try with map?
         selections.forEach(sel => {
             let name = sel.name.value;
             //TODO: handle alias

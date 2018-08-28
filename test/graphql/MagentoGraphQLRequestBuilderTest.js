@@ -15,31 +15,19 @@
 'use strict';
 
 const assert = require('chai').assert;
-const requestBuilder = require('../../src/graphql/GraphQlRequestBuilder');
+const requestBuilder = require('../../src/graphql/MagentoGraphQlRequestBuilder');
+
+const requestBuilderObject = require('../resources/GQLRequestBuilderObject');
 
 describe('Magento request builder', () => {
     describe('Unit Tests', () => {
         it('returns basic request parameters', function () {
-            let endpoint = "end";
             let context = {
                 obj: true
             }
-            let b = new requestBuilder(endpoint, context);
+            let b = new requestBuilder('', context);
             let res = b.build();
-            assert.deepEqual(res, {
-                method: 'POST',
-                uri: endpoint,
-                body: {
-                    query: '{\n}',
-                    operationName: null,
-                    variables: null
-                },
-                headers: {
-                    'Store': 'default'
-                },
-                json: true,
-                resolveWithFullResponse: true
-            });
+            assert.deepEqual(res, requestBuilderObject);
         });
     });
 });

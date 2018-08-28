@@ -103,9 +103,9 @@ describe('Magento Mapper', () => {
             };
             let parser = new ToMagentoMapper(['sku'], '', '', ['asset']);
             parser._addPrice(obj);
-            assert.hasAllKeys(obj, ["simpleFields", "price"]);
-            assert.isArray(obj.price);
-            assert.lengthOf(obj.price, 2);
+            assert.hasAllKeys(obj, ["simpleFields", "priceFields"]);
+            assert.isArray(obj.priceFields);
+            assert.lengthOf(obj.priceFields, 2);
         });
 
         it('handles categories correctly', () => {

@@ -14,15 +14,17 @@
 
 'use strict';
 
-const assert = require('chai').assert;
-const responseFilter = require('../../src/graphql/responseFilter');
-
-const { CIFFields } = require('../resources/magentoQueries');
-
-describe('Graphql responseFilter', () => {
-    describe('Unit Tests', () => {
-        it('filters a result object to return only the queried fields', () => {
-            assert.hasAllDeepKeys(responseFilter.filter(CIFFields.mockResponse, CIFFields.queryObject), CIFFields.queryObject);
-        });
-    });
-});
+module.exports = {
+    method: 'POST',
+    uri: '',
+    body: {
+        query: '{\n}',
+        operationName: null,
+        variables: null
+    },
+    headers: {
+        'Store': 'default'
+    },
+    json: true,
+    resolveWithFullResponse: true
+}

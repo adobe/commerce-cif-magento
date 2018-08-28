@@ -12,17 +12,22 @@
  *
  ******************************************************************************/
 
-'use strict';
+ 'use strict';
+ 
+ /**
+  * File to create handlebars helper functions
+  */
 
-const assert = require('chai').assert;
-const responseFilter = require('../../src/graphql/responseFilter');
+function ifCond (v1, operator, v2, options) {
+    switch (operator) {
+        case '==':
+            return (v1 == v2) ? options.fn(this) : options.inverse(this);
+        case '>=':
+            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+        case '||':
+            return (v1 || v2) ? options.fn(this) : options.inverse(this);
+        default:
+    }
+}
 
-const { CIFFields } = require('../resources/magentoQueries');
-
-describe('Graphql responseFilter', () => {
-    describe('Unit Tests', () => {
-        it('filters a result object to return only the queried fields', () => {
-            assert.hasAllDeepKeys(responseFilter.filter(CIFFields.mockResponse, CIFFields.queryObject), CIFFields.queryObject);
-        });
-    });
-});
+module.exports = { ifCond };

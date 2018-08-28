@@ -1,11 +1,11 @@
 {{#each simpleFields}}
 {{this}}        
 {{/each}}
-{{#if price}}
+{{#if priceFields}}
 price {
     regularPrice {
         amount {
-            {{#each price}}
+            {{#each priceFields}}
             {{this}}
             {{/each}}
         }

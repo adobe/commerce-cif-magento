@@ -18,7 +18,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
-const requiredFields = require('./lib/queriedFields');
+const requiredFields = require('../lib/queriedFields');
 
 const expect = chai.expect;
 chai.use(require("chai-sorted"));
@@ -39,13 +39,6 @@ describe('magento graphql endpoint', function () {
 
         // Get environment
         let env = setup();
-
-        // Increase test timeout
-        this.slow(env.slow);
-        this.timeout(env.timeout);
-
-        // `{ searchProducts(text: "${sku}") { total }}`
-
         it('Returns executable Schema for introspection query', function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.graphqlPackage + 'graphql')
