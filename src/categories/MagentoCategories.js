@@ -22,6 +22,9 @@ class MagentoCategories extends MagentoClientBase {
     constructor(args, categoriesMapper, endpoint) {
         super(args, categoriesMapper, endpoint, ERROR_TYPE);
         this.currentSortIndex = 0;
+        //undefine the customer token to make sure we are not using for categories requests.
+        //this might be a bug on this endpoint
+        this.customerToken = undefined;
     }
     
     getCategories(type, depth) {
