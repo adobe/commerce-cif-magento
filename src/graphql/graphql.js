@@ -55,7 +55,7 @@ function main(args) {
         let originalQueryObject = gqlToObject(document.definitions[0]); //transform into JS object
         
         //create cif to magento mapper
-        let toMagento = new ObjectMapper(args.MAGENTO_SIMPLEFIELDS, new Map(args.GRAPHQL_FIELD_SUBSTITUTIONS), args.GRAPHQL_PRODUCT_ATTRIBUTES, args.GRAPHQL_PRODUCT_ASSETS);
+        let toMagento = new ObjectMapper(args.MAGENTO_SIMPLEFIELDS, new Map(args.GRAPHQL_SUBSTITUTIONS), args.GRAPHQL_PRODUCT_ATTRIBUTES, args.GRAPHQL_PRODUCT_ASSETS);
         //rename cif field to corresponding magento fields
         let newQuery = toMagento.renameFields(query);
         //transform renamed query to a queryObject used to create magento query
