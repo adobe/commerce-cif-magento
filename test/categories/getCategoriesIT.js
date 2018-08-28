@@ -68,7 +68,6 @@ describe('magento getCategories', function() {
 
                     requiredFields.verifyLoginResult(res.body);
                     expect(res.body.customer.email).to.equal(env.magentoCustomerName);
-                    expect(res.body.cart).to.not.be.undefined;
                     //check cookie is set
                     accessToken = extractToken(res);
                     expect(accessToken).to.not.be.undefined;
