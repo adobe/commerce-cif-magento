@@ -44,7 +44,7 @@ describe('Magento postCartPayment', function () {
             methodId: 'checkmo',
             statusCode: '1',
             status: 'Paid',
-            amount: {
+            value: {
                 amount: 17900,
                 currency: 'USD'
             }
