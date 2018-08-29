@@ -211,7 +211,7 @@ functions:
   postOrder:
     name: ${self:custom.customer-package}/postOrder
     sequence:
-      - ${self:custom.orders-actions}/postOrderService
+      - ${self:custom.carts-actions}/postOrderService
       - ${self:custom.common-actions}/webActionTransformer
     annotations:
       web-export: true

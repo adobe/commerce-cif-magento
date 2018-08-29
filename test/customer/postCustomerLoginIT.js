@@ -80,7 +80,10 @@ describe('magento postCustomerLogin', function() {
                     //check cookie is set
                     accessToken = extractToken(res);
                     expect(accessToken).to.not.be.undefined;
-                    cartId = res.body.cart.id;
+                    //in the context of cart order the customer might not have a cart
+                    if(res.body.cart) {
+                        cartId = res.body.cart.id;
+                    }
                     return res;
                 })
                 //add a cart entry
@@ -100,6 +103,8 @@ describe('magento postCustomerLogin', function() {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.CREATED);
                     requiredFields.verifyCart(res.body);
+                    //set the cart id here if customer didn't have one at login
+                    cartId = res.body.id;
                     let promises = [];
                     res.body.entries.forEach(entry => {
                         requiredFields.verifyCartEntry(entry);

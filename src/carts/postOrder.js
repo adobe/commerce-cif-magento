@@ -15,7 +15,7 @@
 'use strict';
 
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
-const MagentoOrderClient = require('./MagentoOrderClient');
+const MagentoCartClient = require('./MagentoCartClient');
 const OrderMapper = require('./OrderMapper');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 
@@ -42,9 +42,11 @@ function postOrder(args) {
     }
 
     let mapper = new OrderMapper();
-    const orderClient = new MagentoOrderClient(args, mapper._mapOrder, 'orders');
+    const cart = new MagentoCartClient(args, mapper._mapOrder, 'order');
 
-    return orderClient.create(args.cartId);
+    return cart.byId(args.cartId).order().catch(error => {
+        return cart.handleError(error);
+    });
 }
 
 module.exports.main = postOrder;

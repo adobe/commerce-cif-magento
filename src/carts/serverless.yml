@@ -99,3 +99,7 @@ functions:
   deleteCouponService:
     name: ${self:custom.ow-package}/deleteCouponService
     handler: deleteCoupon.main
+
+  postOrderService:
+    name: ${self:custom.ow-package}/postOrderService
+    handler: postOrder.main

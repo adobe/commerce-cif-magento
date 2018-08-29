@@ -15,7 +15,7 @@
 'use strict';
 
 const assert = require('chai').assert;
-const OrderMapper = require('../../src/orders/OrderMapper');
+const OrderMapper = require('../../src/carts/OrderMapper');
 const Order = require('@adobe/commerce-cif-model').Order;
 
 describe('Magento OrderMapper', () => {
