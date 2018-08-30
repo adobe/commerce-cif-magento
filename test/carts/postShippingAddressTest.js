@@ -52,6 +52,7 @@ describe('Magento postShippingAddress', () => {
                 const args = {
                     id: spec.args.id,
                     address: spec.args.address,
+                    __ow_headers: spec.args.__ow_headers,
                     default_method: config.SHIPPING_CODES[0],
                     default_carrier: config.SHIPPING_CODES[1]
                 };
@@ -63,12 +64,14 @@ describe('Magento postShippingAddress', () => {
                     }
                 };
 
-                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/shipping-information`), 'POST');
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/shipping-information`),
+                    'POST', spec.token);
                 postRequestWithBody.body = body;
 
                 const expectedArgs = [
                     postRequestWithBody,
-                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
                 ];
 
                 return this.prepareResolve(Promise.reject(samplecart404), expectedArgs)
@@ -87,6 +90,7 @@ describe('Magento postShippingAddress', () => {
                 const args = {
                     id: spec.args.id,
                     address: spec.args.address,
+                    __ow_headers: spec.args.__ow_headers,
                     default_method: config.SHIPPING_CODES[0],
                     default_carrier: config.SHIPPING_CODES[1]
                 };
@@ -98,12 +102,14 @@ describe('Magento postShippingAddress', () => {
                     }
                 };
 
-                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/guest-carts/${args.id}/shipping-information`), 'POST');
+                let postRequestWithBody = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/shipping-information`),
+                    'POST', spec.token);
                 postRequestWithBody.body = body;
 
                 const expectedArgs = [
                     postRequestWithBody,
-                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/guest-aggregated-carts/${args.id}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`, 'GET')
+                    requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpointAggregatedCart}?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,
+                        'GET', spec.token)
                 ];
 
                 return this.prepareResolve(samplecart1, expectedArgs)
