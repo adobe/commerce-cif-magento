@@ -19,6 +19,7 @@ const setup = require('../lib/setupTest').setup;
 const config = require('../lib/config').config;
 const requestConfig = require('../lib/config').requestConfig;
 const specsBuilder = require('../lib/config').specsBuilder;
+const samplecart404 = require('../resources/sample-cart-404');
 
 describe('Magento postOrder', () => {
     describe('Unit tests', () => {
@@ -47,6 +48,16 @@ describe('Magento postOrder', () => {
                         assert.strictEqual(result.response.body.id, 12);
                     });
             });
+        });
+
+        it('returns 404 for a non-existing cart', () => {
+            return this.prepareReject(samplecart404)
+                .execute({'cartId': 'dummy-1'})
+                .then(result => {
+                    assert.isDefined(result.response);
+                    assert.isDefined(result.response.error);
+                    assert.strictEqual(result.response.error.name, 'CommerceServiceResourceNotFoundError');
+                });
         });
 
     });
