@@ -16,7 +16,6 @@ custom:
   bindings-namespace: ${opt:bindings-namespace, file(package.json):bindings-namespace}
   common-actions: /${self:custom.customer-namespace}/commerce-cif-magento-common@latest
   carts-actions: /${self:custom.customer-namespace}/commerce-cif-magento-cart@latest
-  orders-actions: /${self:custom.customer-namespace}/commerce-cif-magento-order@latest
   categories-actions: /${self:custom.customer-namespace}/commerce-cif-magento-category@latest
   customers-actions: /${self:custom.customer-namespace}/commerce-cif-magento-customer@latest
   products-actions: /${self:custom.customer-namespace}/commerce-cif-magento-product@latest
@@ -35,9 +34,6 @@ resources:
         default_method: flatrate
         default_carrier: flatrate
         $<<: ${file(credentials.json)}
-    commerce-cif-magento-order@latest:
-      binding: /${self:custom.bindings-namespace}/commerce-cif-magento-order@latest
-      parameters: ${file(credentials.json)}
     commerce-cif-magento-category@latest:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-category@latest
       parameters:
@@ -211,7 +207,7 @@ functions:
   postOrder:
     name: ${self:custom.customer-package}/postOrder
     sequence:
-      - ${self:custom.orders-actions}/postOrderService
+      - ${self:custom.carts-actions}/postOrderService
       - ${self:custom.common-actions}/webActionTransformer
     annotations:
       web-export: true
