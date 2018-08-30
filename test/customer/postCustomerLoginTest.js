@@ -138,18 +138,20 @@ describe('Magento postCustomerLogin', () => {
             let postRequestWithBody = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/integration/customer/token`, 'POST');
             postRequestWithBody.body = body;
             let getRequestWithCustomerToken = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/customers/me`), 'GET');
+            let getCustomerCartBeforeMerge = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/mine`), 'GET');
             let assignCartRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/mine/merge-with-guest-cart/${sampleCart.cart_details.id}`), 'PUT');
             let getCustomerCart = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/customer-aggregated-carts/mine?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,'GET');
-            assignCartRequest.headers.authorization = getCustomerCart.headers.authorization = getRequestWithCustomerToken.headers.authorization = 'Bearer ' + customerToken;
+            getCustomerCartBeforeMerge.headers.authorization = assignCartRequest.headers.authorization = getCustomerCart.headers.authorization = getRequestWithCustomerToken.headers.authorization = 'Bearer ' + customerToken;
 
             const expectedArgs = [
                 postRequestWithBody,
                 getRequestWithCustomerToken,
+                getCustomerCartBeforeMerge,
+                assignCartRequest,
                 getCustomerCart,
-                assignCartRequest
             ];
 
-            let mockedResponses = [customerToken, customerResponseMock, sampleCart];
+            let mockedResponses = [customerToken, customerResponseMock, '', '', sampleCart];
 
             return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs)
                 .execute(
@@ -166,6 +168,86 @@ describe('Magento postCustomerLogin', () => {
                     assert.isTrue(result.response.headers['Set-Cookie'].includes(customerToken));
                 });
         });
+
+        it('successful customer login and cart assign when customer does not have an active cart', () => {
+            let body = {
+                username: 'a@a.com',
+                password: 'password'
+            };
+            let postRequestWithBody = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/integration/customer/token`, 'POST');
+            postRequestWithBody.body = body;
+            let getRequestWithCustomerToken = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/customers/me`), 'GET');
+            let getCustomerCartBeforeMerge = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/mine`), 'GET');
+            let createsEmptyCart = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/mine`), 'POST');
+            let assignCartRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/mine/merge-with-guest-cart/${sampleCart.cart_details.id}`), 'PUT');
+            let getCustomerCart = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/customer-aggregated-carts/mine?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,'GET');
+            createsEmptyCart.headers.authorization = getCustomerCartBeforeMerge.headers.authorization = assignCartRequest.headers.authorization = getCustomerCart.headers.authorization = getRequestWithCustomerToken.headers.authorization = 'Bearer ' + customerToken;
+
+            const expectedArgs = [
+                postRequestWithBody,
+                getRequestWithCustomerToken,
+                getCustomerCartBeforeMerge,
+                createsEmptyCart,
+                assignCartRequest,
+                getCustomerCart,
+            ];
+
+            let mockedResponses = [customerToken, customerResponseMock, Promise.reject({statusCode: 404}), '', '', sampleCart];
+
+            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs)
+                .execute(
+                    Object.assign(config, {
+                        email: 'a@a.com',
+                        password: 'password',
+                        anonymousCartId: sampleCart.cart_details.id
+                    })
+                ).then(result => {
+                    assert.strictEqual(result.response.statusCode, 200);
+                    assert.isDefined(result.response.body.customer);
+                    assert.isDefined(result.response.body.cart);
+                    assert.isDefined(result.response.headers['Set-Cookie']);
+                    assert.isTrue(result.response.headers['Set-Cookie'].includes(customerToken));
+                });
+        });
+
+        it('fails with unexpected error at customer cart merge when get cart returns 500', () => {
+            let body = {
+                username: 'a@a.com',
+                password: 'password'
+            };
+            let postRequestWithBody = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/integration/customer/token`, 'POST');
+            postRequestWithBody.body = body;
+            let getRequestWithCustomerToken = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/customers/me`), 'GET');
+            let getCustomerCartBeforeMerge = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/mine`), 'GET');
+            let createsEmptyCart = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/mine`), 'POST');
+            let assignCartRequest = requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/carts/mine/merge-with-guest-cart/${sampleCart.cart_details.id}`), 'PUT');
+            let getCustomerCart = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/customer-aggregated-carts/mine?productAttributesSearchCriteria[filter_groups][0][filters][0][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][0][value]=color&productAttributesSearchCriteria[filter_groups][0][filters][1][field]=attribute_code&productAttributesSearchCriteria[filter_groups][0][filters][1][value]=size`,'GET');
+            createsEmptyCart.headers.authorization = getCustomerCartBeforeMerge.headers.authorization = assignCartRequest.headers.authorization = getCustomerCart.headers.authorization = getRequestWithCustomerToken.headers.authorization = 'Bearer ' + customerToken;
+
+            const expectedArgs = [
+                postRequestWithBody,
+                getRequestWithCustomerToken,
+                getCustomerCartBeforeMerge,
+                createsEmptyCart,
+                assignCartRequest,
+                getCustomerCart,
+            ];
+
+            let mockedResponses = [customerToken, customerResponseMock, Promise.reject({statusCode: 500}), '', '', sampleCart];
+
+            return this.prepareResolveMultipleResponse(mockedResponses, expectedArgs)
+                .execute(
+                    Object.assign(config, {
+                        email: 'a@a.com',
+                        password: 'password',
+                        anonymousCartId: sampleCart.cart_details.id
+                    })
+                ).then(result => {
+                    assert.strictEqual(result.response.error.name, 'UnexpectedError');
+                    assert.strictEqual(result.response.error.message, 'Unknown error while communicating with Magento');
+                });
+        });
+
 
         it('returns proper error message with a failed login', () => {
             let args = {
