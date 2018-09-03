@@ -100,10 +100,25 @@ class MagentoCustomerLogin extends MagentoClientBase {
             });
     }
 
+    //TODO update this to only merge a cart once the following issue is fixed: https://github.com/adobe/commerce-cif-magento-extension/issues/13
     _mergeCart(cartClient, anonymousCartId) {
         // no need to provide the id for a customer cart
-        return cartClient.byId().mergeCart(anonymousCartId);
+        cartClient.baseEndpoint = 'carts';
+        return cartClient.withResetEndpoint('mine')._execute('GET')
+            .then(() => {
+                return cartClient.withResetEndpoint('mine').mergeCart(anonymousCartId);
+            })
+            .catch(err => {
+                if (err.statusCode === HttpStatusCodes.NOT_FOUND) {
+                    return cartClient.withResetEndpoint().create()
+                        .then(() => {
+                            return cartClient.withResetEndpoint('mine').mergeCart(anonymousCartId);
+                        });
+                }
+                throw err;
+            });
     }
+
 
 }
 
