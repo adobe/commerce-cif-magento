@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/commerce-cif-magento.git"
   },
   "dependencies": {
-    "@adobe/commerce-cif-magento-common": "0.0.1",
+    "@adobe/commerce-cif-magento-common": "1.0.0",
     "@adobe/commerce-cif-common": "1.0.0",
     "@adobe/commerce-cif-model": "1.1.0",
     "handlebars": "4.0.11",
