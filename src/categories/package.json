@@ -1,6 +1,6 @@
 {
   "name": "@adobe/commerce-cif-magento-category",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Adobe Commerce Integration Framework (CIF) Magento Integration Category Project",
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
