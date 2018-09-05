@@ -1,0 +1,7 @@
+.nyc_output/*
+coverage/*
+test/*
+test-results-xunit.xml
+.npmignore
+.serverless/*
+@adobe/*
