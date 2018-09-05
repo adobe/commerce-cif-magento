@@ -5,3 +5,7 @@ test-results-xunit.xml
 .npmignore
 .serverless/*
 @adobe/*
+# serverless.yml and webpack.config.js needs to be released.
+# so that postinstall script works for the released packages
+# serverless.yml
+# webpack.config.js
