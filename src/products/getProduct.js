@@ -19,8 +19,18 @@ const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoCli
 const ProductGraphQlRequestBuilder = require('./ProductGraphQlRequestBuilder');
 const httpRequest = require('request-promise-native');
 const ProductMapper = require('./ProductMapper');
+const HttpStatusCodes = require('http-status-codes');
 
-
+/**
+ * This action searches a single Magento product by its SKU.
+ *
+ * @param   {string} args.MAGENTO_SCHEMA                Magento host URL schema (http or https)
+ * @param   {string} args.MAGENTO_HOST                  Magento host URL
+ * @param   {string} args.GRAPHQL_PRODUCT_ATTRIBUTES    The product attributes fetched by the graphQL request
+ * @param   {string} args.id                            The SKU of the product.
+ *
+ * @return  {Promise.<Product}                          A promise which resolves to a product model representation
+ */
 function getProduct(args) {
     const validator = new InputValidator(args, ERROR_TYPE);
     validator.checkArguments().mandatoryParameter('id');
@@ -43,7 +53,7 @@ function getProduct(args) {
         const items = response.body.data.products.items;
         if (!items || items.length === 0) {
             return Promise.reject({
-                statusCode: 404
+                statusCode: HttpStatusCodes.NOT_FOUND
             });
         }
 
