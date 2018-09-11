@@ -59,7 +59,7 @@ describe('magento searchProducts', function() {
                 });
         });
 
-        it('returns a 500 error if parameters are missing', function() {
+        it('returns a 400 error if parameters are missing', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'searchProducts')
                 .set('Cache-Control', 'no-cache')

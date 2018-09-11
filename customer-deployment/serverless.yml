@@ -248,6 +248,14 @@ functions:
     annotations:
       web-export: true
 
+  getProductById:
+    name: ${self:custom.customer-package}/getProductById
+    sequence:
+      - ${self:custom.products-actions}/getProductByIdService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
   searchProducts:
     name: ${self:custom.customer-package}/searchProducts
     sequence:

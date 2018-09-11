@@ -24,6 +24,10 @@ resources:
   packages: ${file(../common/serverlessPackageConfig.js)}
 
 functions:
+  getProductByIdService:
+    name: ${self:custom.ow-package}/getProductByIdService
+    handler: getProduct.main
+
   searchProductsService:
     name: ${self:custom.ow-package}/searchProductsService
     handler: searchProducts.main

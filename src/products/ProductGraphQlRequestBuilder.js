@@ -25,15 +25,21 @@ class ProductGraphQlRequestBuilder {
         this.requestArgs = requestArgs;
         this.template = template;
         this.context = {};
+        this.getBySku = false;
+    }
+
+    bySku() {
+        this.getBySku = true;
+        return this;
     }
 
     build() {
         // Parse arguments
-        this._parsePagination();
-        this._parseFullTextSearch();
-        this._parseSorting();
-        this._parseFilter();
-        this._parseAttributes();
+        if (this.getBySku) {
+            this._parseForGetBySku();
+        } else {
+            this._parseAllArguments();
+        }
 
         if (this.context.filter.length == 0 && !('search' in this.context)) {
             throw new InvalidArgumentError("The request didn't include any valid search filter or text argument");
@@ -56,6 +62,25 @@ class ProductGraphQlRequestBuilder {
             json: true,
             resolveWithFullResponse: true
         };
+    }
+
+    _parseAllArguments() {
+        this._parsePagination();
+        this._parseFullTextSearch();
+        this._parseSorting();
+        this._parseFilter();
+        this._parseAttributes();
+    }
+
+    _parseForGetBySku() {
+        const productSku = this.requestArgs.id;
+        this._parseAttributes();
+        this.context.pageSize = 1;
+        this.context.currentPage = 1;
+        this.context.filter = [{
+            field: 'sku',
+            value: productSku
+        }];
     }
 
     _parseAttributes() {

@@ -54,6 +54,11 @@ class ProductMapper {
             .build();
     }
 
+    mapGraphQlResponseOfSingleProduct(result) {
+        const items = result.data.products.items;
+        return this._mapProduct(items[0]);
+    }
+
     /**
      * Maps an array of Magento products to an array of CCIF products
      *
