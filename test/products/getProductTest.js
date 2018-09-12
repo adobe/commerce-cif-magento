@@ -16,8 +16,9 @@
 
 const assert = require('chai').assert;
 const setup = require('../lib/setupTest').setup;
-const sampleProductSearch = require('../resources/sample-product-search-single-product');
+const sampleProductSearchData = require('../resources/sample-product-search-single-product');
 const config = require('../lib/config').config;
+const sinon = require('sinon');
 
 describe('magento getProduct', () => {
 
@@ -25,6 +26,21 @@ describe('magento getProduct', () => {
 
         // build the helper in the context of '.this' suite
         setup(this, __dirname, 'getProduct');
+
+        let consoleSpy;
+        let sampleProductSearch;
+
+        before(() => {
+            consoleSpy = sinon.spy(console, 'log');
+        });
+
+        beforeEach(() => {
+            sampleProductSearch = JSON.parse(JSON.stringify(sampleProductSearchData));
+        });
+
+        after(() => {
+            consoleSpy.restore();
+        });
 
         it('returns an error for a missing expected parameter', () => {
             return this.prepareReject(null).execute(null).then(result => {
@@ -35,22 +51,22 @@ describe('magento getProduct', () => {
         it('returns an error for a failed backend request', () => {
             return this.prepareReject(undefined)
                 .execute(Object.assign({
-                    'id': 'someId"'
+                    'id': 'someId'
                 }, config))
                 .then(result => {
                     assert.strictEqual(result.response.error.name, 'UnexpectedError');
                 });
         });
 
-        it('performs a get product for an existing product', () => {
+        it('returns a product for a valid request', () => {
             return this.prepareResolve(sampleProductSearch, (actualsArgs) => {
-                    assert.equal(actualsArgs.method, "POST");
-                    assert.isTrue(actualsArgs.resolveWithFullResponse, true);
-                    assert.equal(actualsArgs.uri, `http://${config.MAGENTO_HOST}/graphql`);
-                    assert.isDefined(actualsArgs.body.query);
-                    assert.isDefined(actualsArgs.body.operationName);
-                    assert.isDefined(actualsArgs.body.variables);
-                })
+                assert.equal(actualsArgs.method, "POST");
+                assert.isTrue(actualsArgs.resolveWithFullResponse, true);
+                assert.equal(actualsArgs.uri, `http://${config.MAGENTO_HOST}/graphql`);
+                assert.isDefined(actualsArgs.body.query);
+                assert.isDefined(actualsArgs.body.operationName);
+                assert.isDefined(actualsArgs.body.variables);
+            })
                 .execute(Object.assign({
                     'id': 'testSimpleProduct',
                 }, config))
@@ -61,7 +77,29 @@ describe('magento getProduct', () => {
                     assert.strictEqual(product.id, 'testSimpleProduct');
                     assert.strictEqual(product.sku, 'testSimpleProduct');
                     assert.strictEqual(product.prices[0].amount, 2200);
-                    
+                });
+        });
+
+        it('returns 404 for a product which does not exist', () => {
+            sampleProductSearch.body.data.products.items = [];
+            return this.prepareResolve(sampleProductSearch)
+                .execute(Object.assign({
+                    'id': 'testSimpleProduct',
+                }, config))
+                .then(result => {
+                    assert.strictEqual(result.response.error.name, 'CommerceServiceResourceNotFoundError')
+                });
+        });
+
+        it('performs a profiled product get in debug mode', () => {
+            return this.prepareResolve(sampleProductSearch)
+                .execute(Object.assign({
+                    'id': 'testSimpleProduct',
+                    'DEBUG': true
+                }, config))
+                .then(result => {
+                    assert.isTrue(consoleSpy.withArgs('BACKEND-CALL').calledOnce);
+                    assert.isDefined(result.response.body); 
                 });
         });
     });

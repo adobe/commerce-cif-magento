@@ -17,6 +17,7 @@
 const assert = require('chai').assert;
 const searchProductsBySku = require('../resources/searchProductsBySku');
 const searchProductsWithPaging = require('../resources/searchProductsWithPaging');
+const searchSingleProduct = require('../resources/sample-product-search-single-product').body;
 const utils = require('../lib/utils');
 
 describe('Magento ProductMapper', () => {
@@ -31,11 +32,13 @@ describe('Magento ProductMapper', () => {
     describe('Unit tests', () => {
         let simpleData = undefined;
         let pagedData = undefined;
+        let singleProductData = undefined;
 
         beforeEach(() => {
             // clone original sample data before each test
             simpleData = JSON.parse(JSON.stringify(searchProductsBySku));
             pagedData = JSON.parse(JSON.stringify(searchProductsWithPaging));
+            singleProductData = JSON.parse(JSON.stringify(searchSingleProduct));
         });
 
         it('Maps Magento graphQL response into valid CIF Cloud product', () => {
@@ -178,6 +181,12 @@ describe('Magento ProductMapper', () => {
                 assert.lengthOf(product.variants, magentoProduct.variants.length);
                 assert.lengthOf(product.categories, magentoProduct.categories.length);
             }
+        });
+
+        it('Maps Magento graphQL response into valid single product CIF Cloud response', () => {
+            let response = productMapper.mapGraphQlResponseOfSingleProduct(singleProductData);
+            assert.strictEqual(response.id, 'testSimpleProduct');
+            assert.strictEqual(response.sku, 'testSimpleProduct');
         });
     });
 });

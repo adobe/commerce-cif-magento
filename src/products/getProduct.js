@@ -27,6 +27,8 @@ const HttpStatusCodes = require('http-status-codes');
  * @param   {string} args.MAGENTO_SCHEMA                Magento host URL schema (http or https)
  * @param   {string} args.MAGENTO_HOST                  Magento host URL
  * @param   {string} args.GRAPHQL_PRODUCT_ATTRIBUTES    The product attributes fetched by the graphQL request
+ * @param   {string} args.MAGENTO_MEDIA_PATH            Magento media base path
+ * 
  * @param   {string} args.id                            The SKU of the product.
  *
  * @return  {Promise.<Product}                          A promise which resolves to a product model representation
@@ -40,16 +42,25 @@ function getProduct(args) {
     }
 
     const client = new MagentoClientBase(args, null, '', ERROR_TYPE);
-    const builder = new ProductGraphQlRequestBuilder(`${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/graphql`, __dirname + '/searchProducts.graphql', args);
 
-    let requestOptions = null;
-    try {
-        requestOptions = builder.bySku().build();
-    } catch (error) {
-        return client.handleError(error);
+    const argsForBuilder = {
+        MAGENTO_SCHEMA: args.MAGENTO_SCHEMA,
+        MAGENTO_HOST: args.MAGENTO_HOST,
+        GRAPHQL_PRODUCT_ATTRIBUTES: args.GRAPHQL_PRODUCT_ATTRIBUTES,
+        MAGENTO_MEDIA_PATH: args.MAGENTO_MEDIA_PATH,
+        filter: `variants.sku:"${args.id}"`
+    };
+    const builder = new ProductGraphQlRequestBuilder(`${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/graphql`, __dirname + '/searchProducts.graphql', argsForBuilder);
+
+    const requestOptions = builder.build();
+    let request;
+    if (args.DEBUG) {
+        request = client._profileRequest(requestOptions);
+    } else {
+        request = httpRequest(requestOptions);
     }
 
-    return httpRequest(requestOptions).then(response => {
+    return request.then(response => {
         const items = response.body.data.products.items;
         if (!items || items.length === 0) {
             return Promise.reject({
