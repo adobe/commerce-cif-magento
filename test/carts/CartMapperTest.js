@@ -64,7 +64,7 @@ describe('Magento CartMapper', () => {
 
             assert.isDefined(mappedCart.shippingInfo);
             assertPrice(mappedCart.shippingInfo.cost, sampleCartTotals.shipping_incl_tax * 100, sampleCartTotals.quote_currency_code);
-            assertPrice(mappedCart.shippingInfo.discountedCost, sampleCartTotals.shipping_incl_tax * 100, sampleCartTotals.quote_currency_code);
+            assertPrice(mappedCart.shippingInfo.discountedCost, sampleCartTotals.shipping_discount_amount * 100, sampleCartTotals.quote_currency_code);
             assertTax(mappedCart.shippingInfo.taxInfo, sampleCartTotals.shipping_tax_amount * 100);
 
             assert.strictEqual(mappedCart.createdAt, formatDate(sampleCartDetails.created_at));
