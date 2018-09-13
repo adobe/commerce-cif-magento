@@ -224,6 +224,7 @@ class RequiredFields {
         expect(o).to.have.own.property("id");
         if (!rec) return;
         this.verifyPrice(o.cost);
+        this.verifyPrice(o.discountedCost);
         this.verifyTaxInfo(o.taxInfo);
     }
 
