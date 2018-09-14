@@ -1,6 +1,6 @@
 {
   "name": "@adobe/commerce-cif-magento-cart",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adobe Commerce Integration Framework (CIF) Magento Integration Cart Project",
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
