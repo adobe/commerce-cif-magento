@@ -1,0 +1,16 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "customer-deployment/package.json",
+        "package.json",
+        "src/carts/package.json",
+        "src/categories/package.json",
+        "src/common/package.json",
+        "src/customer/package.json",
+        "src/orders/package.json",
+        "src/products/package.json"
+      ]
+    }
+  }
+}
