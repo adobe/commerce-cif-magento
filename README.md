@@ -1,5 +1,5 @@
 [![CircleCI](https://circleci.com/gh/adobe/commerce-cif-magento.svg?style=svg)](https://circleci.com/gh/adobe/commerce-cif-magento)
-[![codecov](https://codecov.io/gh/adobe/commerce-cif-magento/branch/master/graph/badge.svg)](https://codecov.io/gh/adobe/commerce-cif-magento)
+[![codecov](https://codecov.io/gh/adobe/commerce-cif-magento/branch/master/graph/badge.svg)](https://codecov.io/gh/adobe/commerce-cif-magento) [![Greenkeeper badge](https://badges.greenkeeper.io/adobe/commerce-cif-magento.svg)](https://greenkeeper.io/)
 
 # Commerce Integration Framework (CIF) on Cloud for Magento
 
