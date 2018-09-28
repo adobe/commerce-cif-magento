@@ -14,73 +14,94 @@
 
 'use strict';
 
-const req = require('request-promise-native');
-const { parse, graphql } = require('graphql');
-const {makeExecutableSchema} = require('graphql-tools');
-const graphqlSchema = require('@adobe/commerce-cif-model').graphqlSchema;
+const request = require('request-promise-native');
+const { parse } = require('graphql');
+
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 
-const ProductMapper = require('@adobe/commerce-cif-magento-product/ProductMapper');
-const { validateAndParseQuery, gqlToObject } = require('./utils/graphqlUtils');
-const GraphQlRequestBuilder = require('./MagentoGraphQlRequestBuilder');
-const ObjectMapper = require('./lib/ToMagentoMapper');
-const filter = require('./responseFilter').filter;
-const schema = makeExecutableSchema({typeDefs: graphqlSchema});
+const { gqlToObject, makeGraphqlQuery } = require('../../../commerce-cif-common/src/graphql/utils');
+const ObjectTransformer = require('../../../commerce-cif-common/src/graphql/ObjectTransformer');
+const MagentoTransforms = require('./CIFtoMagentoTransforms');
+const transformer = new ObjectTransformer(MagentoTransforms);
+const graphqlBase = require('../../../commerce-cif-common/src/graphql/introspectionHandler').main;
+const ArgsTransformer = require('../../../commerce-cif-common/src/graphql/ArgsTransformer');
+const { argsTransforms, checkFields } = require('./CIFtoMagentoArgs');
+
+const argsTransformer = new ArgsTransformer(argsTransforms, checkFields, '__args');
+
+const ObjectMapper = require('../../../commerce-cif-common/src/graphql/ResponseMapper');
+const MagentoToCIFMapper = require('./MagentoToCIFMapper');
+const mapper = new ObjectMapper(MagentoToCIFMapper);
+
+function main(args) {
+    return graphqlBase(args, magentoDataHandler);
+}
 
 /**
- * This action handles incoming GraphQL queries.
- * @param   {GraphQLSource} args.query      //entering GraphQL query
+ * This action handles incoming GraphQL data queries for Magento backend.
+ * 
+ * @param   {GraphQLSource} args.query      entering GraphQL query
  * 
  * @return  {Promise.<ExecutionResult>}
  */
-function main(args) {
-    let query = args.query || "";
-    // DocumentNode of query or encountered errors
-    let document = validateAndParseQuery(schema, query);
+function magentoDataHandler(args) {
+    let query = args.query;
 
-    const client = new MagentoClientBase(args, null, '', 'graphql');
+    let originalQueryObject = gqlToObject(parse(query).definitions[0]); //transform into JS object
 
-    if (document.errors || query.includes("__schema") || query.includes("__types")) {
-        //let graphql function handle errors and IntrospectionQueries
-        return graphql(schema, query, null, null, args.variables, args.operationName)
-            .then(result => {
-                return client._handleSuccess(result, null);
+    let MagentoObject = JSON.parse(JSON.stringify(originalQueryObject));
+    const client = new MagentoClientBase(args, null, null, 'graphql');
+
+    transformer.transform(MagentoObject);
+    try {
+        argsTransformer.transformRecursive(MagentoObject);
+    } catch (e) {
+        return client._handleError(e);
+    }
+
+    const options = buildRequest(makeGraphqlQuery(MagentoObject));
+
+    return request(options)
+            .then(response => {
+                let body;
+                if (response.body.errors) {
+                    let errors = response.body.errors;
+                    errors.forEach(e => {
+                        delete e.locations; //locations do not always match CIF query
+                    });
+                    body = response.body;
+                } else {
+                    body = { data: mapper.map(originalQueryObject, response.body.data) };
+                }
+
+                return client._handleSuccess(body); 
             })
             .catch(e => {
-                return client.handleError(e);
+                console.log(e);
+                return client._handleError(e);
             });
-    } else {
-        //no IntrospectionQuery => prepare magento query
-        //need original query to filter only queried fields in response
-        let originalQueryObject = gqlToObject(document.definitions[0]); //transform into JS object
-        
-        //create cif to magento mapper
-        let toMagento = new ObjectMapper(args.MAGENTO_SIMPLEFIELDS, new Map(args.GRAPHQL_SUBSTITUTIONS), args.GRAPHQL_PRODUCT_ATTRIBUTES, args.GRAPHQL_PRODUCT_ASSETS);
-        //rename cif field to corresponding magento fields
-        let newQuery = toMagento.renameFields(query);
-        //transform renamed query to a queryObject used to create magento query
-        let queryObject = toMagento.addFields(gqlToObject(parse(newQuery).definitions[0]));
-        //build magento query with queryObject as context
-        let builder = new GraphQlRequestBuilder(`${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/graphql`, queryObject);
-        let options;
-        try {
-            options = builder.build();
-        } catch(e) {
-            return client.handleError(e);
-        }
-        return req(options)
-            .then(response => {
-                let imageUrlPrefix = `${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/${args.MAGENTO_MEDIA_PATH}`;
-                let productMapper = new ProductMapper(imageUrlPrefix, args.GRAPHQL_PRODUCT_ATTRIBUTES);
-                let pagedResponse = productMapper.mapGraphQlResponse(response.body);
-                //filter out only queried fields from originalQueryObject
-                let body = {data: filter(JSON.parse(JSON.stringify(pagedResponse)), originalQueryObject)};
-                return client._handleSuccess(body, null, response.statusCode);
-            })
-            .catch((e) => {
-                return client.handleError(e);
-            });
-    }
+}
+
+/**
+ * 
+ * @private 
+ */
+function buildRequest(query) {
+    return {
+        uri: "http://master-7rqtwti-7ztex4hq2b6mu.us-3.magentosite.cloud/graphql",
+        method: "POST",
+        headers: {
+            'Store': 'default',
+            'Content-Type': 'application/json',
+        },
+        json: true,
+        body: {
+            query: query,
+            operationName: null,
+            variables: null
+        },
+        resolveWithFullResponse: true
+    };
 }
 
 module.exports.main = main;

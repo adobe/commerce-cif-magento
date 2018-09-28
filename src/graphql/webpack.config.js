@@ -16,18 +16,12 @@
 
 const slsw = require('serverless-webpack');
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-
-const plugins = [
-    new CopyWebpackPlugin(['./query.graphql', './magentoProduct.graphql'])
-];
 
 module.exports = {
     entry: slsw.lib.entries,
     // devtool: 'source-map',
     target: 'node',
     stats: 'minimal',
-    plugins,
     // See https://github.com/webpack/webpack/issues/1599
     node: {
         __dirname: false,
