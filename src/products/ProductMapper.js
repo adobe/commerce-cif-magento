@@ -41,28 +41,22 @@ class ProductMapper {
      */
     mapGraphQlResponse(result) {
         let products = result.data.products;
-        let items = products.items;
+        let items = result.data.products.items;
 
-        let results = items ? this.mapProducts(items) : null;
-        let offset = undefined; //will be defined if needed
-        let total = products.total_count; //if undefined we won't need it
-        let count = items ? items.length : undefined;
-
-        if (products.page_info) {
-            let current_page = products.page_info.current_page;
-            let page_size = products.page_info.page_size;
-            offset = (current_page - 1) * page_size;
-            if (!count) {
-                count = current_page * page_size > total ? (total % page_size) : page_size;
-            }
-        }
+        let results = this.mapProducts(items);
+        let offset = (products.page_info.current_page - 1) * products.page_info.page_size;
 
         return new PagedResponse.Builder()
-            .withCount(count)
+            .withCount(items.length)
             .withOffset(offset)
-            .withTotal(total)
+            .withTotal(products.total_count)
             .withResults(results)
             .build();
+    }
+
+    mapGraphQlResponseOfSingleProduct(result) {
+        const items = result.data.products.items;
+        return this._mapProduct(items[0]);
     }
 
     /**
@@ -74,7 +68,7 @@ class ProductMapper {
     mapProducts(products) {
         return products.map(product => this._mapProduct(product));
     }
-
+    
     /**
      * Maps some generic Magento product data to either a CCIF Product or ProductVariant.
      * 
@@ -91,17 +85,17 @@ class ProductMapper {
         if (product.created_at) {
             p.createdAt = formatDate(product.created_at);
         }
-
+        
         if (product.updated_at) {
             p.lastModifiedAt = formatDate(product.updated_at);
         }
-
+        
         if (product.image) {
             p.assets = [
                 this._mapAsset(product.image)
             ];
         }
-
+        
         if (product.categories) {
             p.categories = this._mapCategories(product.categories);
         }
@@ -184,18 +178,18 @@ class ProductMapper {
             .build();
 
         this._mapProductData(v, variant);
-
+        
         if (product.configurable_options) {
             v.attributes = this._addConfigurableOptions(product, variant);
         }
-
+        
         if (this.attributes) {
             this._addAttributes(v, variant);
         }
 
         return v;
     }
-
+    
     /**
      * @private
      */
@@ -215,7 +209,7 @@ class ProductMapper {
             }
         });
     }
-
+    
     /**
      * @private
      */
@@ -261,7 +255,7 @@ class ProductMapper {
             .build();
         return asset;
     }
-
+    
     /**
      * @private
      */
