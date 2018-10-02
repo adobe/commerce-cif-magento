@@ -50,12 +50,10 @@ const Asset = (req, imageUrl) => {
     let result = {};
     Object.keys(req).forEach(key => {
         let field = req[key].__aliasFor || key;
-        if (field === "url") {
+        if (field === "id") {
             result[key] = imageUrl;
-        } else {
-            if (!field.startsWith("__")) {
-                result[key] = imagePrefix + imageUrl; //id
-            }
+        } else if (field === 'url') {
+            result[key] = imagePrefix + imageUrl;
         }
     });
     return result;
@@ -117,7 +115,8 @@ const Attributes = (req, data, configurableOpts) => {
                     isVariantAxis = { key: key, value: attributes.map(a => { return a.isVariantAxis }) };
                     n = Math.max(n, isVariantAxis.value.length);
                     break;
-                default: break;
+                default:
+                    break;
             }
         });
         if (n > 0) {
@@ -175,7 +174,11 @@ const ProductVariant = (req, data, configurableOpts) => {
             case "attributes":
                 result[key] = Attributes(req[key], data, configurableOpts);
                 break;
-            default: break;
+            case "available":
+                result[key] = true; // TODO: Get actual value from backend
+                break;
+            default:
+                break;
         }
     });
     return result;
@@ -201,7 +204,8 @@ const Product = (req, data) => {
                     result[key] = [];
                 }
                 break;
-            default: break;
+            default:
+                break;
         }
     });
     return result;
@@ -272,8 +276,8 @@ const PagedResponse = (originalObject, dataObject, fieldName) => {
 
 
 //define the rootfields in the actual mapper, delegate handling of rootFields to functions
-const MagentoToCIFMapper = {
+const magentoMapper = {
     searchProducts: PagedResponse
 };
 
-module.exports = MagentoToCIFMapper;
+module.exports = magentoMapper;

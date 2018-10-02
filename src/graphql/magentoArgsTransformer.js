@@ -34,7 +34,7 @@ function _translateFieldName(field) {
     if (field.startsWith('categories.id')) {
         return 'category_id';
     }
-    if (field.startsWith('sku')) {
+    if (field.includes('sku')) {
         return 'sku';
     }
     if (field.startsWith('createdAt')) {
@@ -46,7 +46,7 @@ function _translateFieldName(field) {
     return null;
 }
 
-let argsTransforms = {
+let transformerFunctions = {
 
     text: function(args) {
         args.search = args.text;
@@ -56,7 +56,7 @@ let argsTransforms = {
     limit: function (args) {
         let defaultLimit = 25;
         let limit = Number(args.limit);
-        if (!limit) {
+        if (!limit || limit < 0) {
             limit = defaultLimit;
         }
         delete args.limit;
@@ -64,18 +64,14 @@ let argsTransforms = {
     },
 
     offset: function (args) {
-        let defaultOffset = 0;
+        let currentPage = 1;
+        let limit = args.limit || args.pageSize;
         let offset = Number(args.offset);
         if (!offset || offset < 0) {
-            offset = defaultOffset;
+            offset = 0;
         }
-        args.offset = offset;
-    },
-
-    currentPage: function (args) {
-        let currentPage = 1;
-        if (args.pageSize > 0 && args.offset % args.pageSize === 0) {
-            currentPage = (args.offset / args.limit) + 1;
+        if (limit > 0 && offset % limit === 0) {
+            currentPage = (offset / limit) + 1;
         }
         args.currentPage = currentPage;
         delete args.offset;
@@ -91,7 +87,7 @@ let argsTransforms = {
 
     filter: function (args) {
         let filterArgs = Array.isArray(args.filter) ? args.filter : [args.filter];
-        let filterFields = [];
+        let filterFields = {};
         filterArgs.forEach((filterArg) => {
             // Translate field names
             let field = _translateFieldName(filterArg);
@@ -117,10 +113,10 @@ let argsTransforms = {
                 } else if (values) {
                     filter[field] = { in: values };
                 }
-                filterFields.push(filter);
+                Object.assign(filterFields, filter);
             }
         });
-        if (filterFields.length > 0) {
+        if (filterFields) {
             args.filter = filterFields;
         } else {
             delete args.filter;
@@ -134,7 +130,7 @@ let argsTransforms = {
             // Get direction
             let direction = 'ASC';
             if (sortArg.split('.').slice(-1)[0] == 'desc') {
-                direction ='DESC';
+                direction = 'DESC';
             }
 
             // Translate field names
@@ -142,7 +138,6 @@ let argsTransforms = {
             if (field) {
                 sortFields[field] = new EnumType(direction);
             }
-            console.log(sortFields)
         });
         if (Object.keys(sortFields).length > 0) {
             args.sort = sortFields;
@@ -156,4 +151,4 @@ let checkFields = {
     searchProducts: ['textOrFilter', 'limit', 'offset', 'currentPage']
 };
 
-module.exports = { argsTransforms, checkFields };
+module.exports = { transformerFunctions, checkFields };

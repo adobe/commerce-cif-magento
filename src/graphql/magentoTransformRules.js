@@ -15,7 +15,7 @@
 'use strict';
 
 const Price = {
-    ignore: ["country"],
+    removers: ["country"],
     adders: [{
         when: "country",
         add: "currency"
@@ -40,7 +40,7 @@ const Category = {
 }
 
 const _commonProduct = {
-    ignore: ["assets", "attributes"],
+    removers: ["assets", "attributes"],
     adders: [
         {
             when: "assets",
@@ -51,7 +51,7 @@ const _commonProduct = {
             add: ["color", "size", "features", "summary"]
         }
     ],
-    moveFields: [
+    movers: [
         {
             from: "prices",
             to: "price.regularPrice.amount"
@@ -72,10 +72,10 @@ const _commonProduct = {
 
 const ProductVariant = Object.assign({}, _commonProduct,
     {
-        moveFields: _commonProduct.moveFields.concat([{
+        movers: _commonProduct.movers.concat([{
             to: "product"
         }]),
-        ignore: _commonProduct.ignore.concat(["available"]),
+        removers: _commonProduct.removers.concat(["available"]),
         adders: _commonProduct.adders.concat([
             {
                 when: "available",
@@ -86,7 +86,7 @@ const ProductVariant = Object.assign({}, _commonProduct,
 
 const Product = Object.assign({}, _commonProduct,
     {
-        ignore: _commonProduct.ignore.concat(["masterVariantId"]),
+        removers: _commonProduct.removers.concat(["masterVariantId"]),
         adders: _commonProduct.adders.concat([
             {
                 when: "masterVariantId",
@@ -122,7 +122,7 @@ const Product = Object.assign({}, _commonProduct,
     });
 
 const PagedResponse = {
-    ignore: ["count", "offset", "facets"],
+    removers: ["count", "offset", "facets"],
     adders: [
         {
             when: ["count", "facets"],
@@ -139,7 +139,7 @@ const PagedResponse = {
     results: Object.assign({}, Product, { alias: "items" })
 };
 
-const transformsObject = {
+const transformRules = {
     searchProducts: Object.assign(
         {},
         PagedResponse,
@@ -147,4 +147,4 @@ const transformsObject = {
     )
 };
 
-module.exports = transformsObject;
+module.exports = transformRules;

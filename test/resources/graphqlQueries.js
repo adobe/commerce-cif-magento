@@ -14,119 +14,109 @@
 
 'use strict';
 
-
-let simpleFieldsQuery = `
-    query {
-        searchProducts(text: "meskwielt") {
-            results {
-                sku
-                name
-                id
-                createdAt
-                lastModifiedAt
-                description
-                masterVariantId
-            }
+let allFieldsQuery = `{
+    searchProducts(filter: "sku:meskwielt") {
+      offset
+      count
+      total
+      results {
+        sku
+        name
+        id
+        createdAt
+        lastModifiedAt
+        description
+        masterVariantId
+        prices {
+          currency
+          country
+          amount
         }
-    }
-`;
-
-let allFieldsQuery = `
-    query {
-        searchProducts(text: "meskwielt") {
-            offset
-            count
-            total
-            results {
-                sku
-                name
-                id
-                createdAt
-                lastModifiedAt
-                description
-                masterVariantId
-                prices {
-                    currency
-                    country
-                    amount
-                }
-                categories {
-                    id 
-                }
-                assets {
-                    url
-                }
-                attributes {
-                    id
-                    name
-                    value
-                    isVariantAxis
-                }
-                variants {
-                    sku
-                    createdAt
-                    lastModifiedAt
-                    id
-                    name
-                    description
-                    prices {
-                        currency
-                        country
-                        amount
-                    }
-                    categories {
-                        id
-                    }
-                    assets {
-                        url
-                    }
-                    attributes {
-                        id
-                        name
-                        value
-                        isVariantAxis
-                    }
-                    available
-                }
-            }
+        categories {
+          id
         }
+        assets {
+          url
+        }
+        attributes {
+          id
+          name
+          value
+          isVariantAxis
+        }
+        variants {
+          sku
+          createdAt
+          lastModifiedAt
+          id
+          name
+          description
+          prices {
+            currency
+            country
+            amount
+          }
+          categories {
+            id
+          }
+          assets {
+            url
+          }
+          attributes {
+            id
+            name
+            value
+            isVariantAxis
+          }
+          available
+        }
+      }
     }
-`
+}`;
 
 let pricesQuery = `{
-    searchProducts(text: "meskwielt"){
+    searchProducts(text: "meskwielt") {
         results {
-            prices {
-                country
-                currency
-                amount
-            }
+          prices {
+            country
+            currency
+            amount
+          }
         }
     }
-}`
+}`;
 
 let attributesQuery = `{
-    searchProducts(text: "meskwielt"){
+    searchProducts(text: "meskwielt") {
         results {
+          attributes {
+            id
+            name
+            value
+            isVariantAxis
+          }
+          variants {
             attributes {
-                id
-                name
-                value
-                isVariantAxis
+              id
+              name
+              value
+              isVariantAxis
             }
+          }
         }
-    }
-}`
+      }
+}`;
 
 let assetsQuery = `{
     searchProducts(text: "meskwielt"){
         results {
             assets {
+                id
                 url
             }
         }
     }
-}`
+}`;
 
 let categoriesQuery = `{
     searchProducts(text: "meskwielt"){
@@ -136,7 +126,7 @@ let categoriesQuery = `{
             }
         }
     }
-}`
+}`;
 
 let variantsQuery = `{
     searchProducts(text: "meskwielt"){
@@ -148,6 +138,7 @@ let variantsQuery = `{
                 id
                 name
                 description
+                available
                 prices {
                     currency
                     country
@@ -168,7 +159,7 @@ let variantsQuery = `{
             }
         }
     }
-}`
+}`;
 
 let pageInfoQuery = `{
     searchProducts(text: "meskwielt"){
@@ -176,12 +167,12 @@ let pageInfoQuery = `{
         count
         offset
     }
-}`
+}`;
 
 let syntaxError = `{
     searchProducts(text: "meskwielt"){
         total
-}`
+}`;
 
 let invalidField = `{
     searchProducts(text: "meskwielt"){
@@ -189,18 +180,18 @@ let invalidField = `{
             unicorn
         }
     }
-}`
+}`;
 
-let emptyText = `{
+let filterAndTextMissing = `{
     searchProducts(limit: 10){
         results {
             sku
             lastModifiedAt
         }
     }
-}`
+}`;
 
-const introSpectionQuery = `query IntrospectionQuery {
+const introspectionQuery = `query IntrospectionQuery {
     __schema {
       queryType { name }
       mutationType { name }
@@ -290,6 +281,6 @@ const introSpectionQuery = `query IntrospectionQuery {
         }
       }
     }
-  }`
+  }`;
 
-module.exports = {emptyText, invalidField, syntaxError, simpleFieldsQuery, allFieldsQuery, introSpectionQuery, pricesQuery, attributesQuery, assetsQuery, categoriesQuery, variantsQuery, pageInfoQuery};
+module.exports = { filterAndTextMissing, invalidField, syntaxError, allFieldsQuery, introspectionQuery, pricesQuery, attributesQuery, assetsQuery, categoriesQuery, variantsQuery, pageInfoQuery };

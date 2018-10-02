@@ -14,175 +14,185 @@
 
 'use strict';
 
-const categoryQuery = `{
-    products(
-    ) {
-        items {
-          categories {
-              jackets        
-              shirts        
-              pants        
-              dress 
-          }
+const magentoAllFieldsQuery = `
+{
+  searchProducts: products(filter: {sku: {eq: "meskwielt"}}) {
+    total: total_count
+    results: items {
+      sku
+      name
+      id: sku
+      createdAt: created_at
+      lastModifiedAt: updated_at
+      description
+      categories {
+        id
       }
-    }
-  }`
-
-const priceQuery = `{
-    products(
-    ) {
-        items {
-          price {
+      image
+      color
+      size
+      features
+      summary
+      price {
+        regularPrice {
+          amount {
+            currency
+            amount: value
+          }
+        }
+      }
+      ... on ConfigurableProduct {
+        variants {
+          product {
+            sku
+            createdAt: created_at
+            lastModifiedAt: updated_at
+            id: sku
+            name
+            description
+            categories {
+              id
+            }
+            image
+            color
+            size
+            features
+            summary
+            price {
               regularPrice {
-                  amount {
-                      jackets
-                      shirts
-                      pants
-                      dress
-                  }
-              }
-          }
-      }
-    }
-  }`
-
-const conf_options = `{
-    products(
-    ) {
-        items {
-          ... on ConfigurableProduct {
-            configurable_options {
-              attribute_code
-              label
-              values {
-                value_index
-                label
-              }
-            }
-            variants {
-              product {
-                jackets        
-                shirts        
-                pants        
-                dress        
+                amount {
+                  currency
+                  amount: value
+                }
               }
             }
           }
-      }
-    }
-  }`
-
-const simpleVariants = `{
-    products(
-    ) {
-        items {
-          ... on ConfigurableProduct {
-            variants {
-              product {
-                jackets        
-                shirts        
-                pants        
-                dress        
-              }
-            }
+        }
+        configurable_options {
+          attribute_code
+          values {
+            value_index
+            label
           }
-      }
-    }
-}`
-
-const simpleQuery = `{
-    products(
-    ) {
-        items {
-          jackets        
-          shirts        
-          pants        
-          dress        
-      }
-    }
-  }`
-
-const noResultsQuery = `{
-    products(
-    ) {
-        total_count
-        page_info {
-          page_size
-          current_page
-        }
-    }
-  }`
-
-const totalQuery = `{
-    products(
-    ) {
-        total_count
-    }
-  }`
-
-const countQuery = `{
-    products(
-    ) {
-        total_count
-        page_info {
-          page_size
-          current_page
-        }
-    }
-  }`
-
-const offsetQuery = `{
-    products(
-    ) {
-        page_info {
-          page_size
-          current_page
-        }
-    }
-  }`
-
-const placesArgsCorrectlyQuery = `{
-    products(
-        search: "ik hou van honden"
-        pageSize: 39
-        currentPage: 4
-    ) {
-    }
-  }`
-
-const CIFFields = {
-  queryObject: {
-    searchProducts: {
-      results: {
-        prices: {
-          country: true
-        },
-        sku: true,
-        id: true,
-        variants: {
-          available: true
+          label
         }
       }
     }
-  },
-  mockResponse: {
-    results: [{
-      prices: [{
-        country: 'CH',
-        amount: 123
-      }],
-      sku: "sku",
-      id: "lol",
-      anotherField: "haha",
-      obj: {
-        wh: "at"
-      },
-      variants: [{
-        sku: "variant",
-        guru: 1
-      }]
-    }]
+    page_info {
+      page_size
+      current_page
+    }
   }
-}
+}`;
 
-module.exports = { CIFFields, categoryQuery, priceQuery, placesArgsCorrectlyQuery, offsetQuery, countQuery, totalQuery, simpleQuery, noResultsQuery, simpleVariants, conf_options };
+const magentoCategoriesQuery = `
+{
+  searchProducts: products(search: "meskwielt") {
+    results: items {
+      categories {
+        id
+      }
+    }
+  }
+}`;
+
+const magentoPricesQuery = `
+{
+  searchProducts: products(search: "meskwielt") {
+    results: items {
+      price {
+        regularPrice {
+          amount {
+            currency
+            amount: value
+          }
+        }
+      }
+    }
+  }
+}`;
+
+const magentoAttributesQuery = `
+{
+  searchProducts: products(search: "meskwielt") {
+    results: items {
+      color
+      size
+      features
+      summary
+      ... on ConfigurableProduct {
+        variants {
+          product {
+            color
+            size
+            features
+            summary
+          }
+        }
+        configurable_options {
+          attribute_code
+          values {
+            value_index
+            label
+          }
+          label
+        }
+      }
+    }
+  }
+}`;
+
+const magentoAssetsQuery = `
+{
+  searchProducts: products(search: "meskwielt") {
+    results: items {
+      image
+    }
+  }
+}`;
+
+const magentoVariantsQuery = `
+{
+  searchProducts: products(search: "meskwielt") {
+    results: items {
+      ... on ConfigurableProduct {
+        variants {
+          product {
+            sku
+            createdAt: created_at
+            lastModifiedAt: updated_at
+            id: sku
+            name
+            description
+            categories {
+              id
+            }
+            image
+            color
+            size
+            features
+            summary
+            price {
+              regularPrice {
+                amount {
+                  currency
+                  amount: value
+                }
+              }
+            }
+          }
+        }
+        configurable_options {
+          attribute_code
+          values {
+            value_index
+            label
+          }
+          label
+        }
+      }
+    }
+  }
+}`;
+
+module.exports = { magentoAllFieldsQuery, magentoPricesQuery, magentoAttributesQuery, magentoAssetsQuery, magentoCategoriesQuery, magentoVariantsQuery };

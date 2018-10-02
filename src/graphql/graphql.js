@@ -16,25 +16,25 @@
 
 const request = require('request-promise-native');
 const { parse } = require('graphql');
-
+const { gqlToObject, makeGraphqlQuery } = require(__dirname + '/../../../commerce-cif-common/src/graphql/utils');
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 
-const { gqlToObject, makeGraphqlQuery } = require('../../../commerce-cif-common/src/graphql/utils');
-const ObjectTransformer = require('../../../commerce-cif-common/src/graphql/ObjectTransformer');
-const MagentoTransforms = require('./CIFtoMagentoTransforms');
-const transformer = new ObjectTransformer(MagentoTransforms);
-const graphqlBase = require('../../../commerce-cif-common/src/graphql/introspectionHandler').main;
-const ArgsTransformer = require('../../../commerce-cif-common/src/graphql/ArgsTransformer');
-const { argsTransforms, checkFields } = require('./CIFtoMagentoArgs');
+const ObjectTransformer = require(__dirname + '/../../../commerce-cif-common/src/graphql/ObjectTransformer');
+const magentoTransformRules = require('./magentoTransformRules');
+const transformer = new ObjectTransformer(magentoTransformRules);
 
-const argsTransformer = new ArgsTransformer(argsTransforms, checkFields, '__args');
+const introspectionHandler = require(__dirname + '/../../../commerce-cif-common/src/graphql/introspectionHandler');
 
-const ObjectMapper = require('../../../commerce-cif-common/src/graphql/ResponseMapper');
-const MagentoToCIFMapper = require('./MagentoToCIFMapper');
-const mapper = new ObjectMapper(MagentoToCIFMapper);
+const ArgsTransformer = require(__dirname + '/../../../commerce-cif-common/src/graphql/ArgsTransformer');
+const { transformerFunctions, checkFields } = require('./magentoArgsTransformer');
+const argsTransformer = new ArgsTransformer(transformerFunctions, checkFields, '__args');
+
+const ResponseMapper = require(__dirname + '/../../../commerce-cif-common/src/graphql/ResponseMapper');
+const magentoMapper = require('./magentoMapper');
+const mapper = new ResponseMapper(magentoMapper);
 
 function main(args) {
-    return graphqlBase(args, magentoDataHandler);
+    return introspectionHandler(args, magentoDataHandler);
 }
 
 /**
@@ -46,49 +46,43 @@ function main(args) {
  */
 function magentoDataHandler(args) {
     let query = args.query;
+    let queryObject = gqlToObject(parse(query).definitions[0]); //transform into JS object
 
-    let originalQueryObject = gqlToObject(parse(query).definitions[0]); //transform into JS object
-
-    let MagentoObject = JSON.parse(JSON.stringify(originalQueryObject));
+    let magentoQueryObject = JSON.parse(JSON.stringify(queryObject));
     const client = new MagentoClientBase(args, null, null, 'graphql');
 
-    transformer.transform(MagentoObject);
+    transformer.transform(magentoQueryObject);
     try {
-        argsTransformer.transformRecursive(MagentoObject);
+        argsTransformer.transformRecursive(magentoQueryObject);
     } catch (e) {
+        console.error(e);
         return client._handleError(e);
     }
 
-    const options = buildRequest(makeGraphqlQuery(MagentoObject));
+    const options = _buildRequest(args, makeGraphqlQuery(magentoQueryObject));
 
     return request(options)
             .then(response => {
                 let body;
                 if (response.body.errors) {
-                    let errors = response.body.errors;
-                    errors.forEach(e => {
-                        delete e.locations; //locations do not always match CIF query
-                    });
                     body = response.body;
                 } else {
-                    body = { data: mapper.map(originalQueryObject, response.body.data) };
+                    body = { data: mapper.map(queryObject, response.body.data) };
                 }
-
                 return client._handleSuccess(body); 
             })
             .catch(e => {
-                console.log(e);
+                console.error(e);
                 return client._handleError(e);
             });
 }
 
 /**
- * 
  * @private 
  */
-function buildRequest(query) {
+function _buildRequest(args, query) {
     return {
-        uri: "http://master-7rqtwti-7ztex4hq2b6mu.us-3.magentosite.cloud/graphql",
+        uri: `${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/graphql`,
         method: "POST",
         headers: {
             'Store': 'default',
