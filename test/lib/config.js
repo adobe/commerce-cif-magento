@@ -33,10 +33,11 @@ const requestConfig = function (uri, method, token = 'my-token') {
 module.exports.requestConfig = requestConfig;
 
 let config = {
+    MAGENTO_SCHEMA: 'http',
     MAGENTO_HOST: 'does.not.exist',
     MAGENTO_MEDIA_PATH: 'media/catalog/product',
     PRODUCT_ATTRIBUTES: ['color', 'size'],
-    GRAPHQL_PRODUCT_ATTRIBUTES: ['color', 'size'],
+    GRAPHQL_PRODUCT_ATTRIBUTES: ['color', 'size', 'features', 'summary'],
     MAGENTO_AUTH_ADMIN_TOKEN: 'my-token',
     SHIPPING_CODES: ['flatrate', 'flatrate']
 };

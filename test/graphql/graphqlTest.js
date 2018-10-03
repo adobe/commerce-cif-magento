@@ -36,7 +36,7 @@ describe('Unit tests', () => {
             return this.prepareResolve(sampleResponse, (expectedArgs) => {
                     assert.equal(expectedArgs.method, "POST");
                     assert.isTrue(expectedArgs.resolveWithFullResponse, true);
-                    assert.equal(expectedArgs.uri, `http://${config.MAGENTO_HOST}/graphql`);
+                    assert.equal(expectedArgs.uri, `${config.MAGENTO_SCHEMA}://${config.MAGENTO_HOST}/graphql`);
                     assert.isDefined(expectedArgs.body.query);
                     assert.isDefined(expectedArgs.body.operationName);
                     assert.isDefined(expectedArgs.body.variables);
@@ -59,12 +59,15 @@ describe('Unit tests', () => {
 
                     expect(product.variants).to.have.lengthOf(15);
                     expect(product.attributes).to.have.lengthOf(2);
+
                     expect(product.attributes.find(o => {return o.id === 'summary'})).to.be.an('object');
                     expect(product.attributes.find(o => {return o.id === 'features'})).to.be.an('object');
 
-                    //only product variant contains variants attributes
                     expect(product.variants[0].attributes.find(o => {return o.id === 'color'})).to.be.an('object');
                     expect(product.variants[0].attributes.find(o => {return o.id === 'size'})).to.be.an('object');
+
+                    let urlPrefix = `${config.MAGENTO_SCHEMA}://${config.MAGENTO_HOST}/${config.MAGENTO_MEDIA_PATH}`;
+                    expect(product.assets[0].url).to.startsWith(urlPrefix);
                 });
         });
 
@@ -156,6 +159,16 @@ describe('Unit tests', () => {
                     expect(result.response.statusCode).to.equal(HttpStatus.OK);
                     const error = result.response.body.errors[0];
                     expect(error.message).to.equal('This is an error');
+                });
+        });
+
+        it('Properly returns error responses for a failing HTTP request', () => {
+            return this.prepareReject(undefined)
+                .execute(Object.assign({
+                    'query': allFieldsQuery
+                }, config))
+                .then(result => {
+                    assert.strictEqual(result.response.error.name, 'UnexpectedError');
                 });
         });
     });

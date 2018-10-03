@@ -14,137 +14,148 @@
 
 'use strict';
 
-const Price = {
-    removers: ["country"],
-    adders: [{
-        when: "country",
-        add: "currency"
-    }],
-    amount: {
-        alias: "value"
-    }
-};
+/**
+ * We export a closure function that is initialised with the Openwhisk action parameter required to get
+ * the complete list of product attributes.
+ * 
+ * That closure expects that the config argument object has the property 'productAttributes'.
+ * 
+ * @param {*} config 
+ */
+const configureRules = (config) => {
 
-const Category = {
-    ignore: ["children", "parents", "mainParentId"],
-    adders: [{
-        when: ["children", "parents", "mainParentId"],
-        add: "id"
-    }],
-    createdAt: {
-        alias: "created_at"
-    },
-    lastModifiedAt: {
-        alias: "updated_at"
-    },
-}
+    const Price = {
+        removers: ["country"],
+        adders: [{
+            when: "country",
+            add: "currency"
+        }],
+        amount: {
+            alias: "value"
+        }
+    };
 
-const _commonProduct = {
-    removers: ["assets", "attributes"],
-    adders: [
-        {
-            when: "assets",
-            add: "image"
+    const Category = {
+        ignore: ["children", "parents", "mainParentId"],
+        adders: [{
+            when: ["children", "parents", "mainParentId"],
+            add: "id"
+        }],
+        createdAt: {
+            alias: "created_at"
         },
-        {
-            when: "attributes",
-            add: ["color", "size", "features", "summary"]
-        }
-    ],
-    movers: [
-        {
-            from: "prices",
-            to: "price.regularPrice.amount"
-        }
-    ],
-    createdAt: {
-        alias: "created_at"
-    },
-    lastModifiedAt: {
-        alias: "updated_at"
-    },
-    id: {
-        alias: "sku"
-    },
-    prices: Price,
-    categories: Category
-};
+        lastModifiedAt: {
+            alias: "updated_at"
+        },
+    };
 
-const ProductVariant = Object.assign({}, _commonProduct,
-    {
-        movers: _commonProduct.movers.concat([{
-            to: "product"
-        }]),
-        removers: _commonProduct.removers.concat(["available"]),
-        adders: _commonProduct.adders.concat([
+    const _commonProduct = {
+        removers: ["assets", "attributes"],
+        adders: [
             {
-                when: "available",
-                add: "sku"
-            }
-        ])
-    });
-
-const Product = Object.assign({}, _commonProduct,
-    {
-        removers: _commonProduct.removers.concat(["masterVariantId"]),
-        adders: _commonProduct.adders.concat([
-            {
-                when: "masterVariantId",
-                add: ["sku", "variants.sku"]
+                when: "assets",
+                add: "image"
             },
             {
-                when: "variants.attributes",
-                add: "configurable_options"
-            }
-        ]),
-        inlineFragments: [
-            {
-                typeName: "ConfigurableProduct",
-                fields: ['variants', 'configurable_options']
+                when: "attributes",
+                add: config.productAttributes
             }
         ],
-        configurable_options: {
-            adders: [
+        movers: [
+            {
+                from: "prices",
+                to: "price.regularPrice.amount"
+            }
+        ],
+        createdAt: {
+            alias: "created_at"
+        },
+        lastModifiedAt: {
+            alias: "updated_at"
+        },
+        id: {
+            alias: "sku"
+        },
+        prices: Price,
+        categories: Category
+    };
+
+    const ProductVariant = Object.assign({}, _commonProduct,
+        {
+            movers: _commonProduct.movers.concat([{
+                to: "product"
+            }]),
+            removers: _commonProduct.removers.concat(["available"]),
+            adders: _commonProduct.adders.concat([
                 {
-                    add: ['attribute_code', 'values', 'label']
+                    when: "available",
+                    add: "sku"
+                }
+            ])
+        });
+
+    const Product = Object.assign({}, _commonProduct,
+        {
+            removers: _commonProduct.removers.concat(["masterVariantId"]),
+            adders: _commonProduct.adders.concat([
+                {
+                    when: "masterVariantId",
+                    add: ["sku", "variants.sku"]
+                },
+                {
+                    when: "variants.attributes",
+                    add: "configurable_options"
+                }
+            ]),
+            inlineFragments: [
+                {
+                    typeName: "ConfigurableProduct",
+                    fields: ['variants', 'configurable_options']
                 }
             ],
-            values: {
+            configurable_options: {
                 adders: [
                     {
-                        add: ['value_index', 'label']
+                        add: ['attribute_code', 'values', 'label']
                     }
-                ]
+                ],
+                values: {
+                    adders: [
+                        {
+                            add: ['value_index', 'label']
+                        }
+                    ]
+                }
+            },
+            categories: Category,
+            variants: ProductVariant
+        });
+
+    const PagedResponse = {
+        removers: ["count", "offset", "facets"],
+        adders: [
+            {
+                when: ["count", "facets"],
+                add: ["total"]
+            },
+            {
+                when: ["count", "offset"],
+                add: ["page_info.page_size", "page_info.current_page"]
             }
+        ],
+        total: {
+            alias: "total_count"
         },
-        categories: Category,
-        variants: ProductVariant
-    });
+        results: Object.assign({}, Product, { alias: "items" })
+    };
 
-const PagedResponse = {
-    removers: ["count", "offset", "facets"],
-    adders: [
-        {
-            when: ["count", "facets"],
-            add: ["total"]
-        },
-        {
-            when: ["count", "offset"],
-            add: ["page_info.page_size", "page_info.current_page"]
-        }
-    ],
-    total: {
-        alias: "total_count"
-    },
-    results: Object.assign({}, Product, { alias: "items" })
+    return {
+        searchProducts: Object.assign(
+            {},
+            PagedResponse,
+            { alias: "products" }
+        )
+    };
 };
 
-const transformRules = {
-    searchProducts: Object.assign(
-        {},
-        PagedResponse,
-        { alias: "products" }
-    )
-};
-
-module.exports = transformRules;
+module.exports = configureRules;

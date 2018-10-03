@@ -21,7 +21,6 @@ const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoCli
 
 const ObjectTransformer = require(__dirname + '/../../../commerce-cif-common/src/graphql/ObjectTransformer');
 const magentoTransformRules = require('./magentoTransformRules');
-const transformer = new ObjectTransformer(magentoTransformRules);
 
 const introspectionHandler = require(__dirname + '/../../../commerce-cif-common/src/graphql/introspectionHandler');
 
@@ -31,7 +30,6 @@ const argsTransformer = new ArgsTransformer(transformerFunctions, checkFields, '
 
 const ResponseMapper = require(__dirname + '/../../../commerce-cif-common/src/graphql/ResponseMapper');
 const magentoMapper = require('./magentoMapper');
-const mapper = new ResponseMapper(magentoMapper);
 
 function main(args) {
     return introspectionHandler(args, magentoDataHandler);
@@ -49,14 +47,17 @@ function magentoDataHandler(args) {
     let queryObject = gqlToObject(parse(query).definitions[0]); //transform into JS object
 
     let magentoQueryObject = JSON.parse(JSON.stringify(queryObject));
-    const client = new MagentoClientBase(args, null, null, 'graphql');
+    let client = new MagentoClientBase(args, null, null, 'graphql');
 
+    let transformerConfig = {
+        productAttributes: args.GRAPHQL_PRODUCT_ATTRIBUTES
+    };
+    let transformer = new ObjectTransformer(magentoTransformRules(transformerConfig));
     transformer.transform(magentoQueryObject);
     try {
         argsTransformer.transformRecursive(magentoQueryObject);
     } catch (e) {
-        console.error(e);
-        return client._handleError(e);
+        return client.handleError(e);
     }
 
     const options = _buildRequest(args, makeGraphqlQuery(magentoQueryObject));
@@ -67,13 +68,17 @@ function magentoDataHandler(args) {
                 if (response.body.errors) {
                     body = response.body;
                 } else {
+                    let mapperConfig = {
+                        imageUrlPrefix: `${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/${args.MAGENTO_MEDIA_PATH}`,
+                        baseProductAttributes: args.GRAPHQL_PRODUCT_ATTRIBUTES.filter(e => !(args.PRODUCT_ATTRIBUTES.includes(e)))
+                    }
+                    let mapper = new ResponseMapper(magentoMapper(mapperConfig));
                     body = { data: mapper.map(queryObject, response.body.data) };
                 }
                 return client._handleSuccess(body); 
             })
             .catch(e => {
-                console.error(e);
-                return client._handleError(e);
+                return client.handleError(e);
             });
 }
 
