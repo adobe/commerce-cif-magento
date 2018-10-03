@@ -1,6 +1,6 @@
 {
   "name": "@adobe/commerce-cif-magento-cart",
-  "version": "0.0.2",
+  "version": "1.0.1",
   "description": "Adobe Commerce Integration Framework (CIF) Magento Integration Cart Project",
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
@@ -9,13 +9,13 @@
     "url": "https://github.com/adobe/commerce-cif-magento.git"
   },
   "dependencies": {
-    "@adobe/commerce-cif-magento-common": "0.0.1",
-    "@adobe/commerce-cif-common": "0.1.17",
+    "@adobe/commerce-cif-magento-common": "1.1.0",
+    "@adobe/commerce-cif-common": "1.0.0",
     "@adobe/commerce-cif-model": "1.1.0"
   },
   "devDependencies": {
     "eslint": "3.19.0",
-    "eslint-plugin-header": "git+https://github.com/herzog31/eslint-plugin-header.git",
+    "eslint-plugin-header": "2.0",
     "serverless": "1.29.0",
     "serverless-openwhisk": "0.13.0",
     "serverless-webpack": "4.3.0",

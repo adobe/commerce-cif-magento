@@ -20,9 +20,9 @@ const config = require('../lib/config').config;
 const sinon = require('sinon');
 const sampleProductSearch = require('../resources/sample-product-search');
 
-describe('Unit tests', () => {
+describe('magento searchProducts', () => {
 
-    describe('searchProducts', () => {
+    describe('Unit tests', () => {
 
         // Add helpers to context
         setup(this, __dirname, 'searchProducts');

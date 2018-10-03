@@ -37,14 +37,22 @@ class MagentoOrderClient extends MagentoClientBase {
      * Creates an order from a cart.
      */
     create(cartId) {
-        this.baseEndpoint = 'guest-carts';
-        return this.withEndpoint(`${cartId}/order`)._execute('PUT').then(result => {
+        return this.withEndpointBasedOnCustomer(cartId)._execute('PUT').then(result => {
             let ccifOrder = this.mapper(result);
             let headers = {'Location': `orders/${ccifOrder.id}`};
             return this._handleSuccess(ccifOrder, headers, 201);
         }).catch(error => {
             return this.handleError(error);
         });
+    }
+
+    withEndpointBasedOnCustomer(cartId) {
+        if (this.customerToken) {
+            this.endpoint = 'carts/mine/order';
+        } else {
+            this.baseEndpoint = `guest-carts/${cartId}/order`;
+        }
+        return this;
     }
 
 }

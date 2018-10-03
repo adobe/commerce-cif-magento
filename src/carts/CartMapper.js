@@ -202,7 +202,7 @@ class CartMapper {
             .withTaxInfo(taxInfo)
             .build();
         shippingInfo.discountedCost = new MoneyValue.Builder()
-            .withAmount(magentoCartTotals.shipping_incl_tax * 100)
+            .withAmount(magentoCartTotals.shipping_discount_amount * 100)
             .withCurrency(magentoCartTotals.quote_currency_code)
             .build();
 

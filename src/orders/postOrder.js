@@ -42,7 +42,7 @@ function postOrder(args) {
     }
 
     let mapper = new OrderMapper();
-    const orderClient = new MagentoOrderClient(args, mapper._mapOrder, 'orders');
+    const orderClient = new MagentoOrderClient(args, mapper._mapOrder);
 
     return orderClient.create(args.cartId);
 }

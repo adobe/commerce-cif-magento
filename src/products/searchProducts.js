@@ -27,6 +27,7 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * @param   {string} args.MAGENTO_SCHEMA                Magento host URL schema (http or https)
  * @param   {string} args.MAGENTO_HOST                  Magento host URL
  * @param   {string} args.GRAPHQL_PRODUCT_ATTRIBUTES    The product attributes fetched by the graphQL request
+ * @param   {string} args.MAGENTO_MEDIA_PATH            Magento media base path
  * 
  * @param   {string} args.text                 a string which should be used to perform a full-text search
  * @param   {string} args.filter               a string of search filters separated by the '|' (pipe) character

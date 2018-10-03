@@ -70,6 +70,11 @@ class MagentoCartClient extends MagentoClientBase {
      * @return {Promise}         Promise with cart data
      */
     create() {
+        //when a cart is created for a logged in customer we have to make sure that mine is appended to `cart`
+        //this has to be done even the customer does not have any cart yet
+        if(this.customerToken) {
+            this.withEndpoint('mine');
+        }
         return this._execute('POST').then(result => {
             return this._handleSuccess(result);
         });

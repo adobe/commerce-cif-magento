@@ -19,13 +19,15 @@ const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
 const requiredFields = require('../lib/requiredFields');
+const extractToken = require('../lib/setupIT').extractToken;
+const CCS_MAGENTO_CUSTOMER_TOKEN = require('../../src/common/MagentoClientBase').const().CCS_MAGENTO_CUSTOMER_TOKEN;
 
 const expect = chai.expect;
 
 chai.use(chaiHttp);
 
 
-describe('Magento postOrder', function () {
+describe('Magento postOrder IT', function () {
 
     describe('Integration tests', function () {
 
@@ -63,9 +65,10 @@ describe('Magento postOrder', function () {
 
         let cartId;
         const productVariantId = env.PRODUCT_VARIANT_EQBISUMAS_10;
+        let accessToken;
 
-        /** Create empty cart. */
-        beforeEach(function () {
+        /** Create cart. */
+        before(function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postCartEntry')
                 .query({
@@ -79,12 +82,62 @@ describe('Magento postOrder', function () {
 
                     // Store cart id
                     cartId = res.body.id;
+
+                    return chai.request(env.openwhiskEndpoint)
+                        .get(env.customersPackage + 'postCustomerLogin')
+                        .set('Cache-Control', 'no-cache')
+                        .query({
+                            email: env.magentoCustomerName,
+                            password: env.magentoCustomerPwd
+                        });
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+
+                    requiredFields.verifyLoginResult(res.body);
+                    expect(res.body.customer.email).to.equal(env.magentoCustomerName);
+                    //check cookie is set
+                    accessToken = extractToken(res);
+                    expect(accessToken).to.not.be.undefined;
+                    //create a new customer cart
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postCartEntry')
+                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .query({
+                            currency: 'USD',
+                            quantity: 5,
+                            productVariantId: productVariantId
+                        });
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.CREATED);
                 });
         });
 
-        /** Delete cart. */
+        // check that the anonymous and customer cart are not available anymore.
         after(function () {
-            // TODO: CIF-239
+            return chai.request(env.openwhiskEndpoint)
+                .get(env.cartsPackage + 'getCart')
+                .set('Cache-Control', 'no-cache')
+                .query({id: cartId})
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    //this is a bug on the extension service which returns 500 when a cart was `ordered`
+                    //https://github.com/adobe/commerce-cif-magento-extension/issues/12
+                    //should be replaced with 404 or (200 and cartEntries.length = 0) when a fix will be avail.
+                    expect(res).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                    return chai.request(env.openwhiskEndpoint)
+                        .get(env.cartsPackage + 'getCart')
+                        .set('Cache-Control', 'no-cache')
+                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .query({id: cartId})
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                });
         });
 
         it('returns 400 for updating the order when the cart id is missing', function () {
@@ -120,7 +173,7 @@ describe('Magento postOrder', function () {
                 });
         });
 
-        it('returns 201 for creating an order', function () {
+        it('returns 201 for creating an order for a guest cart', function () {
             // Set billing address
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postBillingAddress')
@@ -130,7 +183,9 @@ describe('Magento postOrder', function () {
                 .send({
                     address: addr
                 })
-                .then(function() {
+                .then(function(res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
                     // Set shipping address
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.cartsPackage + 'postShippingAddress')
@@ -143,7 +198,9 @@ describe('Magento postOrder', function () {
                             address: addr
                         });
                 })
-                .then(function () {
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
                     // Set payment
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.cartsPackage + 'postPayment')
@@ -154,10 +211,73 @@ describe('Magento postOrder', function () {
                             payment: ccifPayment
                         });
                 })
-                .then(function () {
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
                     // Submit order
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.ordersPackage + 'postOrder')
+                        .query({
+                            cartId: cartId
+                        });
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.CREATED);
+                    expect(res).to.have.property('headers');
+                    expect(res.headers).to.have.property('location');
+                    requiredFields.verifyOrder(res.body);
+                });
+        });
+
+        it('returns 201 for creating an order for a customer cart', function () {
+            // Set billing address
+            return chai.request(env.openwhiskEndpoint)
+                .post(env.cartsPackage + 'postBillingAddress')
+                .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                .query({
+                    id: cartId
+                })
+                .send({
+                    address: addr
+                })
+                .then(function(res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    // Set shipping address
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postShippingAddress')
+                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .query({
+                            id: cartId,
+                            default_method: 'flatrate',
+                            default_carrier: 'flatrate'
+                        })
+                        .send({
+                            address: addr
+                        });
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    // Set payment
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.cartsPackage + 'postPayment')
+                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .query({
+                            id: cartId
+                        })
+                        .send({
+                            payment: ccifPayment
+                        });
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    // Submit order
+                    return chai.request(env.openwhiskEndpoint)
+                        .post(env.ordersPackage + 'postOrder')
+                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
                         .query({
                             cartId: cartId
                         });

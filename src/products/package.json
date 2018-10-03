@@ -1,6 +1,6 @@
 {
   "name": "@adobe/commerce-cif-magento-product",
-  "version": "0.0.1",
+  "version": "1.0.2",
   "description": "Adobe Commerce Integration Framework (CIF) Magento Integration Product Project",
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
@@ -9,9 +9,9 @@
     "url": "https://github.com/adobe/commerce-cif-magento.git"
   },
   "dependencies": {
-    "@adobe/commerce-cif-magento-common": "0.0.1",
-    "@adobe/commerce-cif-common": "0.1.17",
-    "@adobe/commerce-cif-model": "1.0.0",
+    "@adobe/commerce-cif-magento-common": "1.1.0",
+    "@adobe/commerce-cif-common": "1.0.0",
+    "@adobe/commerce-cif-model": "1.1.0",
     "handlebars": "4.0.11",
     "request": "2.87.0",
     "request-promise-native": "1.0.5"
@@ -19,7 +19,7 @@
   "devDependencies": {
     "copy-webpack-plugin": "4.5.1",
     "eslint": "3.19.0",
-    "eslint-plugin-header": "git+https://github.com/herzog31/eslint-plugin-header.git",
+    "eslint-plugin-header": "2.0",
     "serverless": "1.29.0",
     "serverless-openwhisk": "0.13.0",
     "serverless-webpack": "4.3.0",

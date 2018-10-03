@@ -87,7 +87,7 @@ module.exports.specsBuilder = function(propName, propValue) {
                     'cookie': `ccs-magento-customer-token=customer-token;`
                 }
             },
-            baseCart: `${baseCustomerCart}`,
+            baseCart: `${baseCustomerCart}/mine`,
             baseEndpoint: `${baseCustomerCart}/mine`,
             baseEndpointAggregatedCart: `${baseCustomerAggregatedCart}/mine`,
             token: 'customer-token'

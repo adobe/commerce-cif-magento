@@ -8,7 +8,7 @@ The CircleCi configuration can be found in the [.circleci](.circleci) folder. Th
 During the `Build` job, we provision the project and run unit and integration tests. For integration testing, we deploy the actions on Adobe I/O Runtime and configure them to run against a Magento instance. The `Build` job is executed on every push.
 
 ### 1.2 Release
-To release a package, the `Release` job is used. It can be triggered by adding a Git tag to the latest commit on master. The tag has to consist of both the name of the package and the version bump (`@PACKAGE-NAME@release-(patch|minor|major)`). You can find all possible release-able package names in the [release.js](ci/release.js) file. The possible release bumps are `patch`, `minor` and `major`.
+To release a package, the `Release` job is used. It can be triggered by adding a Git tag to the latest commit on master. The tag has to consist of both the name of the package and the version bump (`@PACKAGE-NAME@release-(patch|minor|major)`). You can find all possible release-able package names in the [modules.json](modules.json) file. The possible release bumps are `patch`, `minor` and `major`.
 
 During the release, the version in the `package.json` file is increased and the change is committed. Therefore, the release script checks out the latest commit of the `master` branch. Releases on branches are not possible. 
 
