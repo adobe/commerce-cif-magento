@@ -16,19 +16,19 @@
 
 const request = require('request-promise-native');
 const { parse } = require('graphql');
-const { gqlToObject, makeGraphqlQuery } = require(__dirname + '/../../../commerce-cif-common/src/graphql/utils');
+const { gqlToObject, makeGraphqlQuery } = require('@adobe/commerce-cif-graphql/utils');
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 
-const ObjectTransformer = require(__dirname + '/../../../commerce-cif-common/src/graphql/ObjectTransformer');
+const ObjectTransformer = require('@adobe/commerce-cif-graphql/ObjectTransformer');
 const magentoTransformRules = require('./magentoTransformRules');
 
-const introspectionHandler = require(__dirname + '/../../../commerce-cif-common/src/graphql/introspectionHandler');
+const introspectionHandler = require('@adobe/commerce-cif-graphql/introspectionHandler');
 
-const ArgsTransformer = require(__dirname + '/../../../commerce-cif-common/src/graphql/ArgsTransformer');
+const ArgsTransformer = require('@adobe/commerce-cif-graphql/ArgsTransformer');
 const { transformerFunctions, checkFields } = require('./magentoArgsTransformer');
 const argsTransformer = new ArgsTransformer(transformerFunctions, checkFields, '__args');
 
-const ResponseMapper = require(__dirname + '/../../../commerce-cif-common/src/graphql/ResponseMapper');
+const ResponseMapper = require('@adobe/commerce-cif-graphql/ResponseMapper');
 const magentoMapper = require('./magentoMapper');
 
 function main(args) {

@@ -108,12 +108,11 @@ describe('Unit tests', () => {
                 }, config));
         });
 
-        // TODO: fix issue with ENUM
         it('Correctly processes multiple sort parameters', () => {
             let params = 'searchProducts(text: "test", sort: ["name.asc", "sku.desc", "createdAt.asc", "lastModifiedAt.desc"])';
             let query = allFieldsQuery.replace(/searchProducts\(.*\)/, params);
             return this.prepareResolve(sampleResponse, (expectedArgs) => {
-                    expect(expectedArgs.body.query).to.contains('sort: {name: {value: "ASC"}, sku: {value: "DESC"}, created_at: {value: "ASC"}, updated_at: {value: "DESC"}}');
+                    expect(expectedArgs.body.query).to.contains('sort: {name: ASC, sku: DESC, created_at: ASC, updated_at: DESC}');
                 })
                 .execute(Object.assign({
                     'query': query

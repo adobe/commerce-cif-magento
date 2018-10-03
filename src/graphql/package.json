@@ -12,6 +12,7 @@
     "@adobe/commerce-cif-common": "1.0.0",
     "@adobe/commerce-cif-magento-common": "1.1.0",
     "@adobe/commerce-cif-model": "1.1.0",
+    "@adobe/commerce-cif-graphql": "1.0.0",
     "graphql": "14.0.0",
     "graphql-tools": "3.1.1",
     "json-to-graphql-query": "1.8.0",
