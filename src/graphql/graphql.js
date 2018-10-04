@@ -57,7 +57,9 @@ function magentoDataHandler(args) {
     try {
         argsTransformer.transformRecursive(magentoQueryObject);
     } catch (e) {
-        return client.handleError(e);
+        return client._handleSuccess({ // GraphQL errors always return HTTP 200 OK
+            errors: [e]
+        });
     }
 
     const options = _buildRequest(args, makeGraphqlQuery(magentoQueryObject));

@@ -20,6 +20,7 @@
  */
 
 const { EnumType } = require('json-to-graphql-query');
+const MissingPropertyError = require('@adobe/commerce-cif-common/exception').MissingPropertyError;
 
  /**
  * @private
@@ -81,7 +82,7 @@ let transformerFunctions = {
         let text = args.search;
         let filter = args.filter;
         if (!(text || filter) || (filter && filter.length === 0)) {
-            throw new Error("The request didn't include any valid search filter or text argument");
+            throw new MissingPropertyError(`At least one parameter from [text, filter] must be specified.`);
         }
     },
 
@@ -116,7 +117,7 @@ let transformerFunctions = {
                 Object.assign(filterFields, filter);
             }
         });
-        if (filterFields) {
+        if (Object.keys(filterFields).length > 0) {
             args.filter = filterFields;
         } else {
             delete args.filter;
@@ -148,7 +149,8 @@ let transformerFunctions = {
 };
 
 let checkFields = {
-    searchProducts: ['textOrFilter', 'limit', 'offset', 'currentPage']
+    searchProducts: ['limit', 'offset'],
+    products: ['textOrFilter'] // 'searchProducts' is aliased to 'products', the mandatory check will be done on the aliased object
 };
 
 module.exports = { transformerFunctions, checkFields };

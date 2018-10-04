@@ -35,7 +35,8 @@ const {
     variantsQuery,
     syntaxError,
     invalidField,
-    filterAndTextMissing
+    filterAndTextMissing,
+    pageInfoQuery
 } = require('../resources/graphqlQueries');
 
 describe('CIF/Magento graphql', function() {
@@ -221,6 +222,23 @@ describe('CIF/Magento graphql', function() {
                 });
         });
 
+        it('Returns only paging information', function () {
+            return chai.request(env.openwhiskEndpoint)
+                .post(env.graphqlPackage + 'graphql')
+                .set('Cache-Control', 'no-cache')
+                .send({ query: pageInfoQuery })
+                .then(function (res) {
+                    expect(res).to.have.status(HttpStatus.OK);
+                    let pagedRespone = res.body.data.searchProducts;
+                    expect(pagedRespone.total).to.equal(1);
+                    expect(pagedRespone.count).to.equal(1);
+                    expect(pagedRespone.offset).to.equal(0);
+
+                    // PagedResponse JSON should only contain these 3 fields
+                    expect(Object.keys(pagedRespone)).to.have.lengthOf(3);
+                });
+        });
+
         it('Returns a syntax error response to a malformed query', function () {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.graphqlPackage + 'graphql')
@@ -253,9 +271,8 @@ describe('CIF/Magento graphql', function() {
                 .then(function (res) {
                     expect(res).to.have.status(HttpStatus.OK);
                     const error = res.body.errors[0];
-                    expect(error.message).to.equal("'search' or 'filter' input argument is required.");
-                    expect(error.category).to.equal('graphql-input');
-                    expect(error.path[0]).to.equal('searchProducts');
+                    expect(error.name).to.equal('MissingPropertyError');
+                    expect(error.message).to.equal("At least one parameter from [text, filter] must be specified.");
                 });
         });
     });

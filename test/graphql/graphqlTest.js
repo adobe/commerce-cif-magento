@@ -119,8 +119,23 @@ describe('Unit tests', () => {
                 }, config));
         });
 
+        it('Returns a graphQL error response when text and filter parameters are missing', () => {
+            let params = 'searchProducts(offset: 0)';
+            let query = allFieldsQuery.replace(/searchProducts\(.*\)/, params);
+            return this.prepareResolve(undefined)
+                .execute(Object.assign({
+                    'query': query
+                }, config))
+                .then(result => {
+                    expect(result.response.statusCode).to.equal(HttpStatus.OK);
+                    const error = result.response.body.errors[0];
+                    expect(error.name).to.equal('MissingPropertyError');
+                    expect(error.message).to.equal('At least one parameter from [text, filter] must be specified.');
+                });
+        });
+
         it('Returns a syntax error response to a malformed query', () => {
-            return this.prepareResolve(sampleResponse)
+            return this.prepareResolve(undefined)
                 .execute(Object.assign({
                     'query': syntaxError
                 }, config))
@@ -132,7 +147,7 @@ describe('Unit tests', () => {
         });
 
         it('Returns an invalid field error response to an invalid query', () => {
-            return this.prepareResolve(sampleResponse)
+            return this.prepareResolve(undefined)
                 .execute(Object.assign({
                     'query': invalidField
                 }, config))
