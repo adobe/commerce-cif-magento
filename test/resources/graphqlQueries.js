@@ -191,7 +191,7 @@ let filterAndTextMissing = `{
     }
 }`;
 
-const introspectionQuery = `query IntrospectionQuery {
+let introspectionQuery = `query IntrospectionQuery {
     __schema {
       queryType { name }
       mutationType { name }

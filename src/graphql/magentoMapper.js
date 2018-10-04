@@ -27,6 +27,31 @@ const formatDate = require('@adobe/commerce-cif-magento-common/utils').formatDat
  */
 const configureMapper = (config) => {
 
+    /**
+     * To map Magento product data into CIF product data, we cannot rely on the existing ProductMapper used for the REST API.
+     * This is because GraphQL requests explicitly define what data fields should be returned, so the data must be mapped
+     * from Magento to CIF according to the original CIF GraphQL request.
+     * 
+     * Hence each function uses a switch-case block to only map the data requested for each "block" of the original data.
+     * For example, for each field of the following request:
+     * 
+     * searchProducts(text: "meskwielt") {
+     *     offset
+     *     results {
+     *         id
+     *     }
+     * }
+     * 
+     * The mapping is done by:
+     * - offset: mapped by 'mapPagedResponse' because it's the root field-mapper, then "case offset:"
+     * - results: mapped by 'mapPagedResponse' because it's the root field-mapper, then "case results:", then 'arrayMapper/mapProduct'
+     * - results.id: mapped by 'mapProduct', then "case id:"
+     */
+
+    
+    /**
+     * Generic function used to easily map arrays.
+     */
     const arrayMapper = (req, data, mapperfunction) => {
         if (data && data.length > 0) {
             return data.map(d => {
@@ -37,6 +62,9 @@ const configureMapper = (config) => {
         }
     }
 
+    /**
+     * Maps Magento prices into CIF prices, only including fields requested in the original GraphQL request.
+     */
     const mapPrices = (req, data) => {
         let result = {};
         Object.keys(req).forEach(key => {
@@ -55,6 +83,9 @@ const configureMapper = (config) => {
         return result;
     }
 
+    /**
+     * Maps Magento images into CIF assets, only including fields requested in the original GraphQL request.
+     */
     const mapAssets = (req, imageUrl) => {
         let result = {};
         Object.keys(req).forEach(key => {
@@ -68,7 +99,10 @@ const configureMapper = (config) => {
         return result;
     }
 
-    const mapAttributes = (req, data, configurableOpts) => {
+    /**
+     * Maps Magento variant attributes into CIF attributes, mapping all possible fields.
+     */
+    const _mapVariantAttributes = (data, configurableOpts) => {
         let attributes = [];
         if (configurableOpts) {
             configurableOpts.map(opt => {
@@ -86,8 +120,16 @@ const configureMapper = (config) => {
                 }
             });
         }
-        if (config.baseProductAttributes) {
-            config.baseProductAttributes.map(a => {
+        return attributes;
+    }
+
+    /**
+     * Maps Magento simple attributes into CIF attributes, mapping all possible fields.
+     */
+    const _mapSimpleAttributes = (data, baseProductAttributes) => {
+        let attributes = [];
+        if (baseProductAttributes) {
+            baseProductAttributes.map(a => {
                 if (data[a]) {
                     let att = {
                         id: a,
@@ -99,7 +141,19 @@ const configureMapper = (config) => {
                 }
             });
         }
+        return attributes;
+    }
 
+    /**
+     * Maps Magento attributes into CIF attributes, only including fields requested in the original GraphQL request.
+     */
+    const mapAttributes = (req, data, configurableOpts) => {
+        // Collect all attributes, include variant and simple attributes
+        let attributes = [];
+        attributes = attributes.concat(_mapVariantAttributes(data, configurableOpts));
+        attributes = attributes.concat(_mapSimpleAttributes(data, config.baseProductAttributes));
+
+        // For each attribute, we only include the fields requested in the original GraphQL request.
         let results = [];
         if (attributes.length > 0) {
             let id = undefined;
@@ -130,20 +184,21 @@ const configureMapper = (config) => {
                         break;
                 }
             });
-            if (n > 0) {
-                for (let i = 0; i < n; ++i) {
-                    let result = results[i] = {};
-                    [id, name, value, isVariantAxis].forEach(att => {
-                        if (att) {
-                            result[att.key] = att.value[i];
-                        }
-                    });
-                }
+            for (let i = 0; i < n; ++i) {
+                let result = results[i] = {};
+                [id, name, value, isVariantAxis].forEach(att => {
+                    if (att) {
+                        result[att.key] = att.value[i];
+                    }
+                });
             }
         }
         return results;
     }
 
+    /**
+     * Maps Magento product data into CIF product data (Product or ProductVariant), only including fields requested in the original GraphQL request.
+     */
     const mapAbstractProduct = (req, data) => {
         let result = {};
         Object.keys(req).forEach(key => {
@@ -177,6 +232,9 @@ const configureMapper = (config) => {
         return result;
     }
 
+    /**
+     * Maps Magento "variant" data into CIF ProductVariant, only including fields requested in the original GraphQL request.
+     */
     const mapProductVariant = (req, data, configurableOpts) => {
         let result = mapAbstractProduct(req, data);
         Object.keys(req).forEach(key => {
@@ -195,6 +253,9 @@ const configureMapper = (config) => {
         return result;
     }
 
+    /**
+     * Maps Magento "base product" data into CIF Product, only including fields requested in the original GraphQL request.
+     */
     const mapProduct = (req, data) => {
         let result = mapAbstractProduct(req, data);
         Object.keys(req).forEach(key => {
@@ -222,6 +283,9 @@ const configureMapper = (config) => {
         return result;
     }
 
+    /**
+     * Maps Magento category data into CIF Category, only including fields requested in the original GraphQL request.
+     */
     const mapCategory = (req, data) => {
         let result = {};
         Object.keys(req).forEach(key => {
@@ -253,6 +317,9 @@ const configureMapper = (config) => {
         }
     }
 
+    /**
+     * Maps Magento search results data into CIF PagedResponse, only including fields requested in the original GraphQL request.
+     */
     const mapPagedResponse = (originalObject, dataObject, fieldName) => {
         let req = originalObject[fieldName];
         let data = dataObject[fieldName];

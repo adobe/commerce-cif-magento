@@ -134,6 +134,16 @@ describe('Unit tests', () => {
                 });
         });
 
+        it('Returns an error to a bad GraphQL request without a query field', () => {
+            return this.prepareResolve(undefined)
+                .execute({})
+                .then(result => {
+                    expect(result.response.statusCode).to.equal(HttpStatus.OK);
+                    const error = result.response.body.errors[0];
+                    expect(error.message).to.equal("Parameter 'query' is missing.");
+                });
+        });
+
         it('Returns a syntax error response to a malformed query', () => {
             return this.prepareResolve(undefined)
                 .execute(Object.assign({

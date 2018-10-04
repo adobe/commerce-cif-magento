@@ -23,8 +23,13 @@ const { EnumType } = require('json-to-graphql-query');
 const MissingPropertyError = require('@adobe/commerce-cif-common/exception').MissingPropertyError;
 
  /**
- * @private
- */
+  * @private
+  * 
+  * Returns the equivalent 'Magento field name' for the given 'field' argument.
+  * This is used to convert filter ans sort arguments from CIF to Magento.
+  * 
+  * @param {*} field A 'filter' or 'sort' CIF argument, like 'name.en', 'variants.sku', or 'createdAt'.
+  */
 function _translateFieldName(field) {
     if (field.startsWith('name')) {
         return 'name';
@@ -49,11 +54,19 @@ function _translateFieldName(field) {
 
 let transformerFunctions = {
 
+    /**
+     * Converts the CIF 'name' search argument into Magento's 'text' argument.
+     * This is used to transform 'searchProducts(text: "jacket")' into 'products(search: "jacket")'.
+     */
     text: function(args) {
         args.search = args.text;
         delete args.text;
     },
 
+    /**
+     * Converts the CIF 'limit' search argument into Magento's 'pageSize' argument.
+     * For example, this is used to transform 'searchProducts(limit: 10)' into 'products(pageSize: 10)'.
+     */
     limit: function (args) {
         let defaultLimit = 25;
         let limit = Number(args.limit);
@@ -64,6 +77,10 @@ let transformerFunctions = {
         args.pageSize = limit;
     },
 
+    /**
+     * Converts the CIF 'offset' search argument into Magento's 'currentPage' argument.
+     * For example, this is used to transform 'searchProducts(offset: 10, limit: 5)' into 'products(currentPage: 3, pageSize: 5)'.
+     */
     offset: function (args) {
         let currentPage = 1;
         let limit = args.limit || args.pageSize;
@@ -78,6 +95,9 @@ let transformerFunctions = {
         delete args.offset;
     },
 
+    /**
+     * Ensures that the 'searchProducts' function contains the 'text' or 'filter' argument.
+     */
     textOrFilter: function (args) {
         let text = args.search;
         let filter = args.filter;
@@ -86,6 +106,10 @@ let transformerFunctions = {
         }
     },
 
+    /**
+     * Converts search filters into the equivalent Magento 'ProductFilterInput' arguments.
+     * For example, this is used to tranform 'searchProducts(filter: "variants.sku:meskwielt")' into 'products(filter: {sku: {eq: "meskwielt"}})'.
+     */
     filter: function (args) {
         let filterArgs = Array.isArray(args.filter) ? args.filter : [args.filter];
         let filterFields = {};
@@ -123,6 +147,11 @@ let transformerFunctions = {
             delete args.filter;
         }
     },
+
+    /**
+     * Converts 'sort' arguments into the equivalent Magento 'ProductSortInput' and 'SortEnum' arguments.
+     * For example, this is used to tranform 'searchProducts(sort: "name.en.asc")' into 'products(sort: {name: ASC})'.
+     */
     sort: function (args) {
         let sortArgs = Array.isArray(args.sort) ? args.sort : [args.sort];
         let sortFields = {};
@@ -148,6 +177,9 @@ let transformerFunctions = {
     }
 };
 
+/**
+ * This defines the fields that have to be processed and/or checked, whenever they are in the original request or not.
+ */
 let checkFields = {
     searchProducts: ['limit', 'offset'],
     products: ['textOrFilter'] // 'searchProducts' is aliased to 'products', the mandatory check will be done on the aliased object

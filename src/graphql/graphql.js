@@ -31,7 +31,18 @@ const argsTransformer = new ArgsTransformer(transformerFunctions, checkFields, '
 const ResponseMapper = require('@adobe/commerce-cif-graphql/ResponseMapper');
 const magentoMapper = require('./magentoMapper');
 
+const InputValidator = require('@adobe/commerce-cif-common/input-validator');
+
 function main(args) {
+    const validator = new InputValidator(args, 'graphql');
+    validator.checkArguments().mandatoryParameter('query');
+    if (validator.error) {
+        let client = new MagentoClientBase(args, null, null, 'graphql');
+        return client._handleSuccess({ // GraphQL errors always return HTTP 200 OK
+            errors: [validator.error]
+        });
+    }
+
     return introspectionHandler(args, magentoDataHandler);
 }
 
