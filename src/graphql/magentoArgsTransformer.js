@@ -14,11 +14,6 @@
 
 'use strict';
 
-/**
- * argsTransforms defined how to transform each argument
- * checkFields sets arguments that should be checked in any case for a certain field
- */
-
 const { EnumType } = require('json-to-graphql-query');
 const MissingPropertyError = require('@adobe/commerce-cif-common/exception').MissingPropertyError;
 
@@ -52,6 +47,9 @@ function _translateFieldName(field) {
     return null;
 }
 
+/**
+ * This defines all the functions that will be used to transform GraphQL arguments from CIF schema to Magento's GraphQL schema. 
+ */
 let transformerFunctions = {
 
     /**
