@@ -11,9 +11,10 @@
   "dependencies": {
     "@adobe/commerce-cif-common": "0.1.17",
     "@adobe/commerce-cif-model": "1.1.0",
+    "chai-string": "1.4.0",
+    "proxyquire": "v2.0.0",
     "request": "2.87.0",
-    "request-promise-native": "1.0.5",
-    "proxyquire": "v2.0.0"
+    "request-promise-native": "1.0.5"
   },
   "devDependencies": {
     "eslint": "3.19.0",
