@@ -50,6 +50,6 @@
     "test-cov": "nyc npm run unit && npm run lcov-report",
     "lcov-report": "nyc report --reporter=lcov",
     "unit": "mocha test/**/*Test.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-unit.json",
-    "test-it": "mocha test/**/*IT.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-unit.json"
+    "test-it": "mocha test/**/*IT.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-integration.json"
   }
 }
