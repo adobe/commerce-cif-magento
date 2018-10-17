@@ -42,7 +42,7 @@
     "pack": "lerna exec -- npm pack",
     "remove-pack": "find . -name \"*.tgz\" | grep -v node_modules | xargs rm -v",
     "clean": "lerna clean",
-    "postinstall": "lerna bootstrap",
+    "postinstall": "lerna bootstrap --concurrency 2",
     "deploy": "lerna run deploy-package --concurrency 1",
     "remove": "lerna run remove-package --concurrency 1",
     "generate-cov-html": "nyc report --reporter=html",
