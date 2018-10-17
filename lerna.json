@@ -4,13 +4,12 @@
     "src/**",
     "test"
   ],
-  "commands": {
+  "command": {
     "bootstrap": {
       "ignore": "@adobe/commerce-cif-web-action-transformer"
     },
     "run": {
       "ignore": "@adobe/commerce-cif-web-action-transformer"
     }
-  },
-  "lerna": "2.0.0-rc.5"
+  }
 }

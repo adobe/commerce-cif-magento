@@ -27,6 +27,9 @@ let pkg = ci.parsePackage("package.json");
 ci.stage('PROVISION PROJECT');
 ci.sh('npm install');
 
+ci.stage('SECURITY AUDIT');
+ci.sh('npm run audit');
+
 if ("test" in pkg.scripts) {
     ci.stage('UNIT TESTS');
     ci.sh('mkdir -p test/results/unit');

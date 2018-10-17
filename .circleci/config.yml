@@ -12,6 +12,8 @@ jobs:
           path: test/results
       - store_artifacts:
           path: test/results
+      - store_artifacts:
+          path: audit.json
   release:
     docker:
       - image: adobe/commerce-cif-ci-env:v0.0.1
