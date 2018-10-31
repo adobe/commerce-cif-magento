@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: adobe/commerce-cif-ci-env:v0.0.1
+      - image: adobe/commerce-cif-ci-env:ci-v0.0.2
     steps:
       - checkout
       - run:
@@ -12,9 +12,11 @@ jobs:
           path: test/results
       - store_artifacts:
           path: test/results
+      - store_artifacts:
+          path: audit.json
   release:
     docker:
-      - image: adobe/commerce-cif-ci-env:v0.0.1
+      - image: adobe/commerce-cif-ci-env:ci-v0.0.2
     steps:
       - checkout
       - run:
@@ -22,7 +24,7 @@ jobs:
           command: node ci/release.js
   deploy:
     docker:
-      - image: adobe/commerce-cif-ci-env:v0.0.1
+      - image: adobe/commerce-cif-ci-env:ci-v0.0.2
     steps:
       - checkout
       - run:

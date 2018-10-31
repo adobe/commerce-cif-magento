@@ -16,6 +16,7 @@
 
 const e = require('child_process');
 const fs = require('fs');
+const path = require('path')
 
 module.exports = class CI {
 
@@ -159,6 +160,77 @@ module.exports = class CI {
      */
     parseModuleFromVersionTag(tag, mappings) {
         return Object.keys(mappings).find(key => tag.startsWith(`@adobe/${key}-`));
+    }
+
+    /**
+     * Returns an array of paths to npm packages in the current path.
+     */
+    findPackages() {
+        const ignore = ['node_modules', '@adobe'];
+
+        let _findPackagesRec = function(base, files, result) {
+            files = files;
+            result = result;
+    
+            files.forEach((filename) => {
+                // Ignore hidden files
+                if (filename.startsWith('.')) {
+                    return;
+                }
+    
+                // Ignore node_modules folders
+                if (ignore.indexOf(filename) > -1) {
+                    return;
+                }
+    
+                let newPath = path.join(base, filename);
+    
+                // Recursively search subfolders
+                if (fs.statSync(newPath).isDirectory()) {
+                    result = _findPackagesRec(newPath, fs.readdirSync(newPath), result);
+                    return;
+                }
+    
+                // Add project root to list if it contains a package.json file
+                if (filename === 'package.json') {
+                    result.push(base);
+                }
+    
+            });
+            return result
+        }
+        let currentDir = process.cwd();
+        return _findPackagesRec(currentDir, fs.readdirSync(currentDir), []);
+    }
+
+    /**
+     * Returns the JSON output of npm audit in the current path.
+     */
+    npmAudit() {
+        const tmpFile = '_audit.json';
+        let jsonFile = fs.openSync(tmpFile, 'w+');
+    
+        console.log("npm audit --json");
+        try {
+            e.execSync("npm audit --json", { 'stdio': ['pipe', jsonFile, jsonFile] });
+        } catch (e) {}
+    
+        let output = fs.readFileSync(tmpFile, { 'encoding': 'utf8' });
+    
+        // This potentially fails for an invalid audit result
+        output = JSON.parse(output);
+    
+        fs.unlinkSync(tmpFile);
+    
+        return output;
+    }
+
+    /**
+     * Writes given content to a file.
+     */
+    writeFile(fileName, content) {
+        console.log(`// Write to file ${fileName}`);
+        fs.writeFileSync(fileName, content, { 'encoding': 'utf8' });
     }
 
 };

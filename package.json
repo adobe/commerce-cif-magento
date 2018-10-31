@@ -17,7 +17,7 @@
     "chai-http": "4.0.0",
     "chai-sorted": "0.1.2",
     "http-status-codes": "1.2.0",
-    "lerna": "2.9.0",
+    "lerna": "^3.4.2",
     "mocha": "5.2.0",
     "mocha-junit-reporter": "1.18.0",
     "mocha-multi-reporters": "1.1.7",
@@ -42,7 +42,7 @@
     "pack": "lerna exec -- npm pack",
     "remove-pack": "find . -name \"*.tgz\" | grep -v node_modules | xargs rm -v",
     "clean": "lerna clean",
-    "postinstall": "lerna bootstrap",
+    "postinstall": "lerna bootstrap --concurrency 2",
     "deploy": "lerna run deploy-package --concurrency 1",
     "remove": "lerna run remove-package --concurrency 1",
     "generate-cov-html": "nyc report --reporter=html",
@@ -50,6 +50,7 @@
     "test-cov": "nyc npm run unit && npm run lcov-report",
     "lcov-report": "nyc report --reporter=lcov",
     "unit": "mocha test/**/*Test.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-unit.json",
-    "test-it": "mocha test/**/*IT.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-integration.json"
+    "test-it": "mocha test/**/*IT.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-integration.json",
+    "audit": "node ci/audit.js"
   }
 }
