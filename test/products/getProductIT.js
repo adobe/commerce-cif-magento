@@ -53,6 +53,22 @@ describe('magento getProduct', function() {
                 });
         });
 
+        // the product with SKU eqbisublp is intentionally marked as OUT_OF_STOCK on Magento
+        it('returns the stock information for a product', function() {
+            return chai.request(env.openwhiskEndpoint)
+                .get(env.productsPackage + 'getProductById')
+                .query({id: 'eqbisublp'})
+                .set('Cache-Control', 'no-cache')
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+
+                    requiredFields.verifyProduct(res.body);
+                    expect(res.body.name).to.equal('Blast Mini Pump');
+                    expect(res.body.variants[0].available).to.equal(false);
+                });
+        });
+
         it('returns a 404 error for a non existent product', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'getProductById')
