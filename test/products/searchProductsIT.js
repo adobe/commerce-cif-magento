@@ -133,7 +133,7 @@ describe('magento searchProducts', function() {
                     expect(product).to.have.own.property('createdAt');
 
                     expect(product.variants).to.have.lengthOf(15);
-                    expect(product.attributes).to.have.lengthOf(2);
+                    expect(product.attributes).to.have.lengthOf(4);
                     expect(product.attributes.find(o => {return o.id === 'summary'})).to.be.an('object');
                     expect(product.attributes.find(o => {return o.id === 'features'})).to.be.an('object');
 
