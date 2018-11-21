@@ -50,11 +50,12 @@ describe('magento getProduct', function() {
                     expect(res.body.id).to.equal(productId);
                     expect(res.body).to.have.own.property('categories');
                     expect(res.body).to.have.own.property('createdAt');
+                    expect(res.body.variants[0].available).to.equal(true);
                 });
         });
 
         // the product with SKU eqbisublp is intentionally marked as OUT_OF_STOCK on Magento
-        it('returns the stock information for a product', function() {
+        it('returns the stock information for an unavailable product', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.productsPackage + 'getProductById')
                 .query({id: 'eqbisublp'})

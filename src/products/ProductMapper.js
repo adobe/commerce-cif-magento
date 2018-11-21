@@ -126,7 +126,7 @@ class ProductMapper {
         } else {
             variants = [
                 new ProductVariant.Builder()
-                    .withAvailable(product.stock_status == "IN_STOCK")
+                    .withAvailable(product.stock_status === "IN_STOCK")
                     .withId(product.sku)
                     .withName(product.name || '')
                     .withPrices(prices)
