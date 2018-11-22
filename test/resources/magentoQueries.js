@@ -144,7 +144,7 @@ const magentoAttributesQuery = `
 
 const magentoAssetsQuery = `
 {
-  searchProducts: products(search: "meskwielt") {
+  searchProducts: products(search: "eqbisublp") {
     results: items {
       image
     }

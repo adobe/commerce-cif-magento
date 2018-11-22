@@ -108,7 +108,7 @@ let attributesQuery = `{
 }`;
 
 let assetsQuery = `{
-    searchProducts(text: "meskwielt"){
+    searchProducts(text: "eqbisublp"){
         results {
             assets {
                 id
