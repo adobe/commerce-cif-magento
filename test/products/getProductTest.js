@@ -16,7 +16,7 @@
 
 const assert = require('chai').assert;
 const setup = require('../lib/setupTest').setup;
-const sampleProductSearchData = require('../resources/sample-product-search-single-product');
+const testData = require('../resources/sample-product-search-single-product');
 const config = require('../lib/config').config;
 const sinon = require('sinon');
 
@@ -29,13 +29,15 @@ describe('magento getProduct', () => {
 
         let consoleSpy;
         let sampleProductSearch;
+        let productWithVariants;
 
         before(() => {
             consoleSpy = sinon.spy(console, 'log');
         });
 
         beforeEach(() => {
-            sampleProductSearch = JSON.parse(JSON.stringify(sampleProductSearchData));
+            sampleProductSearch = JSON.parse(JSON.stringify(testData.simpleProductResponse));
+            productWithVariants = JSON.parse(JSON.stringify(testData.productWithVariantsResponse));
         });
 
         after(() => {
@@ -79,6 +81,44 @@ describe('magento getProduct', () => {
                     assert.strictEqual(product.prices[0].amount, 2200);
                 });
         });
+
+        it('returns stock information for a product variant', () => {
+            return this.prepareResolve(productWithVariants, (actualsArgs) => {
+                assert.equal(actualsArgs.method, "POST");
+                assert.isTrue(actualsArgs.resolveWithFullResponse, true);
+                assert.equal(actualsArgs.uri, `http://${config.MAGENTO_HOST}/graphql`);
+                assert.isDefined(actualsArgs.body.query);
+                assert.isDefined(actualsArgs.body.operationName);
+                assert.isDefined(actualsArgs.body.variables);
+            })
+                .execute(Object.assign({
+                    'id': 'testConfigProduct',
+                }, config))
+                .then(result => {
+                    assert.isDefined(result.response.body);
+                    const product = result.response.body;
+                    assert.strictEqual(product.variants[0].available, true);
+                });
+        });
+
+        it('returns stock information for a product', () => {
+            return this.prepareResolve(sampleProductSearch, (actualsArgs) => {
+                assert.equal(actualsArgs.method, "POST");
+                assert.isTrue(actualsArgs.resolveWithFullResponse, true);
+                assert.equal(actualsArgs.uri, `http://${config.MAGENTO_HOST}/graphql`);
+                assert.isDefined(actualsArgs.body.query);
+                assert.isDefined(actualsArgs.body.operationName);
+                assert.isDefined(actualsArgs.body.variables);
+            })
+                .execute(Object.assign({
+                    'id': 'testSimpleProduct',
+                }, config))
+                .then(result => {
+                    assert.isDefined(result.response.body);
+                    const product = result.response.body;
+                    assert.strictEqual(product.variants[0].available, false);
+                });
+        })
 
         it('returns 404 for a product which does not exist', () => {
             sampleProductSearch.body.data.products.items = [];

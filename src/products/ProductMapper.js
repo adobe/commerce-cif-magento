@@ -126,7 +126,7 @@ class ProductMapper {
         } else {
             variants = [
                 new ProductVariant.Builder()
-                    .withAvailable(true) // TODO: Get actual value from backend
+                    .withAvailable(product.stock_status === "IN_STOCK")
                     .withId(product.sku)
                     .withName(product.name || '')
                     .withPrices(prices)
@@ -161,8 +161,7 @@ class ProductMapper {
      * @private
      */
     _mapProductVariant(product, variant) {
-        // TODO: Get actual value from backend
-        let available = true;
+        let available = variant.stock_status === "IN_STOCK";
         let prices = [];
         if (variant.price && variant.price.regularPrice) {
             prices = [

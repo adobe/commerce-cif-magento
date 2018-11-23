@@ -17,7 +17,7 @@
 const assert = require('chai').assert;
 const searchProductsBySku = require('../resources/searchProductsBySku');
 const searchProductsWithPaging = require('../resources/searchProductsWithPaging');
-const searchSingleProduct = require('../resources/sample-product-search-single-product').body;
+const searchSingleProductData = require('../resources/sample-product-search-single-product');
 const utils = require('../lib/utils');
 
 describe('Magento ProductMapper', () => {
@@ -38,7 +38,7 @@ describe('Magento ProductMapper', () => {
             // clone original sample data before each test
             simpleData = JSON.parse(JSON.stringify(searchProductsBySku));
             pagedData = JSON.parse(JSON.stringify(searchProductsWithPaging));
-            singleProductData = JSON.parse(JSON.stringify(searchSingleProduct));
+            singleProductData = JSON.parse(JSON.stringify(searchSingleProductData.simpleProductResponse.body));
         });
 
         it('Maps Magento graphQL response into valid CIF Cloud product', () => {
