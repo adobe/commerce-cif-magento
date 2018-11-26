@@ -272,6 +272,11 @@ class CartMapper {
             .withSku(item.sku)
             .build();
 
+        let slug = CartMapper._getCustomAttributeValue(item.custom_attributes, 'url_key');
+        if (slug) {
+            productVariant.slug = slug;
+        }
+
         let desc = CartMapper._getCustomAttributeValue(item.custom_attributes, 'summary');
         if (desc) {
             productVariant.description = desc;
