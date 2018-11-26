@@ -265,7 +265,6 @@ class CartMapper {
     static _mapProductVariant(price, item, magentoAttributes, mediaBaseUrl, productAttributes) {
 
         let productVariant = new ProductVariant.Builder()
-            .withAvailable(true) // TODO: Get actual value from backend
             .withId(item.sku)
             .withName(item.name)
             .withPrices([price])
