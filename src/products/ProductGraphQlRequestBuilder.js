@@ -121,6 +121,9 @@ class ProductGraphQlRequestBuilder {
     }
 
     static _translateFieldName(field) {
+        if (field.startsWith('slug')) {
+            return 'url_key';
+        }
         if (field.startsWith('name')) {
             return 'name';
         }

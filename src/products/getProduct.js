@@ -22,20 +22,21 @@ const ProductMapper = require('./ProductMapper');
 const HttpStatusCodes = require('http-status-codes');
 
 /**
- * This action searches a single Magento product by its SKU.
+ * This action searches a single Magento product by either its SKU or slug.
  *
- * @param   {string} args.MAGENTO_SCHEMA                Magento host URL schema (http or https)
- * @param   {string} args.MAGENTO_HOST                  Magento host URL
- * @param   {string} args.GRAPHQL_PRODUCT_ATTRIBUTES    The product attributes fetched by the graphQL request
- * @param   {string} args.MAGENTO_MEDIA_PATH            Magento media base path
+ * @param   {object} args                               Object of request parameters.
+ * @param   {bool}   useSlug                            If true, this function expects args.slug to exist, otherwise it will use args.id.
  * 
- * @param   {string} args.id                            The SKU of the product.
- *
  * @return  {Promise.<Product}                          A promise which resolves to a product model representation
  */
-function getProduct(args) {
-    const validator = new InputValidator(args, ERROR_TYPE);
-    validator.checkArguments().mandatoryParameter('id');
+function getProduct(args, useSlug) {
+    const validator = new InputValidator(args, ERROR_TYPE).checkArguments();
+    
+    if (useSlug) {
+        validator.mandatoryParameter('slug');
+    } else {
+        validator.mandatoryParameter('id');
+    }
 
     if (validator.error) {
         return validator.buildErrorResponse();
@@ -48,8 +49,14 @@ function getProduct(args) {
         MAGENTO_HOST: args.MAGENTO_HOST,
         GRAPHQL_PRODUCT_ATTRIBUTES: args.GRAPHQL_PRODUCT_ATTRIBUTES,
         MAGENTO_MEDIA_PATH: args.MAGENTO_MEDIA_PATH,
-        filter: `variants.sku:"${args.id}"`
     };
+
+    if (useSlug) {
+        argsForBuilder.filter = `slug:"${args.slug}"`;
+    } else {
+        argsForBuilder.filter = `variants.sku:"${args.id}"`;
+    }
+
     const builder = new ProductGraphQlRequestBuilder(`${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/graphql`, __dirname + '/searchProducts.graphql', argsForBuilder);
 
     const requestOptions = builder.build();
@@ -76,7 +83,6 @@ function getProduct(args) {
         return client.handleError(error);
     });
 
-
 }
 
-module.exports.main = getProduct;
+module.exports = getProduct;

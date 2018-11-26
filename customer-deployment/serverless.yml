@@ -260,6 +260,14 @@ functions:
     annotations:
       web-export: true
 
+  getProductBySlug:
+    name: ${self:custom.customer-package}/getProductBySlug
+    sequence:
+      - ${self:custom.products-actions}/getProductBySlugService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
   searchProducts:
     name: ${self:custom.customer-package}/searchProducts
     sequence:
