@@ -46,7 +46,7 @@ describe('magento getProductBySlug', function() {
 
                     // Verify structure
                     requiredFields.verifyProduct(res.body);
-                    expect(res.body.name).to.equal('BPA-Free Water Bottle');
+                    expect(res.body.name).to.equal('El Gordo Down Jacket');
                     expect(res.body).to.have.own.property('sku');
                     expect(res.body.id).to.equal(productId);
                     expect(res.body.slug).to.equal(productSlug);
