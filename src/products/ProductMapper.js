@@ -100,6 +100,12 @@ class ProductMapper {
             p.categories = this._mapCategories(product.categories);
         }
 
+        if (product.url_key && product.url_path) {
+            p.slug = product.url_path + '/' + product.url_key;
+        } else if (product.url_key) {
+            p.slug = product.url_key;
+        }
+
     }
 
     /**
@@ -254,7 +260,7 @@ class ProductMapper {
             .build();
         return asset;
     }
-    
+
     /**
      * @private
      */

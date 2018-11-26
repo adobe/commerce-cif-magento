@@ -188,5 +188,28 @@ describe('Magento ProductMapper', () => {
             assert.strictEqual(response.id, 'testSimpleProduct');
             assert.strictEqual(response.sku, 'testSimpleProduct');
         });
+
+        it('maps a slug with key and path', () => {
+            let pagedResponse = productMapper.mapGraphQlResponse(simpleData);
+
+            let product = pagedResponse.results[0];
+            assert.strictEqual(product.slug, "sample/path/el-gordo-down-jacket");
+
+            let firstVariant = product.variants[0];
+            assert.strictEqual(firstVariant.slug, "sample/path/meskwielt-purple-xs");
+        });
+
+        it('maps a slug with a key only', () => {
+            simpleData.data.products.items[0].url_path = null;
+            simpleData.data.products.items[0].variants[0].product.url_path = null;
+            let pagedResponse = productMapper.mapGraphQlResponse(simpleData);
+
+            let product = pagedResponse.results[0];
+            assert.strictEqual(product.slug, "el-gordo-down-jacket");
+
+            let firstVariant = product.variants[0];
+            assert.strictEqual(firstVariant.slug, "meskwielt-purple-xs");
+        });
+
     });
 });
