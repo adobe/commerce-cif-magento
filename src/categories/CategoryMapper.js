@@ -122,6 +122,11 @@ class CategoryMapper {
             category.parents = [parentCategory];
         }
 
+        const slug = magentoCategory.custom_attributes.find(a => a.attribute_code === 'url_path');
+        if (slug && slug.value) {
+            category.slug = slug.value;
+        }
+
         if (magentoCategory.created_at) {
             category.createdAt = formatDate(magentoCategory.created_at);
         }
