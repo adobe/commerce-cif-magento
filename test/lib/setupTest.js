@@ -17,6 +17,7 @@
 const mockRequire = require('mock-require');
 const sinon = require('sinon');
 const utils = require('./utils');
+const deepEqual = require('deep-equal');
 const assert = require('chai').assert;
 const rp = require('request-promise-native');
 const rpStub = sinon.stub(rp, 'Request');
@@ -65,7 +66,7 @@ module.exports.setup = function (ctx, testDirName, actionName) {
                                                        ' match the actual');
             }
             for(let i = 0; i < expectedArgs.length; i++) {
-                if (JSON.stringify(args) === JSON.stringify(expectedArgs[i])) {
+                if (deepEqual(args, expectedArgs[i])) {
                     return Promise.resolve(mockedResponses[i]);
                 }
             }

@@ -189,14 +189,15 @@ describe('Magento ProductMapper', () => {
             assert.strictEqual(response.sku, 'testSimpleProduct');
         });
 
-        it('maps a slug with key', () => {
+        it('maps a product url_key to a slug', () => {
             let pagedResponse = productMapper.mapGraphQlResponse(simpleData);
 
             let product = pagedResponse.results[0];
             assert.strictEqual(product.slug, "el-gordo-down-jacket");
 
             let firstVariant = product.variants[0];
-            assert.strictEqual(firstVariant.slug, "meskwielt-purple-xs");
+            // Make sure the slug of the base product is returned. The sample data has a different slug for the variant to cross check.
+            assert.strictEqual(firstVariant.slug, "el-gordo-down-jacket");
         });
 
         it('maps a product without a slug', () => {

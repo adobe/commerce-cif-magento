@@ -124,8 +124,13 @@ class ProductMapper {
             ];
         }
 
+        const slug = product.url_key;
+
         if (product.variants) {
-            variants = product.variants.map(v => this._mapProductVariant(product, v.product));
+            variants = product.variants.map(v => {
+                v.product.url_key = slug; // Always use the slug from the base product
+                return this._mapProductVariant(product, v.product)
+            });
             masterVariantId = variants[0].sku;
         } else {
             variants = [
@@ -137,6 +142,9 @@ class ProductMapper {
                     .withSku(product.sku)
                     .build()
             ];
+            if (slug) {
+                variants[0].slug = slug;
+            }
             masterVariantId = product.sku;
         }
 
