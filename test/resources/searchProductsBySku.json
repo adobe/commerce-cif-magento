@@ -18,7 +18,8 @@
           "features": "<p><ul>\n<li>Sharp-looking, ripstop polyester shell, with a waterproof finish, blocks the wind and resists tears and abrasion</li>\n<li>Finer details include top-quality 800-fill-power goose down, a quilted-through construction, nylon-bound elastic cuffs and a drawcord hem</li>\n<li>Includes 2 zip hand pockets and 1 interior zip-secure pocket; removable hood</li>\n</ul>\n</p>",
           "categories": [
             {
-              "id": 17
+              "id": 17,
+              "url_path": "men/jacket"
             }
           ],
           "price": {
@@ -88,7 +89,8 @@
                 "updated_at": "2018-06-21 12:52:09",
                 "categories": [
                   {
-                    "id": 17
+                    "id": 17,
+                    "url_path": "men/jacket"
                   }
                 ],
                 "price": {

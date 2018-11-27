@@ -125,14 +125,14 @@ describe('Magento CategoriesMapper', () => {
             }
         });
 
-        it('maps a product url_path to a slug', () => {
+        it('maps a category url_path to a slug', () => {
             const category = categoriesData.items.find(v => v.id === 7);
             const mappedCategory = CategoryMapper.mapCategory(category, ignoreCategoriesWithLevelLowerThan);
 
             assert.strictEqual(mappedCategory.slug, "women/pants");
         });
 
-        it('maps a product without a url_path', () => {
+        it('maps a category without a url_path', () => {
             const category = categoriesData.items.find(v => v.id === 7);
             // Remove url_path attribute
             category.custom_attributes = category.custom_attributes.filter(o => o.attribute_code !== 'url_path');

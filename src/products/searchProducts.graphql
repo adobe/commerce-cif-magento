@@ -43,6 +43,7 @@
           {{/each}}
           categories {
             id
+            url_path
           }
           price {
             regularPrice {
