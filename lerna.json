@@ -6,7 +6,8 @@
   ],
   "command": {
     "bootstrap": {
-      "ignore": "@adobe/commerce-cif-web-action-transformer"
+      "ignore": "@adobe/commerce-cif-web-action-transformer",
+      "npmClientArgs": ["--no-package-lock"]
     },
     "run": {
       "ignore": "@adobe/commerce-cif-web-action-transformer"
