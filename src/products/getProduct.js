@@ -30,13 +30,18 @@ const HttpStatusCodes = require('http-status-codes');
  * @return  {Promise.<Product}                          A promise which resolves to a product model representation
  */
 function getProduct(args, useSlug) {
-    const validator = new InputValidator(args, ERROR_TYPE).checkArguments();
-    
+    let param;
+    let filterKey;
     if (useSlug) {
-        validator.mandatoryParameter('slug');
+        param = 'slug';
+        filterKey = 'slug';
     } else {
-        validator.mandatoryParameter('id');
+        param = 'id';
+        filterKey = 'variants.sku';
     }
+
+    const validator = new InputValidator(args, ERROR_TYPE).checkArguments();
+    validator.mandatoryParameter(param);
 
     if (validator.error) {
         return validator.buildErrorResponse();
@@ -49,13 +54,8 @@ function getProduct(args, useSlug) {
         MAGENTO_HOST: args.MAGENTO_HOST,
         GRAPHQL_PRODUCT_ATTRIBUTES: args.GRAPHQL_PRODUCT_ATTRIBUTES,
         MAGENTO_MEDIA_PATH: args.MAGENTO_MEDIA_PATH,
+        filter: `${filterKey}:"${args[param]}"`
     };
-
-    if (useSlug) {
-        argsForBuilder.filter = `slug:"${args.slug}"`;
-    } else {
-        argsForBuilder.filter = `variants.sku:"${args.id}"`;
-    }
 
     const builder = new ProductGraphQlRequestBuilder(`${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/graphql`, __dirname + '/searchProducts.graphql', argsForBuilder);
 
