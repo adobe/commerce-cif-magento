@@ -139,6 +139,28 @@ describe('Magento getCategories', () => {
             });
         });
 
+        it('gets a category by slug', () => {
+            const expectedArgs = [
+                requestConfig('http://does.not.exist/rest/V1/categories/list?searchCriteria[filterGroups][0][filters][0][field]=url_path&searchCriteria[filterGroups][0][filters][0][value]=my/category&searchCriteria[filterGroups][0][filters][0][conditionType]=eq', 'GET'),
+            ];
+            args.slug = 'my/category';
+            return this.prepareResolve(sampleCategoryById, expectedArgs).execute(args).then(result => {
+                assert.isNotEmpty(result);
+                assert.isNotEmpty(result.response);
+                assert.strictEqual(result.response.statusCode, 200);
+                assert.strictEqual(result.response.body.name, 'Equipment');
+            });
+        });
+
+        it('returns an error when there is no category for a given slug', () => {
+            args.slug = 'my/category';
+            return this.prepareReject(sampleCategory404).execute(args).then(result => {
+                assert.isDefined(result.response);
+                assert.isDefined(result.response.error);
+                assert.strictEqual(result.response.error.name, 'CommerceServiceResourceNotFoundError');
+            });
+        });
+
         function checkNamesAreSorted(result) {
             assert.isNotEmpty(result.response.body.results);
             const names = result.response.body.results.map(category => category.name);

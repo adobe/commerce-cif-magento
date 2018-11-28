@@ -37,6 +37,8 @@ describe('magento getCategories', function() {
         this.timeout(env.timeout);
 
         let MEN_CATEGORY_ID = null;
+        let MEN_SHIRTS_CATEGORY_ID = null;
+        let MEN_SHORTS_CATEGORY_SLUG = null;
         let accessToken;
 
         before(function () {
@@ -49,10 +51,13 @@ describe('magento getCategories', function() {
                 .then(function (res) {
                     expect(res).to.have.status(HttpStatus.OK);
 
-                    MEN_CATEGORY_ID = parseInt(res.body.results.find(o => {
-                        return o.name === categoriesConfig.MEN.name
-                    }).id);
-                    //doing a customer login to also test that the customer token header
+                    const menCategory = res.body.results.find(o => o.name === categoriesConfig.MEN.name);
+                    const menShortsCategory = menCategory.children.find(c => c.name === 'Shorts');
+                    MEN_CATEGORY_ID = parseInt(menCategory.id);
+                    MEN_SHIRTS_CATEGORY_ID = parseInt(menShortsCategory.id);
+                    MEN_SHORTS_CATEGORY_SLUG = menShortsCategory.slug;
+
+                    // doing a customer login to also test that the customer token header
                     // will not override the integration token
                     return chai.request(env.openwhiskEndpoint)
                         .get(env.customersPackage + 'postCustomerLogin')
@@ -122,7 +127,7 @@ describe('magento getCategories', function() {
                 });
         });
 
-        it('returns a single category', function() {
+        it('returns a single category by ID', function() {
             const categoryId = MEN_CATEGORY_ID;
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
@@ -141,6 +146,27 @@ describe('magento getCategories', function() {
                     expect(category.name).to.equal('Men');
                     expect(category).to.have.own.property('lastModifiedAt');
                     expect(category).to.have.own.property('createdAt');
+                });
+        });
+
+        it('returns a single category by slug', () => {
+            return chai.request(env.openwhiskEndpoint)
+                .get(env.categoriesPackage + 'getCategories')
+                .set('Cache-Control', 'no-cache')
+                .query({
+                    slug: MEN_SHORTS_CATEGORY_SLUG
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+
+                    // Verify structure
+                    const category = res.body;
+                    requiredFields.verifyCategory(category);
+                    expect(category).to.have.own.property('id');
+                    expect(category.id).to.equal(MEN_SHIRTS_CATEGORY_ID);
+                    expect(category).to.have.own.property('slug');
+                    expect(category.slug).to.equal(MEN_SHORTS_CATEGORY_SLUG);
                 });
         });
 
