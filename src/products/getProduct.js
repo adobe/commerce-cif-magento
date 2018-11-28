@@ -25,21 +25,11 @@ const HttpStatusCodes = require('http-status-codes');
  * This action searches a single Magento product by either its SKU or slug.
  *
  * @param   {object} args                               Object of request parameters.
- * @param   {bool}   useSlug                            If true, this function expects args.slug to exist, otherwise it will use args.id.
+ * @param   {String} param                              Parameter key that should be used. Can be slug or id. Key needs to exist in args.
  * 
  * @return  {Promise.<Product}                          A promise which resolves to a product model representation
  */
-function getProduct(args, useSlug) {
-    let param;
-    let filterKey;
-    if (useSlug) {
-        param = 'slug';
-        filterKey = 'slug';
-    } else {
-        param = 'id';
-        filterKey = 'variants.sku';
-    }
-
+function getProduct(args, param) {
     const validator = new InputValidator(args, ERROR_TYPE).checkArguments();
     validator.mandatoryParameter(param);
 
@@ -49,6 +39,7 @@ function getProduct(args, useSlug) {
 
     const client = new MagentoClientBase(args, null, '', ERROR_TYPE);
 
+    const filterKey = param === 'slug' ? 'slug' : 'variants.sku';
     const argsForBuilder = {
         MAGENTO_SCHEMA: args.MAGENTO_SCHEMA,
         MAGENTO_HOST: args.MAGENTO_HOST,
