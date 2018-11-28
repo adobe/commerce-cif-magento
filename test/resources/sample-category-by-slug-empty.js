@@ -22,7 +22,7 @@ module.exports = {
                 "filters": [
                     {
                         "field": "url_path",
-                        "value": "men\/shortsabc",
+                        "value": "does/not/exist",
                         "condition_type": "eq"
                     }
                 ]

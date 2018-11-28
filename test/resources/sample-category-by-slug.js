@@ -26,7 +26,7 @@ module.exports = {
             "children": "",
             "created_at": "2018-06-01 11:27:54",
             "updated_at": "2018-06-01 11:27:35",
-            "path": "1\/4\/15\/16",
+            "path": "1/4/15/16",
             "available_sort_by": [],
             "include_in_menu": true,
             "custom_attributes": [
@@ -36,7 +36,7 @@ module.exports = {
                 },
                 {
                     "attribute_code": "path",
-                    "value": "1\/4\/15\/16"
+                    "value": "1/4/15/16"
                 },
                 {
                     "attribute_code": "children_count",
@@ -48,7 +48,7 @@ module.exports = {
                 },
                 {
                     "attribute_code": "url_path",
-                    "value": "men\/shorts"
+                    "value": "men/shorts"
                 }
             ]
         }
@@ -59,7 +59,7 @@ module.exports = {
                 "filters": [
                     {
                         "field": "url_path",
-                        "value": "men\/shorts",
+                        "value": "men/shorts",
                         "condition_type": "eq"
                     }
                 ]

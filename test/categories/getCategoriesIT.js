@@ -54,7 +54,7 @@ describe('magento getCategories', function() {
                     const menCategory = res.body.results.find(o => o.name === categoriesConfig.MEN.name);
                     const menShortsCategory = menCategory.children.find(c => c.name === 'Shorts');
                     MEN_CATEGORY_ID = parseInt(menCategory.id);
-                    MEN_SHIRTS_CATEGORY_ID = parseInt(menShortsCategory.id);
+                    MEN_SHIRTS_CATEGORY_ID = String(menShortsCategory.id);
                     MEN_SHORTS_CATEGORY_SLUG = menShortsCategory.slug;
 
                     // doing a customer login to also test that the customer token header
