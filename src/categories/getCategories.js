@@ -56,7 +56,15 @@ function getCategories(args) {
     const depth = (args.depth && !Number.isNaN(args.depth)) ? Number(args.depth) : - 1;
     const type = args.type || 'flat';
     const sorts = args.sort ? args.sort.split('|') : [];
-    const mapper = (id || slug) ? CategoryMapper.mapCategory : CategoryMapper.mapPagedCategoryResponse;
+
+    let mapper;
+    if (id) {
+        mapper = CategoryMapper.mapCategory;
+    } else if (slug) {
+        mapper = CategoryMapper.mapCategoryListToCategory;
+    } else {
+        mapper = CategoryMapper.mapPagedCategoryResponse;
+    }
     const categories = new MagentoCategories(args, mapper, `categories`);
 
     if (id) {

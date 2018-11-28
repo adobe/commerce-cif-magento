@@ -130,7 +130,7 @@ describe('magento getCategories', function() {
         it('returns a single category by ID', function() {
             const categoryId = MEN_CATEGORY_ID;
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage + 'getCategoryById')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     id: categoryId
@@ -151,7 +151,7 @@ describe('magento getCategories', function() {
 
         it('returns a single category by slug', () => {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage + 'getCategoryBySlug')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     slug: MEN_SHORTS_CATEGORY_SLUG
@@ -322,11 +322,23 @@ describe('magento getCategories', function() {
                 });
         });
 
-        it('returns a 404 error for a non existent category', function () {
+        it('returns a 404 error for a non existent category by id', function () {
             return chai.request(env.openwhiskEndpoint)
-                .get(`${env.categoriesPackage}getCategories`)
+                .get(`${env.categoriesPackage}getCategoryById`)
                 .set('Cache-Control', 'no-cache')
                 .query({ id: '999999999999999' })
+                .then(function(res) {
+                    expect(res).to.have.status(HttpStatus.NOT_FOUND);
+                    expect(res).to.be.json;
+                    requiredFields.verifyErrorResponse(res.body);
+                });
+        });
+
+        it('returns a 404 error for a non existent category by slug', function () {
+            return chai.request(env.openwhiskEndpoint)
+                .get(`${env.categoriesPackage}getCategoryBySlug`)
+                .set('Cache-Control', 'no-cache')
+                .query({ slug: 'does/not/exist' })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;

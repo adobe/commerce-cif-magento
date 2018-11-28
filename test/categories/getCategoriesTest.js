@@ -19,6 +19,8 @@ const setup = require('../lib/setupTest').setup;
 const requestConfig = require('../lib/config').requestConfig;
 const sampleCategoriesList = require('../resources/sample-categories-list');
 const sampleCategoryById = require('../resources/sample-category-by-id');
+const sampleCategoryBySlug = require('../resources/sample-category-by-slug');
+const sampleCategoryBySlugEmpty = require('../resources/sample-category-by-slug-empty');
 const sampleCategory404 = require('../resources/sample-category-404');
 const sampleCategoriesSorted = require('../resources/sample-categories-sorted');
 
@@ -144,17 +146,17 @@ describe('Magento getCategories', () => {
                 requestConfig('http://does.not.exist/rest/V1/categories/list?searchCriteria[filterGroups][0][filters][0][field]=url_path&searchCriteria[filterGroups][0][filters][0][value]=my/category&searchCriteria[filterGroups][0][filters][0][conditionType]=eq', 'GET'),
             ];
             args.slug = 'my/category';
-            return this.prepareResolve(sampleCategoryById, expectedArgs).execute(args).then(result => {
+            return this.prepareResolve(sampleCategoryBySlug, expectedArgs).execute(args).then(result => {
                 assert.isNotEmpty(result);
                 assert.isNotEmpty(result.response);
                 assert.strictEqual(result.response.statusCode, 200);
-                assert.strictEqual(result.response.body.name, 'Equipment');
+                assert.strictEqual(result.response.body.name, 'Shorts');
             });
         });
 
         it('returns an error when there is no category for a given slug', () => {
             args.slug = 'my/category';
-            return this.prepareReject(sampleCategory404).execute(args).then(result => {
+            return this.prepareResolve(sampleCategoryBySlugEmpty).execute(args).then(result => {
                 assert.isDefined(result.response);
                 assert.isDefined(result.response.error);
                 assert.strictEqual(result.response.error.name, 'CommerceServiceResourceNotFoundError');
