@@ -26,10 +26,11 @@ const HttpStatusCodes = require('http-status-codes');
  *
  * @param   {object} args                               Object of request parameters.
  * @param   {String} param                              Parameter key that should be used. Can be slug or id. Key needs to exist in args.
+ * @param   {String} filterKey                          Key of the filter that is used to find the product. Can be slug or variants.sku.
  * 
  * @return  {Promise.<Product}                          A promise which resolves to a product model representation
  */
-function getProduct(args, param) {
+function getProduct(args, param, filterKey) {
     const validator = new InputValidator(args, ERROR_TYPE).checkArguments();
     validator.mandatoryParameter(param);
 
@@ -39,7 +40,6 @@ function getProduct(args, param) {
 
     const client = new MagentoClientBase(args, null, '', ERROR_TYPE);
 
-    const filterKey = param === 'slug' ? 'slug' : 'variants.sku';
     const argsForBuilder = {
         MAGENTO_SCHEMA: args.MAGENTO_SCHEMA,
         MAGENTO_HOST: args.MAGENTO_HOST,

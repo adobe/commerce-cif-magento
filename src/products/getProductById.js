@@ -28,5 +28,5 @@ const getProduct = require('./getProduct');
  * @return  {Promise.<Product}                          A promise which resolves to a product model representation
  */
 module.exports.main = (args) => {
-    return getProduct(args, 'id');
+    return getProduct(args, 'id', 'variants.sku');
 };
