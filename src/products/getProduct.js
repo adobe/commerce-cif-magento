@@ -22,20 +22,17 @@ const ProductMapper = require('./ProductMapper');
 const HttpStatusCodes = require('http-status-codes');
 
 /**
- * This action searches a single Magento product by its SKU.
+ * This action searches a single Magento product by either its SKU or slug.
  *
- * @param   {string} args.MAGENTO_SCHEMA                Magento host URL schema (http or https)
- * @param   {string} args.MAGENTO_HOST                  Magento host URL
- * @param   {string} args.GRAPHQL_PRODUCT_ATTRIBUTES    The product attributes fetched by the graphQL request
- * @param   {string} args.MAGENTO_MEDIA_PATH            Magento media base path
+ * @param   {object} args                               Object of request parameters.
+ * @param   {String} param                              Parameter key that should be used. Can be slug or id. Key needs to exist in args.
+ * @param   {String} filterKey                          Key of the filter that is used to find the product. Can be slug or variants.sku.
  * 
- * @param   {string} args.id                            The SKU of the product.
- *
  * @return  {Promise.<Product}                          A promise which resolves to a product model representation
  */
-function getProduct(args) {
-    const validator = new InputValidator(args, ERROR_TYPE);
-    validator.checkArguments().mandatoryParameter('id');
+function getProduct(args, param, filterKey) {
+    const validator = new InputValidator(args, ERROR_TYPE).checkArguments();
+    validator.mandatoryParameter(param);
 
     if (validator.error) {
         return validator.buildErrorResponse();
@@ -48,8 +45,9 @@ function getProduct(args) {
         MAGENTO_HOST: args.MAGENTO_HOST,
         GRAPHQL_PRODUCT_ATTRIBUTES: args.GRAPHQL_PRODUCT_ATTRIBUTES,
         MAGENTO_MEDIA_PATH: args.MAGENTO_MEDIA_PATH,
-        filter: `variants.sku:"${args.id}"`
+        filter: `${filterKey}:"${args[param]}"`
     };
+
     const builder = new ProductGraphQlRequestBuilder(`${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/graphql`, __dirname + '/searchProducts.graphql', argsForBuilder);
 
     const requestOptions = builder.build();
@@ -76,7 +74,6 @@ function getProduct(args) {
         return client.handleError(error);
     });
 
-
 }
 
-module.exports.main = getProduct;
+module.exports = getProduct;

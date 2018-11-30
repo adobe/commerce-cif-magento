@@ -272,6 +272,12 @@ class CartMapper {
             .withSku(item.sku)
             .build();
 
+        // TODO (CIF-649): This returns the slug of the product variant, but not of the base product.
+        let slug = CartMapper._getCustomAttributeValue(item.custom_attributes, 'url_key');
+        if (slug) {
+            productVariant.slug = slug;
+        }
+
         let desc = CartMapper._getCustomAttributeValue(item.custom_attributes, 'summary');
         if (desc) {
             productVariant.description = desc;
