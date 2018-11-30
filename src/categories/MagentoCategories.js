@@ -31,7 +31,7 @@ class MagentoCategories extends MagentoClientBase {
         this.currentSortIndex = 0;
         return this._execute('GET').then(result => {
             const mapperArgs = [result];
-            if (!this.args.id) {
+            if (!this.args.id && !this.args.slug) {
                 mapperArgs.push(type);
                 mapperArgs.push(depth);
             }
@@ -43,6 +43,17 @@ class MagentoCategories extends MagentoClientBase {
         }).catch(error => {
             return this.handleError(error);
         });
+    }
+
+    /**
+     * Returns categories that have the given slug set as Magento url_path. 
+     * This attribute is not unique in Magento, so the response can return more than one category.
+     * 
+     * @param {String} slug     Slug value that is used to filter categories.
+     */
+    bySlug(slug) {
+        this.args.slug = slug;
+        this.withEndpoint('list').withQueryString(`searchCriteria[filterGroups][0][filters][0][field]=url_path&searchCriteria[filterGroups][0][filters][0][value]=${slug}&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`);
     }
     
     list() {

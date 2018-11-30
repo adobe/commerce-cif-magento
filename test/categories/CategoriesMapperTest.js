@@ -16,7 +16,7 @@
 
 const assert = require('chai').assert;
 const utils = require('../lib/utils');
-const sampleCart = require('../resources/sample-categories-list');
+const sampleCategories = require('../resources/sample-categories-list');
 
 describe('Magento CategoriesMapper', () => {
 
@@ -30,7 +30,7 @@ describe('Magento CategoriesMapper', () => {
 
         beforeEach(() => {
             // clone original sample data before each test
-            categoriesData = utils.clone(sampleCart);
+            categoriesData = utils.clone(sampleCategories);
         });
         
         it('Map a single category which does not have a parent', () => {
@@ -124,5 +124,23 @@ describe('Magento CategoriesMapper', () => {
                 assert.strictEqual(mappedCategories.results[i].parents.length, 1);
             }
         });
+
+        it('maps a category url_path to a slug', () => {
+            const category = categoriesData.items.find(v => v.id === 7);
+            const mappedCategory = CategoryMapper.mapCategory(category, ignoreCategoriesWithLevelLowerThan);
+
+            assert.strictEqual(mappedCategory.slug, "women/pants");
+        });
+
+        it('maps a category without a url_path', () => {
+            const category = categoriesData.items.find(v => v.id === 7);
+            // Remove url_path attribute
+            category.custom_attributes = category.custom_attributes.filter(o => o.attribute_code !== 'url_path');
+
+            const mappedCategory = CategoryMapper.mapCategory(category, ignoreCategoriesWithLevelLowerThan);
+
+            assert.isUndefined(mappedCategory.slug);
+        });
+
     });
 });

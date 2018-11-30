@@ -236,6 +236,14 @@ functions:
     annotations:
       web-export: true
 
+  getCategoryBySlug:
+    name: ${self:custom.customer-package}/getCategoryBySlug
+    sequence:
+      - ${self:custom.categories-actions}/getCategoriesService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
   getCustomerById:
     name: ${self:custom.customer-package}/getCustomerById
     sequence:

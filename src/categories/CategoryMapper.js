@@ -60,6 +60,15 @@ class CategoryMapper {
             .build();
     }
 
+    static mapCategoryListToCategory(magentoResponse) {
+        if (magentoResponse && magentoResponse.items && magentoResponse.items.length > 0) {
+            // Map only first category in result list
+            return CategoryMapper.mapCategory(magentoResponse.items[0]);
+        }
+        // If the result list is empty, return a 404
+        throw { error: "No category found.", statusCode: 404 };
+    }
+
     /**
      * Maps an array of Magento categories to a tree of CCIF categories.
      * The result can contain multiple disjoint trees if the product catalog has multiple root categories or with paginated results.
@@ -120,6 +129,11 @@ class CategoryMapper {
             // TODO: Use level here instead of parent id. Doh!
             let parentCategory = new Category.Builder().withId(magentoCategory.parent_id + '').build();
             category.parents = [parentCategory];
+        }
+
+        const slug = magentoCategory.custom_attributes.find(a => a.attribute_code === 'url_path');
+        if (slug && slug.value) {
+            category.slug = slug.value;
         }
 
         if (magentoCategory.created_at) {

@@ -189,6 +189,27 @@ describe('Magento ProductMapper', () => {
             assert.strictEqual(response.sku, 'testSimpleProduct');
         });
 
+        it('maps a category url_path to a slug', () => {
+            const pagedResponse = productMapper.mapGraphQlResponse(simpleData);
+            const category = pagedResponse.results[0].categories[0];
+            assert.strictEqual(category.slug, "men/jacket");
+
+            const variantCategory = pagedResponse.results[0].variants[0].categories[0];
+            assert.strictEqual(variantCategory.slug, "men/jacket");
+        });
+
+        it('maps a category without a url_path', () => {
+            delete(simpleData.data.products.items[0].categories[0].url_path);
+            delete(simpleData.data.products.items[0].variants[0].product.categories[0].url_path);
+
+            const pagedResponse = productMapper.mapGraphQlResponse(simpleData);
+            const category = pagedResponse.results[0].categories[0];
+            assert.isUndefined(category.slug);
+
+            const variantCategory = pagedResponse.results[0].variants[0].categories[0];
+            assert.isUndefined(variantCategory.slug);
+        });
+
         it('maps a product url_key to a slug', () => {
             let pagedResponse = productMapper.mapGraphQlResponse(simpleData);
 

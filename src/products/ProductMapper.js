@@ -272,7 +272,11 @@ class ProductMapper {
      */
     _mapCategories(categories) {
         return categories.map(category => {
-            return new Category.Builder().withId(category.id.toString()).build();
+            let c = new Category.Builder().withId(category.id.toString()).build();
+            if (category.url_path) {
+                c.slug = category.url_path;
+            }
+            return c;
         });
     }
 }

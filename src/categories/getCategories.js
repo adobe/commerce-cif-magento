@@ -50,16 +50,24 @@ function getCategories(args) {
     }
 
     const id = args.id;
+    const slug = args.slug;
     const limit = (args.limit && !Number.isNaN(args.limit)) ? Number(args.limit) : 50;
     const offset = (args.offset && !Number.isNaN(args.offset)) ? Number(args.offset) : 0;
     const depth = (args.depth && !Number.isNaN(args.depth)) ? Number(args.depth) : - 1;
     const type = args.type || 'flat';
     const sorts = args.sort ? args.sort.split('|') : [];
-    const mapper = id ? CategoryMapper.mapCategory : CategoryMapper.mapPagedCategoryResponse;
+    let mapper = CategoryMapper.mapPagedCategoryResponse;
+    if (id) {
+        mapper = CategoryMapper.mapCategory;
+    } else if (slug) {
+        mapper = CategoryMapper.mapCategoryListToCategory;
+    }
     const categories = new MagentoCategories(args, mapper, `categories`);
 
     if (id) {
         categories.byId(id);
+    } else if (slug) {
+        categories.bySlug(slug);
     } else {
         categories.list();
         categories.perPage(limit);

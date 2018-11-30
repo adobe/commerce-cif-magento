@@ -38,6 +38,7 @@ describe('magento searchProducts', function() {
         this.timeout(env.timeout);
 
         let WOMENSHORTS_CATEGORY_ID = null;
+        let WOMENSHORTS_CATEGORY_SLUG = null;
         let MEN_CATEGORY_ID = null;
 
         before(function () {
@@ -51,11 +52,14 @@ describe('magento searchProducts', function() {
                     MEN_CATEGORY_ID = res.body.results.find(o => {
                         return o.name === categoriesConfig.MEN.name
                     }).id.toString();
-                    WOMENSHORTS_CATEGORY_ID = res.body.results.find(o => {
+                    
+                    let womenshorts_category = res.body.results.find(o => {
                         return o.name === categoriesConfig.WOMEN.name
                     }).children.find(o => {
                         return o.name === categoriesConfig.WOMEN.SHORTS.name;
-                    }).id.toString();
+                    });
+                    WOMENSHORTS_CATEGORY_ID = womenshorts_category.id.toString();
+                    WOMENSHORTS_CATEGORY_SLUG = womenshorts_category.slug;
                 });
         });
 
@@ -85,7 +89,10 @@ describe('magento searchProducts', function() {
                     expect(res.body.results).to.have.lengthOf(4);
                     for (let result of res.body.results) {
                         requiredFields.verifyProduct(result);
-                        expect(result.categories).to.deep.include({"id": WOMENSHORTS_CATEGORY_ID});
+                        expect(result.categories).to.deep.include({
+                            "id": WOMENSHORTS_CATEGORY_ID, 
+                            "slug": WOMENSHORTS_CATEGORY_SLUG
+                        });
                     }
                 });
         });
