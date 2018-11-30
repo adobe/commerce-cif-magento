@@ -168,6 +168,26 @@ describe('Magento CartMapper', () => {
             let mappedCart = cartMapper.mapCart(cartDataNoBillingAddress, cartDataNoBillingAddress.totals);
             assert.isUndefined(mappedCart.billingAddress);
         });
+
+        it('maps the slug of a cart entry', () => {
+            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
+            let variant = mappedCart.entries[0].productVariant;
+
+            assert.isDefined(variant.slug);
+            assert.strictEqual(variant.slug, 'eqbisumas-10');
+        });
+
+        it('maps a cart entry without a slug', () => {
+            cartData.products.items[0].custom_attributes = cartData.products.items[0].custom_attributes.filter(attr => {
+                return attr.attribute_code !== 'url_key';
+            });
+
+            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
+            let variant = mappedCart.entries[0].productVariant;
+
+            assert.isUndefined(variant.slug);
+        });
+
     });
 });
 

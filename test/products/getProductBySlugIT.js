@@ -22,7 +22,7 @@ const requiredFields = require('../lib/requiredFields');
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-describe('magento getProductById', function() {
+describe('magento getProductBySlug', function() {
     describe('Integration tests', function() {
         
         // Get environment
@@ -32,12 +32,13 @@ describe('magento getProductById', function() {
         this.slow(env.slow);
         this.timeout(env.timeout);
 
-        const productId = 'eqrusubpe';
+        const productSlug = 'el-gordo-down-jacket';
+        const productId = 'meskwielt';
 
-        it('returns a product for a valid product id', function() {
+        it('returns a product for a valid product slug', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'getProductById')
-                .query({id: productId})
+                .get(env.productsPackage + 'getProductBySlug')
+                .query({ slug: productSlug })
                 .set('Cache-Control', 'no-cache')
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -45,9 +46,10 @@ describe('magento getProductById', function() {
 
                     // Verify structure
                     requiredFields.verifyProduct(res.body);
-                    expect(res.body.name).to.equal('BPA-Free Water Bottle');
+                    expect(res.body.name).to.equal('El Gordo Down Jacket');
                     expect(res.body).to.have.own.property('sku');
                     expect(res.body.id).to.equal(productId);
+                    expect(res.body.slug).to.equal(productSlug);
                     expect(res.body).to.have.own.property('categories');
                     expect(res.body).to.have.own.property('createdAt');
                 });
@@ -55,9 +57,9 @@ describe('magento getProductById', function() {
 
         it('returns a 404 error for a non existent product', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'getProductById')
+                .get(env.productsPackage + 'getProductBySlug')
                 .set('Cache-Control', 'no-cache')
-                .query({id: 'does-not-exist'})
+                .query({ slug: 'does-not-exist' })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;

@@ -26,7 +26,11 @@ resources:
 functions:
   getProductByIdService:
     name: ${self:custom.ow-package}/getProductByIdService
-    handler: getProduct.main
+    handler: getProductById.main
+
+  getProductBySlugService:
+    name: ${self:custom.ow-package}/getProductBySlugService
+    handler: getProductBySlug.main
 
   searchProductsService:
     name: ${self:custom.ow-package}/searchProductsService

@@ -34,6 +34,7 @@
           id
           sku
           name
+          url_key
           stock_status
           description
           created_at
@@ -68,6 +69,7 @@
                 id
                 sku
                 name
+                url_key
                 stock_status
                 description
                 created_at

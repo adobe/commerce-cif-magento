@@ -20,12 +20,12 @@ const testData = require('../resources/sample-product-search-single-product');
 const config = require('../lib/config').config;
 const sinon = require('sinon');
 
-describe('magento getProduct', () => {
+describe('magento getProductById', () => {
 
     describe('Unit tests', () => {
 
         // build the helper in the context of '.this' suite
-        setup(this, __dirname, 'getProduct');
+        setup(this, __dirname, 'getProductById');
 
         let consoleSpy;
         let sampleProductSearch;
