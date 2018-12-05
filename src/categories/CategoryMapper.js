@@ -60,10 +60,10 @@ class CategoryMapper {
             .build();
     }
 
-    static mapCategoryListToCategory(magentoResponse) {
+    static mapCategoryListToCategory(magentoResponse, ignoreCategoresWithLevelLowerThan) {
         if (magentoResponse && magentoResponse.items && magentoResponse.items.length > 0) {
             // Map only first category in result list
-            return CategoryMapper.mapCategory(magentoResponse.items[0]);
+            return CategoryMapper.mapCategory(magentoResponse.items[0], ignoreCategoresWithLevelLowerThan);
         }
         // If the result list is empty, return a 404
         throw { error: "No category found.", statusCode: 404 };

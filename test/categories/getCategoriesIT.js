@@ -167,6 +167,8 @@ describe('magento getCategories', function() {
                     expect(category.id).to.equal(MEN_SHIRTS_CATEGORY_ID);
                     expect(category).to.have.own.property('slug');
                     expect(category.slug).to.equal(MEN_SHORTS_CATEGORY_SLUG);
+                    expect(category).to.have.own.property('parents');
+                    expect(category.parents).to.have.lengthOf(1);
                 });
         });
 

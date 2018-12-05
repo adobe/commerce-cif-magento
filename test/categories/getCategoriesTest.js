@@ -151,6 +151,8 @@ describe('Magento getCategories', () => {
                 assert.isNotEmpty(result.response);
                 assert.strictEqual(result.response.statusCode, 200);
                 assert.strictEqual(result.response.body.name, 'Shorts');
+                assert.isArray(result.response.body.parents);
+                assert.strictEqual(result.response.body.parents.length, 1);
             });
         });
 
