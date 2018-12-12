@@ -59,6 +59,10 @@ function getProduct(args, param, filterKey) {
     }
 
     return request.then(response => {
+        if (response.body.errors) {
+            return client.handleGraphqlErrors(response.body.errors);
+        }
+
         const items = response.body.data.products.items;
         if (!items || items.length === 0) {
             return Promise.reject({

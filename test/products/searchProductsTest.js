@@ -19,6 +19,7 @@ const setup = require('../lib/setupTest').setup;
 const config = require('../lib/config').config;
 const sinon = require('sinon');
 const sampleProductSearch = require('../resources/sample-product-search');
+const errorData = require('../resources/sample-graphql-errors');
 
 describe('magento searchProducts', () => {
 
@@ -94,6 +95,16 @@ describe('magento searchProducts', () => {
             });
         });
 
+        it('forwards graphQL error messages in CIF responses', () => {
+            return this.prepareResolve(errorData)
+                .execute(Object.assign({
+                    'text': 'shirt'
+                }, config))
+                .then(result => {
+                    assert.strictEqual(result.response.error.name, 'InvalidArgumentError');
+                    assert.strictEqual(result.response.error.message, 'Cannot query field "whatever" on type "ProductInterface". | Cannot query field "whatever" on type "SimpleProduct".');
+                });
+        });
     });
 
 });
