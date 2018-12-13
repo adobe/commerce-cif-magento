@@ -17,6 +17,7 @@
 const assert = require('chai').assert;
 const setup = require('../lib/setupTest').setup;
 const testData = require('../resources/sample-product-search-single-product');
+const errorData = require('../resources/sample-graphql-errors');
 const config = require('../lib/config').config;
 const sinon = require('sinon');
 
@@ -140,6 +141,17 @@ describe('magento getProductById', () => {
                 .then(result => {
                     assert.isTrue(consoleSpy.withArgs('BACKEND-CALL').calledOnce);
                     assert.isDefined(result.response.body); 
+                });
+        });
+
+        it('forwards graphQL error messages in CIF responses', () => {
+            return this.prepareResolve(errorData)
+                .execute(Object.assign({
+                    'id': 'testSimpleProduct'
+                }, config))
+                .then(result => {
+                    assert.strictEqual(result.response.error.name, 'InvalidArgumentError');
+                    assert.strictEqual(result.response.error.message, 'Cannot query field "whatever" on type "ProductInterface". | Cannot query field "whatever" on type "SimpleProduct".');
                 });
         });
     });

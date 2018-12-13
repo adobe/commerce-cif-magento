@@ -68,7 +68,12 @@ function searchProducts(args) {
     } else {
         request = req(options);
     }
+    
     return request.then((response) => {
+        if (response.body.errors) {
+            return client.handleGraphqlErrors(response.body.errors);
+        }
+
         let imageUrlPrefix = `${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/${args.MAGENTO_MEDIA_PATH}`;
         let productMapper = new ProductMapper(imageUrlPrefix, args.GRAPHQL_PRODUCT_ATTRIBUTES);
         return client._handleSuccess(productMapper.mapGraphQlResponse(response.body), {}, response.statusCode);

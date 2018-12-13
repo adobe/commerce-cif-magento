@@ -16,6 +16,7 @@
 
 const respondWithServiceError = require('./web-response-utils').respondWithServiceError;
 const requestPromise = require('request-promise-native');
+const InvalidArgumentError = require('@adobe/commerce-cif-common/exception').InvalidArgumentError;
 
 /**
  * Base class for magento client. This should be extended for each implemented business domain api like customer, catalog,
@@ -81,6 +82,17 @@ class MagentoClientBase {
      */
     handleError(error) {
         return respondWithServiceError(error, this.args, Promise.resolve.bind(Promise), this.errorType);
+    }
+
+    handleGraphqlErrors(errors) {
+        let messages = errors.map(e => e.message);
+        let categories = errors.map(e => e.category);
+        let error = new InvalidArgumentError(messages.join(' | ')); // bad query
+        this.args['response'] = {
+            'error': error,
+            'errorType': categories.join(' | ')
+        };
+        return Promise.resolve(this.args);
     }
 
     /**
