@@ -14,9 +14,21 @@ For example, for `products` it will:
 * create the package `/cif-customer/commerce-cif-magento-product@latest` (in the default `cif-customer` customer namespace). This is a package binding to the shared package implementing the `products` Magento actions. Note that this binding will be configured with the Magento credentials defined in `credentials.json`.
 * deploy the `products` actions in the `/cif-customer/magento` package.
 
-We use the `latest` version for the package bindings so that this example customer deployment project always uses the latest available versions of the shared actions. In a real project, a customer should rather point to a particular version to make sure that future changes do not break their deployment. The versions of the package bindings are defined in the `serverless.yml` deployment file. 
-
 To remove all the customer packages and actions, just run `npm run clean`.
+
+## Package Versioning
+
+For each microservice domain like products, Adobe prodvides two shared packages in the catalog namespace like for example:
+
+```
+/cif-core/commerce-cif-magento-product@1.0.0 (updated after each release deployment)
+/cif-core/commerce-cif-magento-product@latest
+```
+Also see main [readme](../readme.md) for details.
+
+We use the `latest` version for the package bindings so that this example customer deployment project always uses the latest available versions of the shared actions. The versions of the package bindings are defined in the `serverless.yml` deployment file, replace all `@latest` versions with the right version for each package to use a dedicated version.
+
+_Recommendation_: for a real project, a customer should rather point to a particular version to make sure that future changes do not break their deployment. 
 
 ## The serverless.yml file
 
