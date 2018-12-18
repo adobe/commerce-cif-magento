@@ -21,7 +21,7 @@ To remove all the customer packages and actions, just run `npm run clean`.
 For each microservice domain like products, Adobe prodvides two shared packages in the catalog namespace like for example:
 
 ```
-/cif-core/commerce-cif-magento-product@1.0.0 (updated after each release deplyoment)
+/cif-core/commerce-cif-magento-product@1.0.0 (updated after each release deployment)
 /cif-core/commerce-cif-magento-product@latest
 ```
 Also see main [readme](../readme.md) for details.
