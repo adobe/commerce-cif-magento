@@ -7,7 +7,7 @@ package:
 
 provider:
   name: openwhisk
-  runtime: nodejs:default
+  runtime: nodejs:10
   ignore_certs: true
 
 custom:
