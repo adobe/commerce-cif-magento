@@ -19,7 +19,7 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 
 /**
- * This action performs a user login.
+ * This action performs a guest (not implemented in Magento) or user authentication.
  *
  * @param   {string} args.MAGENTO_SCHEMA         Magento schema
  * @param   {string} args.MAGENTO_HOST           Magento host key
@@ -47,7 +47,7 @@ function login(args) {
         return validator.buildErrorResponse();
     }
 
-    // Guest authentification is not supported in Magento
+    // Guest authentication is not supported in Magento
     if (args.type == 'guest') {
         return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
     }
