@@ -260,6 +260,14 @@ functions:
     annotations:
       web-export: true
 
+  postCustomerAuth:
+    name: ${self:custom.customer-package}/postCustomerAuth
+    sequence:
+      - ${self:custom.customers-actions}/postCustomerAuthService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
   getProductById:
     name: ${self:custom.customer-package}/getProductById
     sequence:
