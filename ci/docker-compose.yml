@@ -2,7 +2,7 @@ version: '3'
 
 services:
   build:
-    image: adobe/commerce-cif-ci-env:v0.0.1
+    image: adobe/commerce-cif-ci-env:v0.1.0
     volumes:
       - ..:/home/circleci
     command: "node ci/build.js"
@@ -21,7 +21,7 @@ services:
       DEPLOY_CUSTOMER: "false"
 
   release:
-    image: adobe/commerce-cif-ci-env:v0.0.1
+    image: adobe/commerce-cif-ci-env:v0.1.0
     volumes:
       - ..:/home/circleci
     command: "node ci/release.js"
