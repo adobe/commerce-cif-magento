@@ -43,5 +43,37 @@ describe('magento postCustomerLogin', function() {
                 });
         });
 
+        it('successful authentication with credentials', function() {
+            return chai.request(env.openwhiskEndpoint)
+                .get(env.customersPackage + 'postCustomerAuth')
+                .set('Cache-Control', 'no-cache')
+                .query({
+                    type: 'credentials',
+                    email: env.magentoCustomerName,
+                    password: env.magentoCustomerPwd
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.OK);
+                    expect(res.body.access_token).to.exist;
+                    expect(res.body.token_type).to.equal('bearer');
+                });
+        });
+
+        it('return HTTP 401 failed authentication with wrong credentials', function() {
+            return chai.request(env.openwhiskEndpoint)
+                .get(env.customersPackage + 'postCustomerAuth')
+                .set('Cache-Control', 'no-cache')
+                .query({
+                    type: 'credentials',
+                    email: env.magentoCustomerName,
+                    password: 'wrongpassword'
+                })
+                .then(function (res) {
+                    expect(res).to.be.json;
+                    expect(res).to.have.status(HttpStatus.UNAUTHORIZED);
+                    expect(res.body.message).to.equal('CommerceServiceUnauthorizedError: Unauthorized Request');
+                });
+        });
     });
 });

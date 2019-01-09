@@ -16,6 +16,8 @@
 
 const assert = require('chai').assert;
 const setup = require('../lib/setupTest').setup;
+const config = require('../lib/config').config;
+const requestConfig = require('../lib/config').requestConfig;
 
 describe('Magento postCustomerAuth', () => {
     describe('Unit tests', () => {
@@ -29,6 +31,31 @@ describe('Magento postCustomerAuth', () => {
             }).then(result => {
                 assert.strictEqual(result.response.error.name, 'NotImplementedError');
             });
+        });
+
+        it('successful authentication with credentials', () => {
+            let body = {
+                username: 'a@a.com',
+                password: 'password'
+            };
+            let postRequestWithBody = requestConfig(`http://${config.MAGENTO_HOST}/rest/V1/integration/customer/token`, 'POST');
+            postRequestWithBody.body = body;
+            
+            const expectedArgs = [
+                postRequestWithBody
+            ];
+
+            let token = 'abcd';
+            return this.prepareResolve(token, expectedArgs)
+                .execute({
+                    type: 'credentials',
+                    email: 'a@a.com',
+                    password: 'password'
+                }).then(result => {
+                    assert.strictEqual(result.response.statusCode, 200);
+                    assert.strictEqual(result.response.body.access_token, token);
+                    assert.strictEqual(result.response.body.token_type, 'bearer');
+                });
         });
 
         it('returns invalid argument error for bad type parameter', () => {
@@ -51,7 +78,7 @@ describe('Magento postCustomerAuth', () => {
         it('returns missing property error for missing password parameter', () => {
             return this.execute({
                 type: 'credentials',
-                email: 'john.doe@whatever.com'
+                email: 'a@a.com'
             }).then(result => {
                 assert.strictEqual(result.response.error.name, 'MissingPropertyError');
             });

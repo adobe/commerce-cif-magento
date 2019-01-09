@@ -17,6 +17,7 @@
 const InputValidator = require('@adobe/commerce-cif-common/input-validator');
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
+const MagentoCustomerAuth = require('./MagentoCustomerAuth');
 
 /**
  * This action performs a guest (not implemented in Magento) or user authentication.
@@ -50,6 +51,9 @@ function login(args) {
     // Guest authentication is not supported in Magento
     if (args.type == 'guest') {
         return new MagentoClientBase(args, null, '', ERROR_TYPE).handleError({statusCode: 501});
+    } else {
+        const magentoAuth = new MagentoCustomerAuth(args);
+        return magentoAuth.auth(args.email, args.password);
     }
 }
 
