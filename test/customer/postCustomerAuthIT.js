@@ -22,7 +22,7 @@ const setup = require('../lib/setupIT.js').setup;
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-describe('magento postCustomerLogin', function() {
+describe('magento postCustomerAuth', function() {
 
     describe('Integration tests', function() {
 
