@@ -45,7 +45,7 @@ describe('magento postCustomerLogin', function() {
 
         it('successful authentication with credentials', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'postCustomerAuth')
+                .post(env.customersPackage + 'postCustomerAuth')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'credentials',
@@ -62,7 +62,7 @@ describe('magento postCustomerLogin', function() {
 
         it('return HTTP 401 failed authentication with wrong credentials', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'postCustomerAuth')
+                .post(env.customersPackage + 'postCustomerAuth')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'credentials',
