@@ -31,7 +31,7 @@ describe('magento postCustomerLogin', function() {
 
         it('returns HTTP 501 not implemented error for guest authentication', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'postCustomerAuth')
+                .post(env.customersPackage + 'postCustomerAuth')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'guest'
