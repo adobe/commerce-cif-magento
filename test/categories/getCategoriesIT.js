@@ -20,8 +20,6 @@ const setup = require('../lib/setupIT.js').setup;
 const categoriesConfig = require('../lib/config').categoriesConfig;
 const requiredFields = require('../lib/requiredFields');
 const expect = chai.expect;
-const extractToken = require('../lib/setupIT').extractToken;
-const CCS_MAGENTO_CUSTOMER_TOKEN = require('../../src/common/MagentoClientBase').const().CCS_MAGENTO_CUSTOMER_TOKEN;
 
 chai.use(require('chai-sorted'));
 chai.use(require('chai-http'));
@@ -60,9 +58,10 @@ describe('magento getCategories', function() {
                     // doing a customer login to also test that the customer token header
                     // will not override the integration token
                     return chai.request(env.openwhiskEndpoint)
-                        .get(env.customersPackage + 'postCustomerLogin')
+                        .get(env.customersPackage + 'postCustomerAuth')
                         .set('Cache-Control', 'no-cache')
                         .query({
+                            type: 'credentials',
                             email: env.magentoCustomerName,
                             password: env.magentoCustomerPwd
                         });
@@ -70,12 +69,7 @@ describe('magento getCategories', function() {
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
-
-                    requiredFields.verifyLoginResult(res.body);
-                    expect(res.body.customer.email).to.equal(env.magentoCustomerName);
-                    //check cookie is set
-                    accessToken = extractToken(res);
-                    expect(accessToken).to.not.be.undefined;
+                    expect(res.body.access_token).to.not.be.undefined;
                 });
         });
 
@@ -83,7 +77,7 @@ describe('magento getCategories', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
                 .set('Cache-Control', 'no-cache')
-                .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                .set('Authorization', `Bearer ${accessToken}`)
                 .query({
                     type: 'tree'
                 })
@@ -351,7 +345,7 @@ describe('magento getCategories', function() {
         it('returns the Vary header', function() {
             return chai.request(env.openwhiskEndpoint)
                 .get(env.categoriesPackage + 'getCategories')
-                .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                .set('Authorization', `Bearer ${accessToken}`)
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);

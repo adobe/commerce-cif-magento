@@ -19,11 +19,7 @@ const chaiHttp = require('chai-http');
 const HttpStatus = require('http-status-codes');
 const setup = require('../lib/setupIT.js').setup;
 const requiredFields = require('../lib/requiredFields');
-const extractToken = require('../lib/setupIT').extractToken;
-const CCS_MAGENTO_CUSTOMER_TOKEN = require('../../src/common/MagentoClientBase').const().CCS_MAGENTO_CUSTOMER_TOKEN;
-
 const expect = chai.expect;
-
 chai.use(chaiHttp);
 
 
@@ -84,9 +80,10 @@ describe('Magento postOrder IT', function () {
                     cartId = res.body.id;
 
                     return chai.request(env.openwhiskEndpoint)
-                        .get(env.customersPackage + 'postCustomerLogin')
+                        .get(env.customersPackage + 'postCustomerAuth')
                         .set('Cache-Control', 'no-cache')
                         .query({
+                            type: 'credentials',
                             email: env.magentoCustomerName,
                             password: env.magentoCustomerPwd
                         });
@@ -95,15 +92,14 @@ describe('Magento postOrder IT', function () {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
 
-                    requiredFields.verifyLoginResult(res.body);
-                    expect(res.body.customer.email).to.equal(env.magentoCustomerName);
                     //check cookie is set
-                    accessToken = extractToken(res);
+                    accessToken = res.body.access_token;
                     expect(accessToken).to.not.be.undefined;
+                    
                     //create a new customer cart
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.cartsPackage + 'postCartEntry')
-                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .set('authorization', `Bearer ${accessToken}`)
                         .query({
                             currency: 'USD',
                             quantity: 5,
@@ -131,7 +127,7 @@ describe('Magento postOrder IT', function () {
                     return chai.request(env.openwhiskEndpoint)
                         .get(env.cartsPackage + 'getCart')
                         .set('Cache-Control', 'no-cache')
-                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .set('authorization', `Bearer ${accessToken}`)
                         .query({id: cartId})
                 })
                 .then(function (res) {
@@ -234,7 +230,7 @@ describe('Magento postOrder IT', function () {
             // Set billing address
             return chai.request(env.openwhiskEndpoint)
                 .post(env.cartsPackage + 'postBillingAddress')
-                .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                .set('authorization', `Bearer ${accessToken}`)
                 .query({
                     id: cartId
                 })
@@ -247,7 +243,7 @@ describe('Magento postOrder IT', function () {
                     // Set shipping address
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.cartsPackage + 'postShippingAddress')
-                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .set('authorization', `Bearer ${accessToken}`)
                         .query({
                             id: cartId,
                             default_method: 'flatrate',
@@ -263,7 +259,7 @@ describe('Magento postOrder IT', function () {
                     // Set payment
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.cartsPackage + 'postPayment')
-                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .set('authorization', `Bearer ${accessToken}`)
                         .query({
                             id: cartId
                         })
@@ -277,7 +273,7 @@ describe('Magento postOrder IT', function () {
                     // Submit order
                     return chai.request(env.openwhiskEndpoint)
                         .post(env.ordersPackage + 'postOrder')
-                        .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
+                        .set('authorization', `Bearer ${accessToken}`)
                         .query({
                             cartId: cartId
                         });

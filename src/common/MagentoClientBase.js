@@ -60,6 +60,15 @@ class MagentoClientBase {
 
 
     _extractCustomerToken(headers) {
+        // Header --> Authorization: Bearer token
+        if (headers && headers['authorization']) {
+            let parts = headers['authorization'].trim().split(' ');
+            if (parts.length == 2 && parts[0].toLowerCase() == 'bearer') {
+                return parts[1];
+            }
+        }
+
+        // "Old" implementation using cookie header --> Cookie: ccs-magento-customer-token=token
         if (headers && headers['cookie']) {
             let cookies = headers.cookie.split(';');
             for (let i = 0, length = cookies.length; i < length; i++) {
@@ -231,7 +240,7 @@ class MagentoClientBase {
     }
 
     withAuthorizationHeader(value) {
-        return this.withHeaders({'authorization': `Bearer ${value}`});
+        return value ? this.withHeaders({'authorization': `Bearer ${value}`}) : this;
     }
 
 }
