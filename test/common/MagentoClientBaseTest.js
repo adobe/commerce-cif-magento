@@ -98,5 +98,37 @@ describe('Magento Common MagentoClientBase', () => {
             });
         });
 
+        it('extracts authentication token from cookie', () => {
+            const cookieValue = "ccs-magento-customer-token=12345";
+            let args = {
+                __ow_headers: {
+                    cookie: cookieValue
+                }
+            };
+            let clientBase = new MagentoClientBase(args);
+            assert.strictEqual(clientBase.customerToken, '12345');
+        });
+
+        it('extracts bearer token from authentication header', () => {
+            const cookieValue = "ccs-magento-customer-token=12345";
+            let args = {
+                __ow_headers: {
+                    cookie: cookieValue,
+                    authorization: 'Bearer 54321'
+                }
+            };
+            let clientBase = new MagentoClientBase(args);
+            assert.strictEqual(clientBase.customerToken, '54321');
+        });
+
+        it('ignores non bearer token from authentication header', () => {
+            let args = {
+                __ow_headers: {
+                    authentication: 'Basic 54321'
+                }
+            };
+            let clientBase = new MagentoClientBase(args);
+            assert.isNull(clientBase.customerToken);
+        });
     });
 });

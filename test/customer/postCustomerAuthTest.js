@@ -56,6 +56,7 @@ describe('Magento postCustomerAuth', () => {
                     assert.strictEqual(result.response.statusCode, 200);
                     assert.strictEqual(result.response.body.access_token, token);
                     assert.strictEqual(result.response.body.token_type, 'bearer');
+                    assert.strictEqual(result.response.body.expiresIn, config.MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME);
                 });
         });
 

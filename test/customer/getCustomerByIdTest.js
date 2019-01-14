@@ -29,7 +29,7 @@ describe('Magento getCustomerById', () => {
 
         setup(this, __dirname, 'getCustomerById');
 
-        const cookieValue = "ccs-magento-customer-token=token";
+        const bearerToken = "Bearer token";
         const id = 4;
 
         it('returns user details', () => {
@@ -51,11 +51,10 @@ describe('Magento getCustomerById', () => {
                 .execute({
                     id: id,
                     __ow_headers: {
-                        cookie: cookieValue
+                        authorization: bearerToken
                     }
                 })
                 .then(result => {
-                    assert.strictEqual(result.__ow_headers.cookie, cookieValue);
                     assert.strictEqual(result.response.body.id, id);
                     assert.strictEqual(result.response.body.email, "aa@a.com");
                     assert.strictEqual(result.response.body.firstName, "B");
@@ -67,7 +66,7 @@ describe('Magento getCustomerById', () => {
             let args = {
                 id : id,
                 __ow_headers: {
-                    cookie: 'ccs-magento-customer-token=qwtuyr382svfjt7l5abufyuxqsp4sknv'
+                    authorization: bearerToken
                 }
             };
             return this.prepareReject(sampleGetCustomer401).execute(args).then(result => {
@@ -91,7 +90,7 @@ describe('Magento getCustomerById', () => {
                 .execute({
                     id: 123,
                     __ow_headers: {
-                        cookie: cookieValue
+                        authorization: bearerToken
                     }
                 })
                 .then(result => {
@@ -104,7 +103,7 @@ describe('Magento getCustomerById', () => {
             return this.prepareResolve(customerResponseMock)
                 .execute({
                     __ow_headers: {
-                        cookie: cookieValue
+                        authorization: bearerToken
                     }
                 })
                 .then(result => {

@@ -39,7 +39,8 @@ let config = {
     PRODUCT_ATTRIBUTES: ['color', 'size'],
     GRAPHQL_PRODUCT_ATTRIBUTES: ['color', 'size', 'features', 'summary'],
     MAGENTO_AUTH_ADMIN_TOKEN: 'my-token',
-    SHIPPING_CODES: ['flatrate', 'flatrate']
+    SHIPPING_CODES: ['flatrate', 'flatrate'],
+    MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME: "3600"
 };
 module.exports.config = config;
 

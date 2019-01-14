@@ -26,6 +26,8 @@ const CCS_MAGENTO_CUSTOMER_TOKEN = require('../../src/common/MagentoClientBase')
 
 chai.use(chaiHttp);
 
+// IMPORTANT: This IT is still based on postCustomeLogin because postCustomerAuth does not permit to get the customer id
+// This means that we will probably have to introduce a /customers/me endpoint.
 
 describe('magento getCustomerById', function() {
 
