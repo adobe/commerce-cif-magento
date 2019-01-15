@@ -16,7 +16,9 @@
 
 const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoClientBase');
 const CommerceServiceForbiddenError = require('@adobe/commerce-cif-common/exception').CommerceServiceForbiddenError;
+const CommerceServiceBadRequestError = require('@adobe/commerce-cif-common/exception').CommerceServiceBadRequestError;
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
+const Customer = require('@adobe/commerce-cif-model').Customer;
 
 /**
  * Magento customer API implementation.
@@ -33,7 +35,7 @@ class MagentoCustomer extends MagentoClientBase {
         super(args, customerMapper, '', ERROR_TYPE);
         this.id = args.id;
     }
-    
+
     /**
      * Returns a customer based on the id.
      * TODO Use the id.
@@ -56,7 +58,27 @@ class MagentoCustomer extends MagentoClientBase {
             })
             .catch(error => {
                 return this.handleError(error);
+            });
+    }
+
+    /**
+     * Returns a customer based on the customer token extracted by the MagentoClientBase.
+     * @return Customer
+     */
+    getCustomer() {
+        if (!this.customerToken) {
+            return this.handleInternalError(new CommerceServiceBadRequestError('The customer token is missing'));          
+        }
+        return this
+            .withEndpoint("customers/me")
+            .withAuthorizationHeader(this.customerToken)
+            ._execute("GET")
+            .then(result => {
+                return this._handleSuccess(this.mapper(result));
             })
+            .catch(error => {
+                return this.handleError(error);
+            });
     }
 }
 

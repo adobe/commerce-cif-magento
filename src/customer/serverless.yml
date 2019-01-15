@@ -35,3 +35,7 @@ functions:
   postCustomerAuthService:
     name: ${self:custom.ow-package}/postCustomerAuthService
     handler: postCustomerAuth.main
+
+  getCustomerService:
+    name: ${self:custom.ow-package}/getCustomerService
+    handler: getCustomer.main

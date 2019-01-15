@@ -46,6 +46,14 @@ class MagentoCustomerAuth extends MagentoClientBase {
             .withEndpoint("integration/customer/token")
             ._execute("POST", postData);
     }
+
+    _getCustomer(token) {
+        return this.withResetEndpoint("customers/me", 0)
+            .withAuthorizationHeader(token)
+            ._execute("GET").then(result => {
+                return this.mapper(result);
+            });
+    }
 }
 
 module.exports = MagentoCustomerAuth;
