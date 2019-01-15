@@ -72,7 +72,7 @@ describe('magento getCustomer', function() {
 
         it('succesfully returns a customer', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'getCustomerById')
+                .get(env.customersPackage + 'getCustomer')
                 .set('Cache-Control', 'no-cache')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .then(function (res) {
