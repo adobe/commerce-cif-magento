@@ -18,7 +18,7 @@ const MagentoClientBase = require('@adobe/commerce-cif-magento-common/MagentoCli
 const CommerceServiceForbiddenError = require('@adobe/commerce-cif-common/exception').CommerceServiceForbiddenError;
 const CommerceServiceBadRequestError = require('@adobe/commerce-cif-common/exception').CommerceServiceBadRequestError;
 const ERROR_TYPE = require('./constants').ERROR_TYPE;
-const Customer = require('@adobe/commerce-cif-model').Customer;
+const Customer = require('@adobe/commerce-cif-model').Customer;  // eslint-disable-line no-unused-vars
 
 /**
  * Magento customer API implementation.
@@ -63,7 +63,7 @@ class MagentoCustomer extends MagentoClientBase {
 
     /**
      * Returns a customer based on the customer token extracted by the MagentoClientBase.
-     * @return Customer
+     * @return {Customer} The customer data.
      */
     getCustomer() {
         if (!this.customerToken) {
