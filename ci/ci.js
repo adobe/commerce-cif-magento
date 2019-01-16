@@ -212,7 +212,9 @@ module.exports = class CI {
         try {
             const tmpFile = '_audit.json';
             let jsonFile = fs.openSync(tmpFile, 'w+');
-            e.execSync("npm audit --json", { 'stdio': ['pipe', jsonFile, jsonFile] });
+            try {
+                e.execSync("npm audit --json", { 'stdio': ['pipe', jsonFile, jsonFile] });
+            } catch (e) {}
             let output = fs.readFileSync(tmpFile, { 'encoding': 'utf8' });
             // This potentially fails for an invalid audit result
             output = JSON.parse(output);
