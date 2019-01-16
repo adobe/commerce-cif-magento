@@ -207,22 +207,21 @@ module.exports = class CI {
      * Returns the JSON output of npm audit in the current path.
      */
     npmAudit() {
-        const tmpFile = '_audit.json';
-        let jsonFile = fs.openSync(tmpFile, 'w+');
-    
+        
         console.log("npm audit --json");
         try {
+            const tmpFile = '_audit.json';
+            let jsonFile = fs.openSync(tmpFile, 'w+');
             e.execSync("npm audit --json", { 'stdio': ['pipe', jsonFile, jsonFile] });
-        } catch (e) {}
-    
-        let output = fs.readFileSync(tmpFile, { 'encoding': 'utf8' });
-    
-        // This potentially fails for an invalid audit result
-        output = JSON.parse(output);
-    
-        fs.unlinkSync(tmpFile);
-    
-        return output;
+            let output = fs.readFileSync(tmpFile, { 'encoding': 'utf8' });
+            // This potentially fails for an invalid audit result
+            output = JSON.parse(output);
+            fs.unlinkSync(tmpFile);  
+            return output;
+        } catch (e) {
+            console.warn("npm audit failed");
+            return null;
+        }
     }
 
     /**
