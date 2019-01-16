@@ -43,8 +43,10 @@ let root = process.cwd();
 projects.forEach((project) => {
     ci.dir(project, () => {
         let audit = ci.npmAudit();
-        let relativePath = path.relative(root, project) || ".";
-        result[relativePath] = audit;
+        if (audit) {
+            let relativePath = path.relative(root, project) || ".";
+            result[relativePath] = audit;
+        }
     });
 });
 
