@@ -93,6 +93,14 @@ class MagentoClientBase {
         return respondWithServiceError(error, this.args, Promise.resolve.bind(Promise), this.errorType);
     }
 
+    handleInternalError(internalError) {
+        this.args.response = {
+            error: internalError,
+            errorType: this.errorType
+        };
+        return Promise.resolve(this.args);
+    }
+
     handleGraphqlErrors(errors) {
         let messages = errors.map(e => e.message);
         let categories = errors.map(e => e.category);
