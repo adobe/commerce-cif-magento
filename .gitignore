@@ -82,6 +82,8 @@ dev-development/service.yml
 # Development files
 credentials.json
 *-credentials.json
+environment.json
+*-environment.json
 dev-test
 
 # Test results

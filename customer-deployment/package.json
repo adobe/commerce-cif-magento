@@ -6,13 +6,10 @@
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@cruglobal/serverless-merge-config": "git+https://github.com/CruGlobal/serverless-merge-config.git",
-    "serverless": "1.29.0",
-    "serverless-openwhisk": "0.13.0"
+    "@cruglobal/serverless-merge-config": "1.1.0",
+    "serverless": "1.36.0",
+    "serverless-openwhisk": "0.16.2"
   },
-  "customer-namespace": "cif-customer",
-  "customer-package": "magento",
-  "bindings-namespace": "cif-core",
   "scripts": {
     "postinstall": "node ./postinstall.js",
     "fix-serverless-permission": "chmod +x $(npm bin)/serverless",
