@@ -43,7 +43,11 @@ These parameters can be passed to the deployment file via npm, like for example 
 
 ## The credentials.json file
 
-This file contains the Magento credentials of the customer's project. Simply copy the file `credentials-example.json` and name it `credentials.json`, and add your Magento credentials to the file. The field `MAGENTO_INTEGRATION_TOKEN` should contain a Magento token (integration or user token) that has the permissions to access the Magento catalog (that is, products and categories) endpoints. Because not all endpoints require the integration token, this file is kept separate from the server configuration so that the credentials will not be bound by default.
+This file contains the Magento credentials of the customer's project. Simply copy the file `credentials-example.json` and name it `credentials.json`, and add your Magento credentials to the file.
+
+The field `MAGENTO_INTEGRATION_TOKEN` should contain a Magento token (integration or user token) that has the permissions to access the Magento catalog (that is, products and categories) endpoints. Because not all endpoints require the integration token, this file is kept separate from the server configuration so that the credentials will not be bound by default.
+
+The field `MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME` may contain the lifetime (in seconds) of a Magento customer token. This is **not** the lifetime of the integration token. This parameter will be used upon customer login, to set the `expires_in` field of the authentication response.
 
 ```
 {
@@ -51,6 +55,7 @@ This file contains the Magento credentials of the customer's project. Simply cop
     "MAGENTO_INTEGRATION_TOKEN": "INTEGRATION_ACCESS_TOKEN"   // (mandatory) an integration with catalog permissions
 }
 ```
+*(this commented JSON file cannot be used for the real deploment - the JSON format indeed does not allow comments)*
 
 ## The environment.json file
 
@@ -58,7 +63,7 @@ This file contains the Magento server configuration of the customer's project. S
 
 ```
 {
-    "MAGENTO_SCHEMA": "https",                                // (mandatory) always use "https" expect for development or testing purposes
+    "MAGENTO_SCHEMA": "https",                                // (mandatory) always use "https" except for development or testing purposes
     "MAGENTO_HOST": "your-magento-server-without-slash",      // (mandatory) the fully qualified domain name of the Magento server
     "MAGENTO_API_VERSION": "V1",                              // (optional)  the version of the Magento REST API, "V1" by default
     "MAGENTO_MEDIA_PATH": "media/catalog/product",            // (mandatory) the path used to access images on the Magento instance
@@ -71,6 +76,7 @@ This file contains the Magento server configuration of the customer's project. S
     "BINDINGS_NAMESPACE": "ccif-core-library"                 // (mandatory) the namespace where the shared Magento packages are deployed
 }
 ```
+*(this commented JSON file cannot be used for the real deploment - the JSON format indeed does not allow comments)*
 
 ## Deployment
 
