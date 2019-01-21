@@ -25,7 +25,6 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * @param   {string} args.MAGENTO_SCHEMA            Magento schema
  * @param   {string} args.MAGENTO_HOST              Magento hostname
  * @param   {string} args.MAGENTO_API_VERSION       Magento api version
- * @param   {string} args.MAGENTO_AUTH_ADMIN_TOKEN  Magento authentication token
  * @param   {string} args.MAGENTO_MEDIA_PATH        Magento media base path
  * 
  * @param   {string} args.cartId                    cart id from which the order is created

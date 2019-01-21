@@ -94,6 +94,20 @@ module.exports = class CI {
     };
 
     /**
+     * Set CT commerce backend environment for the scope of the given function.
+     */
+    withEnvironment(environment, func) {
+        try {
+            fs.writeFileSync('environment.json', environment || "");
+            console.log('// Created file environment.json.');
+            func();
+        } finally {
+            fs.unlinkSync('environment.json');
+            console.log('// Deleted file environment.json.');
+        }
+    };
+
+    /**
      * Print stage name.
      */
     stage(name) {

@@ -74,6 +74,7 @@ function magentoDataHandler(args) {
     }
 
     const options = _buildRequest(args, makeGraphqlQuery(magentoQueryObject));
+    let variantAttributes = args.PRODUCT_VARIANT_ATTRIBUTES || args.PRODUCT_ATTRIBUTES || [];
 
     return request(options)
             .then(response => {
@@ -83,7 +84,7 @@ function magentoDataHandler(args) {
                 } else {
                     let mapperConfig = {
                         imageUrlPrefix: `${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/${args.MAGENTO_MEDIA_PATH}`,
-                        baseProductAttributes: args.GRAPHQL_PRODUCT_ATTRIBUTES.filter(e => !(args.PRODUCT_ATTRIBUTES.includes(e)))
+                        baseProductAttributes: args.GRAPHQL_PRODUCT_ATTRIBUTES.filter(e => !(variantAttributes.includes(e)))
                     }
                     let mapper = new ResponseMapper(magentoMapper(mapperConfig));
                     body = { data: mapper.map(queryObject, response.body.data) };

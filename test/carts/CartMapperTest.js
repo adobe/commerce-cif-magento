@@ -46,7 +46,7 @@ describe('Magento CartMapper', () => {
 
         it('cart mapper - success', () => {
             //this is cart id as received in the request (i.e open whisk action arguments)
-            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
+            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_VARIANT_ATTRIBUTES);
             let sampleCartDetails = cartData.cart_details;
             let sampleCartTotals = cartData.totals;
 
@@ -88,7 +88,7 @@ describe('Magento CartMapper', () => {
             let sampleCartProducts = cartData.products;
             let sampleCartAttributes = cartData.product_attributes;
 
-            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
+            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_VARIANT_ATTRIBUTES);
             let mappedCartEntries = mappedCart.entries;
 
             assert.isDefined(mappedCartEntries);
@@ -140,7 +140,7 @@ describe('Magento CartMapper', () => {
             cartData.products.items[0].custom_attributes = cartData.products.items[0].custom_attributes.filter(attr => {
                 return attr.attribute_code !== 'color';
             });
-            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
+            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_VARIANT_ATTRIBUTES);
             assert.strictEqual(mappedCart.entries[0].productVariant.attributes.length, 1);
         });
 
@@ -151,7 +151,7 @@ describe('Magento CartMapper', () => {
             cartData.totals.tax_amount = 0;
             cartData.totals.shipping_incl_tax = 0;
 
-            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
+            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_VARIANT_ATTRIBUTES);
 
             assert.isUndefined(mappedCart.netTotalPrice);
             assert.isUndefined(mappedCart.grossTotalPrice);
@@ -170,7 +170,7 @@ describe('Magento CartMapper', () => {
         });
 
         it('maps the slug of a cart entry', () => {
-            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
+            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_VARIANT_ATTRIBUTES);
             let variant = mappedCart.entries[0].productVariant;
 
             assert.isDefined(variant.slug);
@@ -182,7 +182,7 @@ describe('Magento CartMapper', () => {
                 return attr.attribute_code !== 'url_key';
             });
 
-            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_ATTRIBUTES);
+            let mappedCart = cartMapper.mapCart(cartData, args.id, magentoMediaBasePath, config.PRODUCT_VARIANT_ATTRIBUTES);
             let variant = mappedCart.entries[0].productVariant;
 
             assert.isUndefined(variant.slug);

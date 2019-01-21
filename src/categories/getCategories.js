@@ -28,7 +28,7 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * @param   {string} args.MAGENTO_SCHEMA            Schema to use when calling magento. http/https
  * @param   {string} args.MAGENTO_API_VERSION       The version of REST API
  * @param   {string} args.MAGENTO_HOST              Hostname of the magento instance
- * @param   {string} args.MAGENTO_AUTH_ADMIN_TOKEN  Authentication token to use when calling magento REST API.
+ * @param   {string} args.MAGENTO_INTEGRATION_TOKEN Authentication token to use when calling magento REST API.
  *
  * @param   {string} args.id                        an optional category id
  * @param   {string} args.type                      defines if the request should return either a flat or tree category structure

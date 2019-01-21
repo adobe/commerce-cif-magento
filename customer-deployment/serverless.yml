@@ -12,9 +12,9 @@ provider:
 
 custom:
   # Adobe I/O Runtime configuration. The variables can be overriden by command-line arguments.
-  customer-namespace: ${opt:customer-namespace, 'cjelger'}
-  customer-package: ${opt:customer-package, 'magento'}
-  bindings-namespace: ${opt:bindings-namespace, 'ccif-core-library'}
+  customer-namespace: ${opt:customer-namespace, file(environment.json):CUSTOMER_NAMESPACE}
+  customer-package: ${opt:customer-package, file(environment.json):CUSTOMER_PACKAGE}
+  bindings-namespace: ${opt:bindings-namespace, file(environment.json):BINDINGS_NAMESPACE}
 
   # These variables define the names of the package bindings that will be created in the customer namespace
   common-actions: /${self:custom.customer-namespace}/commerce-cif-magento-common@latest
