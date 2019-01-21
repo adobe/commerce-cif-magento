@@ -43,8 +43,35 @@ These parameters can be passed to the deployment file via npm, like for example 
 
 ## The credentials.json file
 
-This file contains the Magento credentials of the customer's project. Simply copy the file `credentials-example.json` and name it `credentials.json`, and add your Magento credentials to the file. The field `MAGENTO_INTEGRATION_TOKEN` should contain a Magento token (integration or user token) that has the permissions to access the Magento catalog, cart, and order endpoints.
- 
+This file contains the Magento credentials of the customer's project. Simply copy the file `credentials-example.json` and name it `credentials.json`, and add your Magento credentials to the file. The field `MAGENTO_INTEGRATION_TOKEN` should contain a Magento token (integration or user token) that has the permissions to access the Magento catalog (that is, products and categories) endpoints. Because not all endpoints require the integration token, this file is kept separate from the server configuration so that the credentials will not be bound by default.
+
+```
+{
+    "MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME": "3600",         // (optional)  the lifetime (in seconds) of a Magento customer token 
+    "MAGENTO_INTEGRATION_TOKEN": "INTEGRATION_ACCESS_TOKEN"   // (mandatory) an integration with catalog permissions
+}
+```
+
+## The environment.json file
+
+This file contains the Magento server configuration of the customer's project. Simply copy the file `environment-example.json` and name it `environment.json`, and add your Magento server configuration to the file. 
+
+```
+{
+    "MAGENTO_SCHEMA": "https",                                // (mandatory) always use "https" expect for development or testing purposes
+    "MAGENTO_HOST": "your-magento-server-without-slash",      // (mandatory) the fully qualified domain name of the Magento server
+    "MAGENTO_API_VERSION": "V1",                              // (optional)  the version of the Magento REST API, "V1" by default
+    "MAGENTO_MEDIA_PATH": "media/catalog/product",            // (mandatory) the path used to access images on the Magento instance
+    "PRODUCT_VARIANT_ATTRIBUTES": ["color", "size"],          // (optional)  the list of VARIANT attributes axis
+    "GRAPHQL_PRODUCT_ATTRIBUTES": ["color", "size"],          // (optional)  the list of ALL custom product attributes that should be fetched by graphQL
+    "MAGENTO_IGNORE_CATEGORIES_WITH_LEVEL_LOWER_THAN": 2,     // (mandatory) the minimum depth of product categories in the Magento backend (0 being the root)
+
+    "CUSTOMER_NAMESPACE": "your-customer-namespace",          // (mandatory) the namespace where this example deployment should be done
+    "CUSTOMER_PACKAGE": "your-package-name",                  // (mandatory) the package where this example deployment should be done
+    "BINDINGS_NAMESPACE": "ccif-core-library"                 // (mandatory) the namespace where the shared Magento packages are deployed
+}
+```
+
 ## Deployment
 
 The `package.json` file contains a number of scripts that can be used to deploy all package bindings and actions. First install all dependencies with
