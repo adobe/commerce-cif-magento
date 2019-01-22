@@ -48,7 +48,7 @@ class MagentoClientBase {
         this.args = args;
         this.mapper = mapper;
         this.errorType = errorType;
-        this.withAuthorizationHeader(this.args.MAGENTO_AUTH_ADMIN_TOKEN);
+        this.withAuthorizationHeader(this.args.MAGENTO_INTEGRATION_TOKEN || this.args.MAGENTO_AUTH_ADMIN_TOKEN);
         this.args.MAGENTO_SCHEMA = args.MAGENTO_SCHEMA || 'http';
         this.args.MAGENTO_API_VERSION = args.MAGENTO_API_VERSION || 'V1';
         this.args.MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME = this.args.MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME || '3600';

@@ -36,9 +36,9 @@ let config = {
     MAGENTO_SCHEMA: 'http',
     MAGENTO_HOST: 'does.not.exist',
     MAGENTO_MEDIA_PATH: 'media/catalog/product',
-    PRODUCT_ATTRIBUTES: ['color', 'size'],
+    PRODUCT_VARIANT_ATTRIBUTES: ['color', 'size'],
     GRAPHQL_PRODUCT_ATTRIBUTES: ['color', 'size', 'features', 'summary'],
-    MAGENTO_AUTH_ADMIN_TOKEN: 'my-token',
+    MAGENTO_INTEGRATION_TOKEN: 'my-token',
     SHIPPING_CODES: ['flatrate', 'flatrate'],
     MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME: "3600"
 };
@@ -78,7 +78,7 @@ module.exports.specsBuilder = function(propName, propValue) {
             baseCart: `${baseGuestCart}`,
             baseEndpoint: `${baseGuestCart}/${cartId}`,
             baseEndpointAggregatedCart: `${baseGuestAggregatedCart}/${cartId}`,
-            token: config.MAGENTO_AUTH_ADMIN_TOKEN,
+            token: config.MAGENTO_INTEGRATION_TOKEN,
         },
         {
             name: 'customer',

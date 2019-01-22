@@ -11,9 +11,12 @@ provider:
   ignore_certs: true
 
 custom:
-  customer-namespace: ${opt:customer-namespace, file(package.json):customer-namespace}
-  customer-package: ${opt:customer-package, file(package.json):customer-package}
-  bindings-namespace: ${opt:bindings-namespace, file(package.json):bindings-namespace}
+  # Adobe I/O Runtime configuration. The variables can be overriden by command-line arguments.
+  customer-namespace: ${opt:customer-namespace, file(environment.json):CUSTOMER_NAMESPACE}
+  customer-package: ${opt:customer-package, file(environment.json):CUSTOMER_PACKAGE}
+  bindings-namespace: ${opt:bindings-namespace, file(environment.json):BINDINGS_NAMESPACE}
+
+  # These variables define the names of the package bindings that will be created in the customer namespace
   common-actions: /${self:custom.customer-namespace}/commerce-cif-magento-common@latest
   carts-actions: /${self:custom.customer-namespace}/commerce-cif-magento-cart@latest
   orders-actions: /${self:custom.customer-namespace}/commerce-cif-magento-order@latest
@@ -23,9 +26,14 @@ custom:
   graphql-actions: /${self:custom.customer-namespace}/commerce-cif-magento-graphql@latest
 
 plugins:
-  - '@cruglobal/serverless-merge-config'
+  - '@cruglobal/serverless-merge-config' # provides the $<<: operator
   - serverless-openwhisk
 
+# This defines the packages that will be deployed in the customer namespace
+# Note that we cannot reuse the names defined above because one cannot use variables in YAML keys
+# Important: this example creates and binds to '@latest' packages. In a production project, one should
+# bind to released versions because '@latest' may in the future include backwards incompatible changes.
+# To bind to a particular version, just replace '@latest' with the desired version like e.g. '@1.0.0'
 resources:
   packages:
     magento:
@@ -35,29 +43,41 @@ resources:
       parameters:
         default_method: flatrate
         default_carrier: flatrate
-        $<<: ${file(credentials.json)}
+        $<<: ${file(environment.json)}
     commerce-cif-magento-order@latest:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-order@latest
-      parameters: ${file(credentials.json)}
+      parameters:
+        ${file(environment.json)}
     commerce-cif-magento-category@latest:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-category@latest
       parameters:
         cachetime: 300
-        $<<: ${file(credentials.json)}
+        $<<:
+          - ${file(environment.json)}
+          - ${file(credentials.json)}
     commerce-cif-magento-customer@latest:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-customer@latest
-      parameters: ${file(credentials.json)}
+      parameters:
+        ${file(environment.json)}
     commerce-cif-magento-product@latest:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-product@latest
       parameters:
         cachetime: 300
-        $<<: ${file(credentials.json)}
+        $<<:
+          - ${file(environment.json)}
+          - ${file(credentials.json)}
     commerce-cif-magento-common@latest:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-common@latest
     commerce-cif-magento-graphql@latest:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-graphql@latest
-      parameters: ${file(credentials.json)}
-      
+      parameters:
+        $<<:
+          - ${file(environment.json)}
+          - ${file(credentials.json)}
+
+# To prevent that your actions are publicly available to anyone, you can add the
+# 'require-whisk-auth: my-secret' annotation to all the actions below
+# HTTP requests will then have to include the HTTP header 'X-Require-Whisk-Auth: my-secret'
 functions:
 
   getCart:

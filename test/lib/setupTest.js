@@ -34,7 +34,7 @@ module.exports.setup = function (ctx, testDirName, actionName) {
     beforeEach(() => {
         args = {
             MAGENTO_HOST: 'does.not.exist',
-            MAGENTO_AUTH_ADMIN_TOKEN: 'my-token'
+            MAGENTO_INTEGRATION_TOKEN: 'my-token'
         };
     });
 

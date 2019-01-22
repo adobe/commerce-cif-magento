@@ -47,8 +47,9 @@ class MagentoCartClient extends MagentoClientBase {
      */
     get(headers, statusCode = 200) {
         let queryString = '';
-        if (this.args.PRODUCT_ATTRIBUTES) {
-            queryString = this.args.PRODUCT_ATTRIBUTES.map((attribute, idx) => {
+        let variantAttributes = this.args.PRODUCT_VARIANT_ATTRIBUTES || this.args.PRODUCT_ATTRIBUTES;
+        if (variantAttributes) {
+            queryString = variantAttributes.map((attribute, idx) => {
                 return this._mapFilter(idx, 'attribute_code', attribute);
             }).join('&');
         }
@@ -59,7 +60,7 @@ class MagentoCartClient extends MagentoClientBase {
             this.baseEndpoint = 'guest-aggregated-carts';
         }
         return this.withQueryString(queryString)._cartById().then(result => {
-            return this._handleSuccess(this.mapper(result, this.args.id, this.mediaBaseUrl, this.args.PRODUCT_ATTRIBUTES), headers, statusCode);
+            return this._handleSuccess(this.mapper(result, this.args.id, this.mediaBaseUrl, variantAttributes), headers, statusCode);
         });
     }
 
