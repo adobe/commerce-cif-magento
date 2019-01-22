@@ -80,6 +80,10 @@ This file contains the Magento server configuration of the customer's project. S
 ```
 *(this commented JSON file cannot be used for the real deploment - the JSON format indeed does not allow comments)*
 
+## Authentication
+
+See the documentation in the [customer](../src/customer) package.
+
 ## Deployment
 
 The `package.json` file contains a number of scripts that can be used to deploy all package bindings and actions. First install all dependencies with
