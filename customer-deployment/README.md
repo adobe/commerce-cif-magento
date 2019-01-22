@@ -49,7 +49,7 @@ The field `MAGENTO_INTEGRATION_TOKEN` should contain a Magento token (integratio
 
 The field `MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME` may contain the lifetime (in seconds) of a Magento customer token. This is **not** the lifetime of the integration token. This parameter will be used upon customer login, to set the `expires_in` field of the authentication response.
 
-```json
+```javascript
 {
     "MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME": "3600",         // (optional)  the lifetime (in seconds) of a Magento customer token 
     "MAGENTO_INTEGRATION_TOKEN": "INTEGRATION_ACCESS_TOKEN"   // (mandatory) an integration with catalog permissions
@@ -61,7 +61,7 @@ The field `MAGENTO_CUSTOMER_TOKEN_EXPIRATION_TIME` may contain the lifetime (in 
 
 This file contains the Magento server configuration of the customer's project. Simply copy the file `environment-example.json` and name it `environment.json`, and add your Magento server configuration to the file. 
 
-```json
+```javascript
 {
     "MAGENTO_SCHEMA": "https",                                // (mandatory) always use "https" except for development or testing purposes
     "MAGENTO_HOST": "your-magento-server-without-slash",      // (mandatory) the fully qualified domain name of the Magento server
