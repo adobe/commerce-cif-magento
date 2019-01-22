@@ -4,14 +4,16 @@ This folder contains an example customer deployment project. It shows how a cust
 
 ## Quick start
 
-Copy the file `credentials-example.json` and name it `credentials.json`, add your Magento credentials in that file, make sure that you currently have a `~/.wskprops` file with the credentials of a user/namespace meant to deploy customer actions (= different than the namespace of the shared action packages), and simply run
+1) Copy the file `credentials-example.json` and name it `credentials.json`, add your Magento credentials in that file
+2) Copy the file `environment-example.json` and name it `environment.json`, add your Magento server details and Openwhisk configuration in that file
+3) Make sure that you currently have a `~/.wskprops` file with the credentials of a user/namespace meant to deploy customer actions (= different than the namespace of the shared action packages), and simply run
 
 `npm install; npm run deploy`
 
 This will create one package for each micro-service (`carts`, `categories`, `customers`, `orders`, and `products`) and will also deploy all the web actions/sequences for each micro-service in a common `magento` package.
 
 For example, for `products` it will:
-* create the package `/cif-customer/commerce-cif-magento-product@latest` (in the default `cif-customer` customer namespace). This is a package binding to the shared package implementing the `products` Magento actions. Note that this binding will be configured with the Magento credentials defined in `credentials.json`.
+* create the package `/cif-customer/commerce-cif-magento-product@latest` (assuming `cif-customer` is your customer namespace). This is a package binding to the shared package implementing the `products` Magento actions. Note that this binding will be configured with the parameters defined in `credentials.json` and `environment.json`. Other packages that do not require credentials will only be configured with the parameters from `environment.json`.
 * deploy the `products` actions in the `/cif-customer/magento` package.
 
 To remove all the customer packages and actions, just run `npm run clean`.
