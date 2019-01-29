@@ -21,6 +21,7 @@ const os = require('os');
 const swagger = require('@adobe/commerce-cif-model/swagger');
 const environment = require('./environment.json');
 const argv = require('minimist')(process.argv);
+const traverse = require('traverse');
 
 // The package and namespace are coming from command-line arguments or read from the 'environment.json' file
 let customerNamespace = argv['customer-namespace'] || environment.CUSTOMER_NAMESPACE;
@@ -30,6 +31,13 @@ let customerPackage = argv['customer-package'] || environment.CUSTOMER_PACKAGE;
 swagger.basePath = '/' + customerPackage;
 swagger.info['x-ow-namespace'] = customerNamespace;
 swagger.info['x-ow-package'] = customerPackage;
+
+// Changes all operationId values with the customer package
+traverse(swagger).forEach(function(value) {
+    if (this.key == 'operationId') {
+        this.update(value.replace('default/', `${customerPackage}/`));
+    }
+});
 
 // Creates a temporary folder for the modified Swagger file
 let tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'swagger-')) + '/swagger.json';
