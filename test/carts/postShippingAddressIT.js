@@ -20,14 +20,6 @@ describe('Magento postShippingAddress', function () {
 
         const addressTests = require('../lib/addressITHelper').tests(this, 'shipping');
 
-        it('returns 400 for updating the shipping address of non existing cart', function () {
-            return addressTests.missingCart(addressTests.postAddressPath);
-        });
-
-        it('returns 400 for updating the shipping address with no parameters', function () {
-            return addressTests.missingCart(addressTests.postAddressPath);
-        });
-
         it('returns 400 for updating the shipping address with no country', function () {
             return addressTests.postAddressWithNoCountry();
         });

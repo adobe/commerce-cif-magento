@@ -41,9 +41,9 @@ describe('magento postCustomerLogin', function() {
 
         it('successfully login a customer', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'postCustomerLogin')
+                .post(env.customersPackage + '/login')
                 .set('Cache-Control', 'no-cache')
-                .query({
+                .send({
                     email: env.magentoCustomerName,
                     password: env.magentoCustomerPwd
                 })
@@ -64,9 +64,9 @@ describe('magento postCustomerLogin', function() {
             let cartId;
             //login customer
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'postCustomerLogin')
+                .post(env.customersPackage + '/login')
                 .set('Cache-Control', 'no-cache')
-                .query({
+                .send({
                     email: env.magentoCustomerName,
                     password: env.magentoCustomerPwd
                 })
@@ -89,10 +89,9 @@ describe('magento postCustomerLogin', function() {
                 //add a cart entry
                 .then(function () {
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postCartEntry')
+                        .post(env.cartsPackage + `/${cartId}/entries`)
                         .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
-                        .query({
-                            id: cartId,
+                        .send({
                             currency: 'EUR',
                             quantity: 1,
                             productVariantId: productVariantEqbisumas10
@@ -109,12 +108,8 @@ describe('magento postCustomerLogin', function() {
                     res.body.entries.forEach(entry => {
                         requiredFields.verifyCartEntry(entry);
                         promises.push(chai.request(env.openwhiskEndpoint)
-                            .post(env.cartsPackage + 'deleteCartEntry')
-                            .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
-                            .query({
-                                id: cartId,
-                                cartEntryId: entry.id
-                            }));
+                            .delete(env.cartsPackage + `/${cartId}/entries/${entry.id}`)
+                            .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`));
                     });
                     return Promise.all(promises).then(function (results) {
                         return results;
@@ -128,10 +123,9 @@ describe('magento postCustomerLogin', function() {
                 //get the cart and check that's empty
                 .then( () => {
                     return chai.request(env.openwhiskEndpoint)
-                        .get(env.cartsPackage + 'getCart')
+                        .get(env.cartsPackage + `/${cartId}`)
                         .set('Cache-Control', 'no-cache')
                         .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
-                        .query({id: cartId})
                         .then(function (cartResult) {
                             return cartResult;
                         })
@@ -157,12 +151,11 @@ describe('magento postCustomerLogin', function() {
             let customerCartId;
             //creates an anonymous cart
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     currency: 'EUR',
                     quantity: 1,
                     productVariantId: productVariantEqbisumas11
-
                 })
                 //verify anonymous cart
                 .then(response => {
@@ -171,9 +164,9 @@ describe('magento postCustomerLogin', function() {
                     anonymousCartId = response.body.id;
                     //post a customer login without merge
                     return chai.request(env.openwhiskEndpoint)
-                        .get(env.customersPackage + 'postCustomerLogin')
+                        .post(env.customersPackage + '/login')
                         .set('Cache-Control', 'no-cache')
-                        .query({
+                        .send({
                             email: env.magentoCustomerName,
                             password: env.magentoCustomerPwd
                         });
@@ -192,11 +185,9 @@ describe('magento postCustomerLogin', function() {
                     customerCartId = res.body.cart.id;
                     //add a cart entry
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postCartEntry')
+                        .post(env.cartsPackage + `/${customerCartId}/entries`)
                         .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
-                        .query({
-                            id: customerCartId,
-                            currency: 'EUR',
+                        .send({
                             quantity: 1,
                             productVariantId: productVariantEqbisumas10
                         });
@@ -204,9 +195,9 @@ describe('magento postCustomerLogin', function() {
                 //customer login with cart merge
                 .then(() => {
                     return chai.request(env.openwhiskEndpoint)
-                        .get(env.customersPackage + 'postCustomerLogin')
+                        .post(env.customersPackage + '/login')
                         .set('Cache-Control', 'no-cache')
-                        .query({
+                        .send({
                             email: env.magentoCustomerName,
                             password: env.magentoCustomerPwd,
                             anonymousCartId: anonymousCartId
@@ -233,9 +224,9 @@ describe('magento postCustomerLogin', function() {
 
         it('returns a 401 for an non existing customer email', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'postCustomerLogin')
+                .post(env.customersPackage + '/login')
                 .set('Cache-Control', 'no-cache')
-                .query({
+                .send({
                     email: 'unexisting@false.com',
                     password: env.magentoCustomerPwd
                 })

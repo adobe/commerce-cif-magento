@@ -46,8 +46,8 @@ describe('magento postCoupon', function () {
         /** Create cart. */
         beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     currency: 'USD',
                     quantity: 1,
                     productVariantId: productVariantId
@@ -65,22 +65,14 @@ describe('magento postCoupon', function () {
         /** Delete cart. */
         after(function () {
             return chai.request(env.openwhiskEndpoint)
-                .delete(env.cartsPackage + 'deleteCoupon')
-                .query({
-                    id: cartId,
-                    code: couponCode
-                })
+                .delete(env.cartsPackage + `/${cartId}/coupons/${couponCode}`)
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
                     expect(res.body).to.not.have.property('coupons');
 
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'deleteCartEntry')
-                        .query({
-                            id: cartId,
-                            cartEntryId: cartEntryId
-                        });
+                        .delete(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`);
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -91,9 +83,8 @@ describe('magento postCoupon', function () {
 
         it('returns 404 for adding a coupon to an non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCoupon')
-                .query({
-                    id: 'non-existing-cart-id',
+                .post(env.cartsPackage + '/does-not-exist/coupons')
+                .send({
                     code: couponCode
                 })
                 .then(function(res) {
@@ -105,10 +96,7 @@ describe('magento postCoupon', function () {
 
         it('returns 400 for a missing coupon code', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCoupon')
-                .query({
-                    id: cartId
-                })
+                .post(env.cartsPackage + `/${cartId}/coupons`)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(res).to.be.json;
@@ -118,9 +106,8 @@ describe('magento postCoupon', function () {
 
         it('returns 404 for an invalid coupon code', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCoupon')
-                .query({
-                    id: cartId,
+                .post(env.cartsPackage + `/${cartId}/coupons`)
+                .send({
                     code: 'non-existing-coupon-code'
                 })
                 .then(function(res) {
@@ -131,13 +118,11 @@ describe('magento postCoupon', function () {
         });
 
         it('adds a coupon code to an existing cart', function () {   
-            const args = {
-                id: cartId,
-                code: couponCode
-            };
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCoupon')
-                .query(args)
+                .post(env.cartsPackage + `/${cartId}/coupons`)
+                .send({
+                    code: couponCode
+                })
                 .then(function(res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);

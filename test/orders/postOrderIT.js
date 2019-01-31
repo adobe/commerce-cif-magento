@@ -66,8 +66,8 @@ describe('Magento postOrder IT', function () {
         /** Create cart. */
         before(function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     currency: 'USD',
                     quantity: 5,
                     productVariantId: productVariantId
@@ -80,9 +80,9 @@ describe('Magento postOrder IT', function () {
                     cartId = res.body.id;
 
                     return chai.request(env.openwhiskEndpoint)
-                        .get(env.customersPackage + 'postCustomerAuth')
+                        .post(env.customersPackage + '/auth')
                         .set('Cache-Control', 'no-cache')
-                        .query({
+                        .send({
                             type: 'credentials',
                             email: env.magentoCustomerName,
                             password: env.magentoCustomerPwd
@@ -98,9 +98,9 @@ describe('Magento postOrder IT', function () {
                     
                     //create a new customer cart
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postCartEntry')
+                        .post(env.cartsPackage)
                         .set('authorization', `Bearer ${accessToken}`)
-                        .query({
+                        .send({
                             currency: 'USD',
                             quantity: 5,
                             productVariantId: productVariantId
@@ -115,9 +115,8 @@ describe('Magento postOrder IT', function () {
         // check that the anonymous and customer cart are not available anymore.
         after(function () {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getCart')
+                .get(env.cartsPackage + `/${cartId}`)
                 .set('Cache-Control', 'no-cache')
-                .query({id: cartId})
                 .then(function (res) {
                     expect(res).to.be.json;
                     //this is a bug on the extension service which returns 500 when a cart was `ordered`
@@ -125,10 +124,9 @@ describe('Magento postOrder IT', function () {
                     //should be replaced with 404 or (200 and cartEntries.length = 0) when a fix will be avail.
                     expect(res).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
                     return chai.request(env.openwhiskEndpoint)
-                        .get(env.cartsPackage + 'getCart')
+                        .get(env.cartsPackage + `/${cartId}`)
                         .set('Cache-Control', 'no-cache')
                         .set('authorization', `Bearer ${accessToken}`)
-                        .query({id: cartId})
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -138,8 +136,8 @@ describe('Magento postOrder IT', function () {
 
         it('returns 400 for updating the order when the cart id is missing', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.ordersPackage + 'postOrder')
-                .query({})
+                .post(env.ordersPackage)
+                .send({})
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(res).to.be.json;
@@ -149,8 +147,8 @@ describe('Magento postOrder IT', function () {
 
         it('returns 404 for creating an order from a non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.ordersPackage + 'postOrder')
-                .query({cartId: 'non-existing-cart-id-1'})
+                .post(env.ordersPackage)
+                .send({cartId: 'non-existing-cart-id-1'})
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;
@@ -160,8 +158,8 @@ describe('Magento postOrder IT', function () {
 
         it('returns 400 for creating an order from a cart without shipping address', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.ordersPackage + 'postOrder')
-                .query({cartId: cartId})
+                .post(env.ordersPackage)
+                .send({cartId: cartId})
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(res).to.be.json;
@@ -172,10 +170,7 @@ describe('Magento postOrder IT', function () {
         it('returns 201 for creating an order for a guest cart', function () {
             // Set billing address
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postBillingAddress')
-                .query({
-                    id: cartId
-                })
+                .post(env.cartsPackage + `/${cartId}/billingaddress`)
                 .send({
                     address: addr
                 })
@@ -184,14 +179,11 @@ describe('Magento postOrder IT', function () {
                     expect(res).to.have.status(HttpStatus.OK);
                     // Set shipping address
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postShippingAddress')
-                        .query({
-                            id: cartId,
-                            default_method: 'flatrate',
-                            default_carrier: 'flatrate'
-                        })
+                        .post(env.cartsPackage + `/${cartId}/shippingaddress`)
                         .send({
-                            address: addr
+                            default_method: 'flatrate',
+                            default_carrier: 'flatrate',
+                            address: addr  
                         });
                 })
                 .then(function (res) {
@@ -199,10 +191,7 @@ describe('Magento postOrder IT', function () {
                     expect(res).to.have.status(HttpStatus.OK);
                     // Set payment
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postPayment')
-                        .query({
-                            id: cartId
-                        })
+                        .post(env.cartsPackage + `/${cartId}/payment`)
                         .send({
                             payment: ccifPayment
                         });
@@ -212,8 +201,8 @@ describe('Magento postOrder IT', function () {
                     expect(res).to.have.status(HttpStatus.OK);
                     // Submit order
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.ordersPackage + 'postOrder')
-                        .query({
+                        .post(env.ordersPackage)
+                        .send({
                             cartId: cartId
                         });
                 })
@@ -229,11 +218,8 @@ describe('Magento postOrder IT', function () {
         it('returns 201 for creating an order for a customer cart', function () {
             // Set billing address
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postBillingAddress')
+                .post(env.cartsPackage + `/${cartId}/billingaddress`)
                 .set('authorization', `Bearer ${accessToken}`)
-                .query({
-                    id: cartId
-                })
                 .send({
                     address: addr
                 })
@@ -242,14 +228,11 @@ describe('Magento postOrder IT', function () {
                     expect(res).to.have.status(HttpStatus.OK);
                     // Set shipping address
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postShippingAddress')
+                        .post(env.cartsPackage + `/${cartId}/shippingaddress`)
                         .set('authorization', `Bearer ${accessToken}`)
-                        .query({
-                            id: cartId,
-                            default_method: 'flatrate',
-                            default_carrier: 'flatrate'
-                        })
                         .send({
+                            default_method: 'flatrate',
+                            default_carrier: 'flatrate',
                             address: addr
                         });
                 })
@@ -258,11 +241,8 @@ describe('Magento postOrder IT', function () {
                     expect(res).to.have.status(HttpStatus.OK);
                     // Set payment
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postPayment')
+                        .post(env.cartsPackage + `/${cartId}/payment`)
                         .set('authorization', `Bearer ${accessToken}`)
-                        .query({
-                            id: cartId
-                        })
                         .send({
                             payment: ccifPayment
                         });
@@ -272,9 +252,9 @@ describe('Magento postOrder IT', function () {
                     expect(res).to.have.status(HttpStatus.OK);
                     // Submit order
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.ordersPackage + 'postOrder')
+                        .post(env.ordersPackage)
                         .set('authorization', `Bearer ${accessToken}`)
-                        .query({
+                        .send({
                             cartId: cartId
                         });
                 })

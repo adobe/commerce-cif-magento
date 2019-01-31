@@ -37,8 +37,7 @@ describe('magento getProductBySlug', function() {
 
         it('returns a product for a valid product slug', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'getProductBySlug')
-                .query({ slug: productSlug })
+                .get(env.productsPackage + `/slug/${productSlug}`)
                 .set('Cache-Control', 'no-cache')
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -57,9 +56,8 @@ describe('magento getProductBySlug', function() {
 
         it('returns a 404 error for a non existent product', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'getProductBySlug')
+                .get(env.productsPackage + '/slug/does-not-exist')
                 .set('Cache-Control', 'no-cache')
-                .query({ slug: 'does-not-exist' })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;

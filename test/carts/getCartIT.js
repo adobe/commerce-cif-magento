@@ -42,8 +42,8 @@ describe('magento getCart', function() {
         /** Create cart. */
         before(function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCart')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     quantity: 2,
                     productVariantId: productVariantId
                 })
@@ -59,9 +59,8 @@ describe('magento getCart', function() {
 
         it('returns a cart for a valid cart id', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getCart')
+                .get(env.cartsPackage + `/${cartId}`)
                 .set('Cache-Control', 'no-cache')
-                .query({id: cartId})
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
@@ -81,12 +80,12 @@ describe('magento getCart', function() {
                 });
         });
         
-        it('returns a 400 error for a missing id parameter', function() {
+        it('returns a 405 error for a missing id parameter', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getCart')
+                .get(env.cartsPackage)
                 .set('Cache-Control', 'no-cache')
                 .then(function(res) {
-                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
+                    expect(res).to.have.status(HttpStatus.METHOD_NOT_ALLOWED);
                     expect(res).to.be.json;
                     requiredFields.verifyErrorResponse(res.body);
                 });
@@ -94,9 +93,8 @@ describe('magento getCart', function() {
 
         it('returns a 404 error for a non existent cart', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getCart')
+                .get(env.cartsPackage + '/does-not-exist')
                 .set('Cache-Control', 'no-cache')
-                .query({id: 'does-not-exist'})
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;

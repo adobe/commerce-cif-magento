@@ -77,7 +77,8 @@ if ("test-it" in pkg.scripts && process.env.CORE_WSK_AUTH_STRING) {
             });
         }
 
-        ci.sh('npm run test-it');
+        let endpoint = `https://adobeioruntime.net/apis/ccif-qe-jenkins-customer/magento@${process.env.OW_PACKAGE_SUFFIX}`;
+        ci.sh(`OW_ENDPOINT='${endpoint}' npm run test-it`);
 
     } finally {
         if (fs.existsSync('customer-deployment') && process.env.CUSTOMER_WSK_AUTH_STRING) {

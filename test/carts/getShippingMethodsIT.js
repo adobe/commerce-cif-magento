@@ -60,7 +60,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         /** Create an empty cart. */
         beforeEach(function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCart')
+                .post(env.cartsPackage)
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.CREATED);
@@ -77,16 +77,11 @@ describe('Magento getShippingMethodsIT for a cart', function () {
         });
 
         it('returns the list of available shipping methods for the cart', function () {
-            
-            const args = {
-                id: cartId
-            };
             // Add an item to the cart. Magento does not allow setting a shipping address to an empty cart.
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage + `/${cartId}/entries`)
+                .send({
                     quantity: 2,
-                    id: cartId,
                     productVariantId: productVariantId
                 })
                 .then(function (res) {
@@ -95,8 +90,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
 
                     // set valid shipping address for cart
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postShippingAddress')
-                        .query(args)
+                        .post(env.cartsPackage + `/${cartId}/shippingaddress`)
                         .send({ address: addr });
                 })
                 .then(function (res) {
@@ -105,9 +99,8 @@ describe('Magento getShippingMethodsIT for a cart', function () {
                     expect(res.body).to.have.property('shippingAddress');
 
                     return chai.request(env.openwhiskEndpoint)
-                        .get(env.cartsPackage + 'getShippingMethods')
-                        .set('Cache-Control', 'no-cache')
-                        .query({ id: cartId });
+                        .get(env.cartsPackage + `/${cartId}/shippingmethods`)
+                        .set('Cache-Control', 'no-cache');
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -124,19 +117,7 @@ describe('Magento getShippingMethodsIT for a cart', function () {
 
         it('returns a 400 error for a cart without shipping address', function () {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getShippingMethods')
-                .set('Cache-Control', 'no-cache')
-                .query({ id: cartId })
-                .then(function(res) {
-                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(res).to.be.json;
-                    requiredFields.verifyErrorResponse(res.body);
-                });
-        });
-
-        it('returns a 400 error for a missing id parameter', function () {
-            return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getShippingMethods')
+                .get(env.cartsPackage + `/${cartId}/shippingmethods`)
                 .set('Cache-Control', 'no-cache')
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
@@ -147,9 +128,8 @@ describe('Magento getShippingMethodsIT for a cart', function () {
 
         it('returns a 404 error for a non existent shopping cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.cartsPackage + 'getShippingMethods')
+                .get(env.cartsPackage + '/does-not-exist/shippingmethods')
                 .set('Cache-Control', 'no-cache')
-                .query({ id: 'does-not-exist' })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;

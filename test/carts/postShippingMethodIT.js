@@ -42,8 +42,8 @@ describe('Magento postShippingMethod', function () {
         // Create new cart with one product
         before(function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     currency: 'USD',
                     quantity: 5,
                     productVariantId: productVariantId
@@ -60,24 +60,18 @@ describe('Magento postShippingMethod', function () {
 
         after(function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCartEntry')
-                .query({
-                    id: cartId,
-                    cartEntryId: cartEntryId
-                })
+                .delete(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`)
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
-
                     expect(res.body.entries).to.have.lengthOf(0);
                 });
         });
 
-        it('returns 404 for updating the shipping method of non existing cart', function () {
+        it('returns 404 for setting the shipping method of non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postShippingMethod')
-                .query({
-                    id: 'non-existing-cart-id',
+                .post(env.cartsPackage + '/does-not-exist/shippingmethod')
+                .send({
                     shippingMethodId: 'flatrate_flatrate'
                 })
                 .then(function(res) {
@@ -89,10 +83,7 @@ describe('Magento postShippingMethod', function () {
 
         it('returns 400 for updating the shipping method with no parameters', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postShippingMethod')
-                .query({
-                    id: cartId
-                })
+                .post(env.cartsPackage + `/${cartId}/shippingmethod`)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(res).to.be.json;
@@ -102,9 +93,8 @@ describe('Magento postShippingMethod', function () {
 
         it('returns 400 for updating the shipping method with invalid shipping method format', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postShippingMethod')
-                .query({
-                    id: cartId,
+                .post(env.cartsPackage + `/${cartId}/shippingmethod`)
+                .send({
                     shippingMethodId: 'xyz'
                 })
                 .then(function(res) {
@@ -115,26 +105,20 @@ describe('Magento postShippingMethod', function () {
         });
 
         it('sets shipping method', function () {
-            const args = {
-                id: cartId,
-                shippingMethodId: 'flatrate_flatrate'
-            };
-
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postShippingAddress')
-                .query({
-                    id: cartId
-                })
+                .post(env.cartsPackage + `/${cartId}/shippingaddress`)
                 .send({
                     address: { country: 'US' }
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
-                    // Set shipping address
+                    // Set shipping method
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postShippingMethod')
-                        .query(args);
+                        .post(env.cartsPackage + `/${cartId}/shippingmethod`)
+                        .send({
+                            shippingMethodId: 'flatrate_flatrate'
+                        });
                 })
                 .then(function (res) {
                     // Verify cart shipping info

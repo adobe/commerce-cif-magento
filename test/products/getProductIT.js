@@ -36,8 +36,7 @@ describe('magento getProductById', function() {
 
         it('returns a product for a valid product id', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'getProductById')
-                .query({id: productId})
+                .get(env.productsPackage + `/${productId}`)
                 .set('Cache-Control', 'no-cache')
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -55,9 +54,8 @@ describe('magento getProductById', function() {
 
         it('returns a 404 error for a non existent product', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'getProductById')
+                .get(env.productsPackage + '/does-not-exist')
                 .set('Cache-Control', 'no-cache')
-                .query({id: 'does-not-exist'})
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;

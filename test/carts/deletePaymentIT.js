@@ -38,7 +38,7 @@ describe('Magento deletePayment', function () {
 
         it('returns 501 error', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deletePayment')
+                .delete(env.cartsPackage + '/does-not-exist/payment')
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_IMPLEMENTED);
                     expect(res).to.be.json;

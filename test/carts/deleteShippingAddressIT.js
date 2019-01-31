@@ -28,16 +28,11 @@ describe('Magento deleteShippingAddress', function () {
 
     describe('Integration tests', function () {
 
-        // Get environment
-        let env = setup();
-
-        // Increase test timeout
-        this.slow(env.slow);
-        this.timeout(env.timeout);
+        const addressTests = require('../lib/addressITHelper').tests(this, 'shipping');
 
         it('returns 501 error', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteShippingAddress')
+                .delete(addressTests.addressPath)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_IMPLEMENTED);
                     expect(res).to.be.json;

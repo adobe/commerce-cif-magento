@@ -34,15 +34,15 @@ module.exports.tests = function (ctx, addressType) {
     // Get environment
     let env = setup();
     
-    //initialize posted URI paths.
-    that.deleteAddressPath = env.cartsPackage + 'deleteShippingAddress';
-    that.postAddressPath = env.cartsPackage + 'postShippingAddress';
-    that.addressPropertyName = 'shippingAddress';
-    
-    if (typeof addressType !== 'undefined' && addressType === 'billing') {
-        that.deleteAddressPath = env.cartsPackage + 'deleteBillingAddress';
-        that.postAddressPath = env.cartsPackage + 'postBillingAddress';
-        that.addressPropertyName = 'billingAddress';
+    that.initPaths = function() {
+        //initialize posted URI paths.
+        that.addressPath = env.cartsPackage + `/${cartId}/shippingaddress`;
+        that.addressPropertyName = 'shippingAddress';
+        
+        if (typeof addressType !== 'undefined' && addressType === 'billing') {
+            that.addressPath = env.cartsPackage + `/${cartId}/billingaddress`;
+            that.addressPropertyName = 'billingAddress';
+        }
     }
     
     // Increase test timeout
@@ -55,8 +55,8 @@ module.exports.tests = function (ctx, addressType) {
     /** Create empty cart - same for all address ITs */
     before(function () {
         return chai.request(env.openwhiskEndpoint)
-            .post(env.cartsPackage + 'postCartEntry')
-            .query({
+            .post(env.cartsPackage)
+            .send({
                 currency: 'USD',
                 quantity: 2,
                 productVariantId: productVariantId
@@ -67,39 +67,20 @@ module.exports.tests = function (ctx, addressType) {
                 // Store cart id
                 cartId = res.body.id;
                 cartEntryId = res.body.entries[0].id;
+                that.initPaths();
             });
     });
     
-    /** Delete cart. */
+    /** Delete cart entry */
     after(function () {
         return chai.request(env.openwhiskEndpoint)
-            .post(env.cartsPackage + 'deleteCartEntry')
-            .query({
-                id: cartId,
-                cartEntryId: cartEntryId
-            })
+            .delete(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`)
             .then(function (res) {
                 expect(res).to.be.json;
                 expect(res).to.have.status(HttpStatus.OK);
-
                 expect(res.body.entries).to.have.lengthOf(0);
             });
     });
-    /**
-     * Verifies that a bad request is returned when no cart id is provided. Used only from post and deletes address ITs.
-     *
-     * @param path  post URI path. Passed as parameter to be reused from any address IT (post or delete).
-     */
-    that.missingCart = function (path) {
-        return chai.request(env.openwhiskEndpoint)
-            .post(path)
-            .query({})
-            .then(function(res) {
-                expect(res).to.have.status(HttpStatus.BAD_REQUEST);
-                expect(res).to.be.json;
-                requiredFields.verifyErrorResponse(res.body);
-            });
-    };
 
     /**
      * Verifies that a not found is returned when the cart id does not exists. Used only from post and deletes
@@ -107,10 +88,9 @@ module.exports.tests = function (ctx, addressType) {
      *
      * @param path  post URI path. Passed as parameter to be reused from any address IT (post or delete).
      */
-    that.nonExistingCart = function (path) {
+    that.deleteNonExistingCart = function () {
         return chai.request(env.openwhiskEndpoint)
-            .post(path)
-            .query({id: 'non-existing-cart-id'})
+            .delete(env.cartsPackage + `/does-not-exist/${that.addressPropertyName.toLowerCase()}`)
             .then(function(res) {
                 expect(res).to.have.status(HttpStatus.NOT_FOUND);
                 expect(res).to.be.json;
@@ -123,8 +103,8 @@ module.exports.tests = function (ctx, addressType) {
      */
     that.postAddressWithNoCountry = function () {
         return chai.request(env.openwhiskEndpoint)
-            .post(that.postAddressPath)
-            .query({id: cartId, title: 'Home'})
+            .post(that.addressPath)
+            .send({title: 'Home'})
             .then(function(res) {
                 expect(res).to.have.status(HttpStatus.BAD_REQUEST);
                 expect(res).to.be.json;
@@ -154,13 +134,9 @@ module.exports.tests = function (ctx, addressType) {
             fax: '6666666666',
             additionalAddressInfo: 'Diameter: ~4.5 Light Years, 26,453,814,179,326 Miles'
         };
-        const args = {
-            id: cartId
-        };
         
         return chai.request(env.openwhiskEndpoint)
-            .post(that.postAddressPath)
-            .query(args)
+            .post(that.addressPath)
             .send({
                 address: addr
             })
@@ -206,9 +182,6 @@ module.exports.tests = function (ctx, addressType) {
      * Verifies that an address is correctly deleted. Used only from delete address ITs.
      */
     that.deleteAddressSuccess = function () {
-        const args = {
-            id: cartId
-        };
         const addr = {
             title: 'Work',
             salutation: 'Ms',
@@ -228,8 +201,7 @@ module.exports.tests = function (ctx, addressType) {
             additionalAddressInfo: 'Diameter: ~4.5 Light Years, 26,453,814,179,326 Miles'
         };
         return chai.request(env.openwhiskEndpoint)
-            .post(that.postAddressPath)
-            .query(args)
+            .post(that.addressPath)
             .send({
                 address: addr
             })
@@ -238,8 +210,7 @@ module.exports.tests = function (ctx, addressType) {
                 expect(res).to.have.status(HttpStatus.OK);
                 expect(res.body).to.have.property(that.addressPropertyName);
                 return chai.request(env.openwhiskEndpoint)
-                    .post(that.deleteAddressPath)
-                    .query({id: cartId});
+                    .delete(that.addressPath);
             })
             .then(function (res) {
                 expect(res).to.be.json;
