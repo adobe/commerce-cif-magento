@@ -28,6 +28,9 @@ describe('Magento deleteShippingAddress', function () {
 
     describe('Integration tests', function () {
 
+        // Get environment
+        let env = setup();
+
         const addressTests = require('../lib/addressITHelper').tests(this, 'shipping');
 
         it('returns 501 error', function () {
