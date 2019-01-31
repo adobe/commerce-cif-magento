@@ -116,8 +116,6 @@ describe('magento deleteCoupon', function () {
                 .delete(env.cartsPackage + `/${cartId}/coupons/`)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.METHOD_NOT_ALLOWED);
-                    expect(res).to.be.json;
-                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
     });

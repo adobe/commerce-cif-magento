@@ -86,8 +86,6 @@ describe('magento getCart', function() {
                 .set('Cache-Control', 'no-cache')
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.METHOD_NOT_ALLOWED);
-                    expect(res).to.be.json;
-                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
 

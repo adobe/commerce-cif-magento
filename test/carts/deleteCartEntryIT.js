@@ -70,7 +70,7 @@ describe('magento deleteCartEntry', function() {
             let cartEntryIdSecond;
 
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + `/${cartId}`)
+                .post(env.cartsPackage + `/${cartId}/entries`)
                 .send({
                     quantity: 5,
                     productVariantId: productVariantIdSecond
@@ -151,8 +151,6 @@ describe('magento deleteCartEntry', function() {
                 .delete(env.cartsPackage + `/${cartId}/entries/`)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.METHOD_NOT_ALLOWED);
-                    expect(res).to.be.json;
-                    requiredFields.verifyErrorResponse(res.body);
                 });
         });
     });

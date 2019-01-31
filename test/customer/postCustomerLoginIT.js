@@ -86,10 +86,10 @@ describe('magento postCustomerLogin', function() {
                     }
                     return res;
                 })
-                //add a cart entry
+                //create a cart and add a cart entry
                 .then(function () {
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + `/${cartId}/entries`)
+                        .post(env.cartsPackage)
                         .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
                         .send({
                             currency: 'EUR',

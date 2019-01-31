@@ -27,7 +27,7 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * @param   {string} args.MAGENTO_API_VERSION    magento client id
  *
  * @param   {string} args.id                     cart id
- * @param   {string} args.code                   the code of the coupon to be deleted, currently ignored because
+ * @param   {string} args.couponId               the id of the coupon to be deleted, currently ignored because
  *                                               Magento has only one coupon per cart and when the action is called
  *                                               this coupon is deleted
  *
@@ -38,7 +38,7 @@ function deleteCoupon(args) {
     const validator = new InputValidator(args, ERROR_TYPE)
         .checkArguments()
         .mandatoryParameter('id')
-        .mandatoryParameter('code');
+        .mandatoryParameter('couponId');
 
     if (validator.error) {
         return validator.buildErrorResponse();
