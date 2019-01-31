@@ -48,4 +48,4 @@ fs.appendFileSync(api, JSON.stringify(swagger, null, 2));
 console.log('Creating and deploying Swagger REST API file');
 let cmd = `wsk api create --config-file ${tmp}`;
 console.log(`> ${cmd}\n`);
-// e.execSync(cmd, {stdio: 'inherit'});
+e.execSync(cmd, {stdio: 'inherit'});
