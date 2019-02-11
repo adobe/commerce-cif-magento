@@ -20,14 +20,14 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
 class MagentoHealth extends MagentoClientBase {
     
     constructor(args, endpoint) {
-        super(args, endpoint, ERROR_TYPE);
+        super(args, null, endpoint, ERROR_TYPE);
     }
     
     getHealth() {
         return this._execute('GET').then(result => {
-            const mapperArgs = [result];
-            const mappedResponse = this.mapper.apply(this, mapperArgs);
-            return this._handleSuccess(mappedResponse);
+            //const mapperArgs = [result];
+            //const mappedResponse = this.mapper.apply(this, mapperArgs);
+            return this._handleSuccess({});
         }).catch(error => {
             return this.handleError(error);
         });

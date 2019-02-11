@@ -41,7 +41,7 @@ function getHealth(args) {
 
     const health = new MagentoHealth(args, 'modules');
 
-    return health.get().catch(error => {
+    return health.getHealth().catch(error => {
         return health.handleError(error);
     });
 

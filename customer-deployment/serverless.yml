@@ -24,6 +24,7 @@ custom:
   customers-actions: /${self:custom.customer-namespace}/commerce-cif-magento-customer@latest
   products-actions: /${self:custom.customer-namespace}/commerce-cif-magento-product@latest
   graphql-actions: /${self:custom.customer-namespace}/commerce-cif-magento-graphql@latest
+  healthcheck-actions: /${self:custom.customer-namespace}/commerce-cif-magento-healthcheck@latest
 
 plugins:
   - '@cruglobal/serverless-merge-config' # provides the $<<: operator
@@ -70,6 +71,12 @@ resources:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-common@latest
     commerce-cif-magento-graphql@latest:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-graphql@latest
+      parameters:
+        $<<:
+          - ${file(environment.json)}
+          - ${file(credentials.json)}
+    commerce-cif-magento-healthcheck@latest:
+      binding: /${self:custom.bindings-namespace}/commerce-cif-magento-healthcheck@latest
       parameters:
         $<<:
           - ${file(environment.json)}
@@ -324,6 +331,14 @@ functions:
     name: ${self:custom.customer-package}/graphql
     sequence:
       - ${self:custom.graphql-actions}/graphqlService
+      - ${self:custom.common-actions}/webActionTransformer
+    annotations:
+      web-export: true
+
+  getHealth:
+    name: ${self:custom.customer-package}/getHealth
+    sequence:
+      - ${self:custom.healthcheck-actions}/getHealthService
       - ${self:custom.common-actions}/webActionTransformer
     annotations:
       web-export: true
