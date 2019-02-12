@@ -71,6 +71,7 @@ if ("test-it" in pkg.scripts && process.env.CORE_WSK_AUTH_STRING) {
 
                             // Deploy the REST API
                             ci.sh('npm run deploy-rest-api -- ' + params);
+                            ci.sh('sleep 15'); // sleep to let nginx pick up the new API config
                         });
                     });
                 });
