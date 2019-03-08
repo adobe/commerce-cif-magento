@@ -30,6 +30,17 @@ const simpleProductResponse = {
                         name: "Test Simple Product",
                         url_key: "test-simple-product",
                         description: null,
+                        media_gallery_entries: [
+                            {
+                                id: 1,
+                                "position": 1
+                            },
+                            {
+                                id: 2,
+                                "position": 2
+                            }
+                        ],
+                        custom_string_attribute: "test",
                         created_at: "2018-06-12 11:15:02",
                         updated_at: "2018-06-12 11:15:02",
                         stock_status: "OUT_OF_STOCK",
