@@ -80,6 +80,22 @@ This file contains the Magento server configuration of the customer's project. S
 ```
 *(this commented JSON file cannot be used for the real deploment - the JSON format indeed does not allow comments)*
 
+
+### Advance GRAPHQL_PRODUCT_ATTRIBUTES
+
+Some more complex product attributes accessible via GraphQL require a list of the attribute's fields to be included in the response. A useful example of this is the `media_gallery_entries` attribute Magento makes available. These more complex attributes can also be queried using the `GRAPHQL_PRODUDCT_ATTRIBUTES` environmnet variable by using a simple key:value pair JavaScript object, for example:
+
+```javascript
+"GRAPHQL_PRODUCT_ATTRIBUTES": {
+        "color": "color",
+        "size": "size",
+        "media_gallery_entries": "media_gallery_entries { file position }"
+    }
+```
+
+In this example the "key" `media_gallery_entries` is the JSON object that will be returned through CIF and the "value" `media_gallery_entries { file position }` will be sent as part of the GraphQL request.
+
+
 ## Authentication
 
 See the documentation in the [customer](../src/customer) package.
