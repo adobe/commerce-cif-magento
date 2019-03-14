@@ -1,7 +1,7 @@
 {
   "name": "@adobe/commerce-cif-magento-order",
   "version": "1.0.0",
-  "description": "Adobe Commerce Integration Framework (CIF) Magento Integration Order Project",
+  "description": "Adobe Commerce Integration Framework (CIF REST) Magento Integration Order Project",
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
   "repository": {

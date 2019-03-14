@@ -1,7 +1,7 @@
 {
   "name": "@adobe/commerce-cif-magento-customer",
   "version": "1.1.0",
-  "description": "Adobe Commerce Integration Framework (CIF) Magento Integration Customer Project",
+  "description": "Adobe Commerce Integration Framework (CIF REST) Magento Integration Customer Project",
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
   "repository": {
