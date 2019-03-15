@@ -1,4 +1,4 @@
-# CIF Cloud example customer deployment
+# CIF REST example customer deployment
 
 This folder contains an example customer deployment project. It shows how a customer can create package bindings and packages with web actions/sequences that use the shared action packages available in the [src](../src) folder.
 

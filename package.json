@@ -2,7 +2,7 @@
   "name": "@adobe/commerce-cif-magento-umbrella",
   "private": true,
   "version": "0.0.1",
-  "description": "Adobe Commerce Integration Framework (CIF) Magento Integration Umbrella Project",
+  "description": "Adobe Commerce Integration Framework (CIF REST) Magento Integration Umbrella Project",
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
   "repository": {
