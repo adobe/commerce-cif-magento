@@ -189,6 +189,21 @@ describe('Magento ProductMapper', () => {
             assert.strictEqual(response.sku, 'testSimpleProduct');
         });
 
+        it('maps attributes correctly with JavaScript object of target attributes', () => {
+            productMapper.attributes = ["custom_string_attribute", "media_gallery_entries"];
+            let response = productMapper.mapGraphQlResponseOfSingleProduct(singleProductData);
+            assert.strictEqual(response.attributes.length, 2);
+        });
+
+        it('maps attributes correctly with flat array of target attributes', () => {
+            productMapper.attributes = {
+                "custom_string_attribute": "custom_string_attribute",
+                "media_gallery_entries": "media_gallery_entries { id }"
+            };
+            let response = productMapper.mapGraphQlResponseOfSingleProduct(singleProductData);
+            assert.strictEqual(response.attributes.length, 2);
+        });
+
         it('maps a category url_path to a slug', () => {
             const pagedResponse = productMapper.mapGraphQlResponse(simpleData);
             const category = pagedResponse.results[0].categories[0];

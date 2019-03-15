@@ -229,7 +229,10 @@ class ProductMapper {
             p.attributes = [];
         }
 
-        this.attributes.forEach(id => {
+        //If the attributes provided are a flat array, we'll just iterate over them directly as they are.
+        //If not, we'll grab the keys from the object to be safely iterated over.        
+        const attributeKeys = Array.isArray(this.attributes) ? this.attributes : Object.keys(this.attributes);
+        attributeKeys.forEach(id => {
             if (p.attributes.find(attr => attr.id == id)) {
                 return;
             }
