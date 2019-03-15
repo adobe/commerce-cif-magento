@@ -1,11 +1,11 @@
 [![CircleCI](https://circleci.com/gh/adobe/commerce-cif-magento.svg?style=svg)](https://circleci.com/gh/adobe/commerce-cif-magento)
 [![codecov](https://codecov.io/gh/adobe/commerce-cif-magento/branch/master/graph/badge.svg)](https://codecov.io/gh/adobe/commerce-cif-magento)
 
-# Commerce Integration Framework (CIF) on Cloud for Magento
+# Commerce Integration Framework (CIF REST) on Cloud for Magento
 
 ## Introduction
 
-The CIF on Cloud services architecture is based on [Apache OpenWhisk](https://openwhisk.apache.org) & [Adobe I/O Runtime](https://www.adobe.io/apis/cloudplatform/runtime.html). The main building blocks of the new commerce services are serverless functions (OpenWhisk actions). These actions run on Adobe I/O Runtime inside an isolated container, stateless and serverless interacting with the commerce backend system or other endpoints via their APIs. 
+The CIF REST services architecture is based on [Apache OpenWhisk](https://openwhisk.apache.org) & [Adobe I/O Runtime](https://www.adobe.io/apis/cloudplatform/runtime.html). The main building blocks of the new commerce services are serverless functions (OpenWhisk actions). These actions run on Adobe I/O Runtime inside an isolated container, stateless and serverless interacting with the commerce backend system or other endpoints via their APIs. 
 
 This project contains the OpenWhisk actions implementation for [Magento](https://www.magento.com/).
 
@@ -13,7 +13,7 @@ This project contains the OpenWhisk actions implementation for [Magento](https:/
 
 ### Magento GraphQL and aggregated cart extension
 
-The CIF Cloud Magento integration relies on the new [Magento graphQL implementation](https://github.com/magento/graphql-ce) for the products integration, and on a dedicated [Magento extension for the carts integration](https://github.com/adobe/commerce-cif-magento-extension).
+The CIF REST Magento integration relies on the new [Magento graphQL implementation](https://github.com/magento/graphql-ce) for the products integration, and on a dedicated [Magento extension for the carts integration](https://github.com/adobe/commerce-cif-magento-extension).
 
 ### Project structure
 
@@ -35,12 +35,12 @@ The project also has dependencies/relationships to the following sub projects:
 
 |  Project | Description |
 | ------------- | ------------- |
-| [commerce-cif-api](https://github.com/adobe/commerce-cif-api) | API definition of the CIF: Swagger File, Java API definition, Java Model, JavaScript Model  |
-| [commerce-cif-common](https://github.com/adobe/commerce-cif-common) | Common code for CIF implementations: common actions, validators, exceptions. |
+| [commerce-cif-api](https://github.com/adobe/commerce-cif-api) | API definition of the CIF REST: Swagger File, Java API definition, Java Model, JavaScript Model  |
+| [commerce-cif-common](https://github.com/adobe/commerce-cif-common) | Common code for CIF REST implementations: common actions, validators, exceptions. |
 
 ### Tools
 
-To get started with CIF on Cloud, first make sure you have the following tools installed:
+To get started with CIF REST, first make sure you have the following tools installed:
 * Node 7.x or 8.x
 * NPM 4.x or 5.x
 * [OpenWhisk CLI](https://github.com/apache/incubator-openwhisk-cli/releases)
