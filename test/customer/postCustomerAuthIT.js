@@ -29,6 +29,10 @@ describe('magento postCustomerAuth', function() {
         // Get environment
         let env = setup();
 
+        // Increase test timeout
+        this.slow(env.slow);
+        this.timeout(env.timeout);
+
         it('returns HTTP 501 not implemented error for guest authentication', function() {
             return chai.request(env.openwhiskEndpoint)
                 .post(env.customersPackage + '/auth')

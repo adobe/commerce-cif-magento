@@ -23,7 +23,6 @@ custom:
   categories-actions: /${self:custom.customer-namespace}/commerce-cif-magento-category@latest
   customers-actions: /${self:custom.customer-namespace}/commerce-cif-magento-customer@latest
   products-actions: /${self:custom.customer-namespace}/commerce-cif-magento-product@latest
-  graphql-actions: /${self:custom.customer-namespace}/commerce-cif-magento-graphql@latest
 
 plugins:
   - '@cruglobal/serverless-merge-config' # provides the $<<: operator
@@ -68,12 +67,6 @@ resources:
           - ${file(credentials.json)}
     commerce-cif-magento-common@latest:
       binding: /${self:custom.bindings-namespace}/commerce-cif-magento-common@latest
-    commerce-cif-magento-graphql@latest:
-      binding: /${self:custom.bindings-namespace}/commerce-cif-magento-graphql@latest
-      parameters:
-        $<<:
-          - ${file(environment.json)}
-          - ${file(credentials.json)}
 
 # To prevent that your actions are publicly available to anyone, you can add the
 # 'require-whisk-auth: my-secret' annotation to all the actions below
@@ -316,14 +309,6 @@ functions:
     name: ${self:custom.customer-package}/searchProducts
     sequence:
       - ${self:custom.products-actions}/searchProductsService
-      - ${self:custom.common-actions}/webActionTransformer
-    annotations:
-      web-export: true
-
-  graphql:
-    name: ${self:custom.customer-package}/graphql
-    sequence:
-      - ${self:custom.graphql-actions}/graphqlService
       - ${self:custom.common-actions}/webActionTransformer
     annotations:
       web-export: true

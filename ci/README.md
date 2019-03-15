@@ -1,4 +1,4 @@
-# CIF Continuous Integration Setup
+# CIF REST Continuous Integration Setup
 
 ## 1. Automation with CircleCI
 

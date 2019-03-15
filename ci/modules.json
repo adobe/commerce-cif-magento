@@ -4,6 +4,5 @@
     "commerce-cif-magento-common": "src/common",
     "commerce-cif-magento-customer": "src/customer",
     "commerce-cif-magento-order": "src/orders",
-    "commerce-cif-magento-product": "src/products",
-    "commerce-cif-magento-graphql": "src/graphql"
+    "commerce-cif-magento-product": "src/products"
 }

@@ -34,7 +34,6 @@ module.exports.setup = function() {
     env.customersPackage = '/customers';
     env.productsPackage = '/products';
     env.ordersPackage = '/orders';
-    env.graphqlPackage = '/graphql';
 
     env.magentoCustomerName = process.env.MAGENTO_CUSTOMER_NAME;
     env.magentoCustomerPwd = process.env.MAGENTO_CUSTOMER_PWD;
