@@ -25,7 +25,6 @@ src
 ├── categories
 ├── common
 ├── customer
-├── graphql
 ├── orders
 └── products
 ```

@@ -29,6 +29,10 @@ describe('magento getCustomer', function() {
         // Get environment
         let env = setup();
 
+        // Increase test timeout
+        this.slow(env.slow);
+        this.timeout(env.timeout);
+
         let accessToken;
 
         beforeEach(function() {
