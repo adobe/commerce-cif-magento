@@ -1,7 +1,7 @@
 {
   "name": "@adobe/commerce-cif-magento-graphql",
   "version": "1.0.0",
-  "description": "Adobe Commerce Integration Framework (CIF) Magento Integration GraphQL Project",
+  "description": "Adobe Commerce Integration Framework (CIF REST) Magento Integration GraphQL Project",
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
   "repository": {
