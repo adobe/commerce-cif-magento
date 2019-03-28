@@ -93,3 +93,4 @@ audit.json
 
 # Local dev test configuration
 dev-tests/config.js
+src/healthchecks/localtest.js
