@@ -28,6 +28,7 @@ const ERROR_TYPE = require('./constants').ERROR_TYPE;
  * @param   {string} args.MAGENTO_API_VERSION    Magento api version
  * 
  * @param   {string} args.scope                  Optional parameter that specifies the scope(s) of the health check. A scope can be a service like Inventory, PIM or Order
+ *                                               But now a fixed endpoint (modules) is used and scope is ignored
  *
  * @return  {Promise}
  */
