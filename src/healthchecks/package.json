@@ -9,14 +9,15 @@
     "url": "https://github.com/adobe/commerce-cif-magento.git"
   },
   "dependencies": {
-    "@adobe/commerce-cif-magento-common": "1.1.0",
     "@adobe/commerce-cif-common": "1.0.0",
-    "@adobe/commerce-cif-model": "1.1.0"
+    "@adobe/commerce-cif-magento-common": "1.1.0",
+    "@adobe/commerce-cif-model": "1.1.0",
+    "node-magento2-rest-api": "^1.1.6"
   },
   "devDependencies": {
     "eslint": "3.19.0",
     "eslint-plugin-header": "2.0",
-    "serverless": "1.29.0",
+    "serverless": "^1.39.1",
     "serverless-openwhisk": "0.13.0",
     "serverless-webpack": "4.3.0",
     "webpack": "4.0.1"

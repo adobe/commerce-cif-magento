@@ -24,11 +24,24 @@ class MagentoHealth extends MagentoClientBase {
     }
     
     getHealth() {
-        return this._execute('GET').then(result => {
+        let start = process.hrtime();
+        return this._execute('GET').then( () => {
             //const mapperArgs = [result];
             //const mappedResponse = this.mapper.apply(this, mapperArgs);
-            return this._handleSuccess({});
-        }).catch(error => {
+            let end = process.hrtime(start);
+            let duration = Math.round(((end[0] * 1e9) + end[1]) / 1e6);
+            let rslt = {
+                "reports": [
+                  {
+                    "scope": this.baseEndpoint,
+                    "healthy": true,
+                    "message": "Response time: "+duration+"ms"
+                  }
+                ]
+              };
+              return this._handleSuccess(rslt);
+              //return this._handleSuccess(result);
+            }).catch(error => {
             return this.handleError(error);
         });
     }
