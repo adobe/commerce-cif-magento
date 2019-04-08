@@ -36,7 +36,9 @@
           name
           url_key
           stock_status
-          description
+          description {
+            html
+          }
           created_at
           updated_at
           {{#each attributes}}
@@ -54,7 +56,9 @@
               }
             }
           }
-          image
+          image {
+            url
+          }
           ... on ConfigurableProduct {
             configurable_options {
               attribute_code
@@ -71,7 +75,9 @@
                 name
                 url_key
                 stock_status
-                description
+                description {
+                  html
+                }
                 created_at
                 updated_at
                 categories {
@@ -85,7 +91,9 @@
                     }
                   }
                 }
-                image
+                image {
+                  url
+                }
                 {{#each attributes}}
                 {{this}}
                 {{/each}}
