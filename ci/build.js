@@ -44,7 +44,7 @@ if ("test-it" in pkg.scripts && process.env.CORE_WSK_AUTH_STRING) {
     ci.stage('INTEGRATION TESTS');
     ci.sh('mkdir -p test/results/integration');
 
-    let branch = process.env.CIRCLE_BRANCH.replace(/[\W_]+/g, "");
+    let branch = process.env.CIRCLE_BRANCH.replace(/[\W_]+/g, "") || 'release';
     let buildNum = process.env.CIRCLE_BUILD_NUM.replace(/[\W_]+/g, "");
     process.env.OW_PACKAGE_SUFFIX = `magento-${branch}-${buildNum}`;
 
