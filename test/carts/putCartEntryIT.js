@@ -43,7 +43,7 @@ describe('magento putCartEntry', function () {
         /** Create cart. */
         before(function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
+                .post(env.cartsPackage)
                 .query({
                     currency: 'USD',
                     quantity: 2,
@@ -69,11 +69,9 @@ describe('magento putCartEntry', function () {
         it('updates the quantity of a cart entry to a new value', function () {
             const newQuantity = 1;
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'putCartEntry')
-                .query({
-                    quantity: newQuantity,
-                    id: cartId,
-                    cartEntryId: cartEntryId
+                .put(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`)
+                .send({
+                    quantity: newQuantity
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -94,11 +92,9 @@ describe('magento putCartEntry', function () {
 
         it('returns a 400 error for setting an invalid quantity', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'putCartEntry')
-                .query({
-                    quantity: -100,
-                    id: cartId,
-                    cartEntryId: cartEntryId
+                .put(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`)
+                .send({
+                    quantity: -100
                 })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
@@ -109,11 +105,9 @@ describe('magento putCartEntry', function () {
 
         it('removes a cart entry from the cart by setting its quantity to 0', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'putCartEntry')
-                .query({
-                    quantity: 0,
-                    id: cartId,
-                    cartEntryId: cartEntryId
+                .put(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`)
+                .send({
+                    quantity: 0
                 })
                 .then(function (res) {
                     expect(res).to.be.json;
@@ -125,11 +119,9 @@ describe('magento putCartEntry', function () {
         
         it('returns a 404 error for updating a non existent cart entry', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'putCartEntry')
-                .query({
-                    quantity: 1,
-                    id: cartId,
-                    cartEntryId: 'does-not-exist'
+                .put(env.cartsPackage + `/${cartId}/entries/does-not-exist`)
+                .send({
+                    quantity: 1
                 })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
@@ -140,11 +132,9 @@ describe('magento putCartEntry', function () {
         
         it('returns a 404 error for updating an entry of a non existent cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'putCartEntry')
-                .query({
-                    quantity: 1,
-                    id: 'does-not-exist',
-                    cartEntryId: cartEntryId
+                .put(env.cartsPackage + `/does-not-exist/entries/${cartEntryId}`)
+                .send({
+                    quantity: 1
                 })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
@@ -155,7 +145,7 @@ describe('magento putCartEntry', function () {
         
         it('returns a 400 error for missing parameters', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'putCartEntry')
+                .put(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(res).to.be.json;

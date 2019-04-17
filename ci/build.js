@@ -68,13 +68,18 @@ if ("test-it" in pkg.scripts && process.env.CORE_WSK_AUTH_STRING) {
 
                             let params = '--customer-package magento@' + process.env.OW_PACKAGE_SUFFIX + ' --customer-namespace ' + process.env.CUSTOMER_WSK_NAMESPACE + ' --bindings-namespace ' + process.env.CORE_WSK_NAMESPACE;
                             ci.sh('$(npm bin)/serverless deploy ' + params);
+
+                            // Deploy the REST API
+                            ci.sh('npm run deploy-rest-api -- ' + params);
+                            ci.sh('sleep 15'); // sleep to let nginx pick up the new API config
                         });
                     });
                 });
             });
         }
 
-        ci.sh('npm run test-it');
+        let endpoint = `${process.env.OW_ENDPOINT}/magento@${process.env.OW_PACKAGE_SUFFIX}`;
+        ci.sh(`OW_ENDPOINT='${endpoint}' npm run test-it`);
 
     } finally {
         if (fs.existsSync('customer-deployment') && process.env.CUSTOMER_WSK_AUTH_STRING) {
@@ -82,6 +87,9 @@ if ("test-it" in pkg.scripts && process.env.CORE_WSK_AUTH_STRING) {
                 ci.withWskCredentials(process.env.WSK_API_HOST, process.env.CUSTOMER_WSK_NAMESPACE, process.env.CUSTOMER_WSK_AUTH_STRING, () => {
                     let params = '--customer-package magento@' + process.env.OW_PACKAGE_SUFFIX + ' --customer-namespace ' + process.env.CUSTOMER_WSK_NAMESPACE + ' --bindings-namespace ' + process.env.CORE_WSK_NAMESPACE;
                     ci.sh('$(npm bin)/serverless remove ' + params);
+
+                    // Remove the REST API
+                    ci.sh('wsk api delete magento@' + process.env.OW_PACKAGE_SUFFIX);
                 });
             });
         }

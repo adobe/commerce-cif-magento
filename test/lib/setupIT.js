@@ -29,17 +29,11 @@ module.exports.setup = function() {
     expect(env.openwhiskEndpoint).to.have.string('http');
 
     // Sets the name of the package where all web actions are deployed
-    // To make it very flexible, we crate one entry per microservice but still
-    // only use one single package for all actions
-    let mainPackage = `/magento/`;
-    if (process.env.OW_PACKAGE_SUFFIX) {
-        mainPackage = `/magento@${process.env.OW_PACKAGE_SUFFIX}/`
-    }
-    env.cartsPackage = mainPackage;
-    env.categoriesPackage = mainPackage;
-    env.customersPackage = mainPackage;
-    env.productsPackage = mainPackage;
-    env.ordersPackage = mainPackage;
+    env.cartsPackage = '/carts';
+    env.categoriesPackage = '/categories';
+    env.customersPackage = '/customers';
+    env.productsPackage = '/products';
+    env.ordersPackage = '/orders';
 
     env.magentoCustomerName = process.env.MAGENTO_CUSTOMER_NAME;
     env.magentoCustomerPwd = process.env.MAGENTO_CUSTOMER_PWD;

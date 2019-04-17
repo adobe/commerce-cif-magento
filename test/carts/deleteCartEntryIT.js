@@ -44,8 +44,8 @@ describe('magento deleteCartEntry', function() {
         /** Create cart and add product. */
         before(function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     quantity: 2,
                     productVariantId: productVariantId
                 })
@@ -70,9 +70,8 @@ describe('magento deleteCartEntry', function() {
             let cartEntryIdSecond;
 
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
-                    id: cartId,
+                .post(env.cartsPackage + `/${cartId}/entries`)
+                .send({
                     quantity: 5,
                     productVariantId: productVariantIdSecond
                 })
@@ -92,11 +91,7 @@ describe('magento deleteCartEntry', function() {
 
                     // Remove newly added product
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'deleteCartEntry')
-                        .query({
-                            id: cartId,
-                            cartEntryId: cartEntryIdSecond
-                        });
+                        .delete(env.cartsPackage + `/${cartId}/entries/${cartEntryIdSecond}`);
                 })
                 .then(function(res) {
                     expect(res).to.be.json;
@@ -111,11 +106,7 @@ describe('magento deleteCartEntry', function() {
     
         it('removes an entry from a cart', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCartEntry')
-                .query({
-                    id: cartId,
-                    cartEntryId: cartEntryId
-                })
+                .delete(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`)
                 .then(function(res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
@@ -127,11 +118,7 @@ describe('magento deleteCartEntry', function() {
         
         it('returns a 400 error for an invalid entry id', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCartEntry')
-                .query({
-                    id: cartId,
-                    cartEntryId: 'INVALID ENTRY |D'
-                })
+                .delete(env.cartsPackage + `/${cartId}/entries/INVALID ENTRY |D`)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(res).to.be.json;
@@ -141,11 +128,7 @@ describe('magento deleteCartEntry', function() {
 
         it('returns a 400 error for a non existent entry id', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCartEntry')
-                .query({
-                    id: cartId,
-                    cartEntryId: 'does-not-exist'
-                })
+                .delete(env.cartsPackage + `/${cartId}/entries/does-not-exist`)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(res).to.be.json;
@@ -155,11 +138,7 @@ describe('magento deleteCartEntry', function() {
 
         it('returns a 404 error for a non existent cart', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCartEntry')
-                .query({
-                    id: 'does-not-exist',
-                    cartEntryId: cartEntryId
-                })
+                .delete(env.cartsPackage + `/does-not-exist/entries/${cartEntryId}`)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;
@@ -167,15 +146,12 @@ describe('magento deleteCartEntry', function() {
                 });
         });
 
-        it('returns a 400 error for missing parameters', function() {
+        it('returns a 405 error for a missing cart entry parameters', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCartEntry')
+                .delete(env.cartsPackage + `/${cartId}/entries/`)
                 .then(function(res) {
-                    expect(res).to.have.status(HttpStatus.BAD_REQUEST);
-                    expect(res).to.be.json;
-                    requiredFields.verifyErrorResponse(res.body);
+                    expect(res).to.have.status(HttpStatus.METHOD_NOT_ALLOWED);
                 });
         });
-
     });
 });

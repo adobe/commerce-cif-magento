@@ -68,8 +68,8 @@ describe('Magento postPayment', function () {
             };
 
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     currency: 'USD',
                     quantity: 5,
                     productVariantId: productVariantId
@@ -83,40 +83,29 @@ describe('Magento postPayment', function () {
                     cartEntryId = res.body.entries[0].id;
                     // Set shipping address
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'postShippingAddress')
-                        .query({
-                            id: cartId,
-                            default_method: 'flatrate',
-                            default_carrier: 'flatrate'
-                        })
+                        .post(env.cartsPackage + `/${cartId}/shippingaddress`)
                         .send({
+                            default_method: 'flatrate',
+                            default_carrier: 'flatrate',
                             address: addr
                         });
                 });
         });
 
-        /** Delete cart. */
+        /** Delete cart entry */
         after(function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCartEntry')
-                .query({
-                    id: cartId,
-                    cartEntryId: cartEntryId
-                })
+                .delete(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`)
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
-
                     expect(res.body.entries).to.have.lengthOf(0);
                 });
         });
 
         it('returns 400 for posting the payment to an non existing cart', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postPayment')
-                .query({
-                    id: 'non-existing-cart-id',
-                })
+                .post(env.cartsPackage + '/does-not-exist/payment')
                 .send({
                     payment: ccifPayment
                 })
@@ -129,10 +118,7 @@ describe('Magento postPayment', function () {
 
         it('returns 400 for posting to payment without payment', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postPayment')
-                .query({
-                    id: cartId
-                })
+                .post(env.cartsPackage + `/${cartId}/payment`)
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
                     expect(res).to.be.json;
@@ -141,12 +127,8 @@ describe('Magento postPayment', function () {
         });
 
         it('sets payment method', function () {
-            const args = {
-                id: cartId,
-            };
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postPayment')
-                .query(args)
+                .post(env.cartsPackage + `/${cartId}/payment`)
                 .send({
                     payment: ccifPayment
                 })

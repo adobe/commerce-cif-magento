@@ -43,7 +43,7 @@ describe('magento searchProducts', function() {
 
         before(function () {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree'
@@ -65,7 +65,7 @@ describe('magento searchProducts', function() {
 
         it('returns a 400 error if parameters are missing', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.BAD_REQUEST);
@@ -76,7 +76,7 @@ describe('magento searchProducts', function() {
 
         it('returns products in a category', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:"${WOMENSHORTS_CATEGORY_ID}"`
@@ -99,7 +99,7 @@ describe('magento searchProducts', function() {
 
         it('returns products in a category and all its children', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:subtree("${MEN_CATEGORY_ID}")`
@@ -120,7 +120,7 @@ describe('magento searchProducts', function() {
         it('returns a product with a given SKU', function() {
             const sku = 'meskwielt';
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `variants.sku:"${sku}"`
@@ -154,7 +154,7 @@ describe('magento searchProducts', function() {
             const sku1 = 'meskwielt';
             const sku2 = 'mesusupis';
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `variants.sku:"${sku1}","${sku2}"`
@@ -171,7 +171,7 @@ describe('magento searchProducts', function() {
 
         it('returns a valid response with a filter parameter and search string', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: 'categories.id:"11"', // category alone has 6 matches
@@ -189,7 +189,7 @@ describe('magento searchProducts', function() {
         it('returns products matching a search string', function() {
             const searchTerm = 'jacket';
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     text: searchTerm
@@ -209,7 +209,7 @@ describe('magento searchProducts', function() {
 
         it('returns products sorted by their name', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:"${WOMENSHORTS_CATEGORY_ID}"`,
@@ -235,7 +235,7 @@ describe('magento searchProducts', function() {
         //TODO - review this when we agree and implement search syntax
         it.skip('returns a 500 error for invalid sorting parameters', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:"${WOMENSHORTS_CATEGORY_ID}"`,
@@ -250,7 +250,7 @@ describe('magento searchProducts', function() {
 
         it('returns a subset of products as defined by paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:subtree("${MEN_CATEGORY_ID}")`,
@@ -273,7 +273,7 @@ describe('magento searchProducts', function() {
 
         it('returns a 400 error for invalid paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.productsPackage + 'searchProducts')
+                .get(env.productsPackage + '/search')
                 .set('Cache-Control', 'no-cache')
                 .query({
                     filter: `categories.id:subtree:"${MEN_CATEGORY_ID}"`,

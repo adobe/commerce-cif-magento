@@ -20,14 +20,6 @@ describe('magento postBillingAddress', function () {
 
         const addressTests = require('../lib/addressITHelper').tests(this, 'billing');
 
-        it('returns 400 for updating the billing address of non existing cart', function () {
-            return addressTests.missingCart(addressTests.postAddressPath);
-        });
-
-        it('returns 400 for updating the billing address with no parameters', function () {
-            return addressTests.missingCart(addressTests.postAddressPath);
-        });
-
         it('returns 400 for updating the billing address with no country', function () {
             return addressTests.postAddressWithNoCountry();
         });

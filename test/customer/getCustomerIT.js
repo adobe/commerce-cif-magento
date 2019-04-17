@@ -37,9 +37,9 @@ describe('magento getCustomer', function() {
 
         beforeEach(function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'postCustomerAuth')
+                .post(env.customersPackage + '/auth')
                 .set('Cache-Control', 'no-cache')
-                .query({
+                .send({
                     type: 'credentials',
                     email: env.magentoCustomerName,
                     password: env.magentoCustomerPwd
@@ -53,7 +53,7 @@ describe('magento getCustomer', function() {
 
         it('fails when the customer token is not provided', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'getCustomer')
+                .get(env.customersPackage + '/me')
                 .set('Cache-Control', 'no-cache')
                 .then(function (response) {
                     expect(response).to.have.status(HttpStatus.BAD_REQUEST);
@@ -64,7 +64,7 @@ describe('magento getCustomer', function() {
 
         it('fails when a wrong token is provided', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'getCustomer')
+                .get(env.customersPackage + '/me')
                 .set('Cache-Control', 'no-cache')
                 .set('Authorization', `Bearer 12345`)
                 .then(function(response) {
@@ -76,7 +76,7 @@ describe('magento getCustomer', function() {
 
         it('succesfully returns a customer', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'getCustomer')
+                .get(env.customersPackage + '/me')
                 .set('Cache-Control', 'no-cache')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .then(function (res) {

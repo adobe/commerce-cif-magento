@@ -46,9 +46,9 @@ describe('magento getCustomerById', function() {
         /** Create cart. */
         beforeEach(function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'postCustomerLogin')
+                .post(env.customersPackage + '/login') // Use old endpoint to get the customer id
                 .set('Cache-Control', 'no-cache')
-                .query({
+                .send({
                     email: env.magentoCustomerName,
                     password: env.magentoCustomerPwd
                 })
@@ -64,9 +64,8 @@ describe('magento getCustomerById', function() {
 
         it('fails when the customer token is not provided', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'getCustomerById')
+                .get(env.customersPackage + `/${customerId}`)
                 .set('Cache-Control', 'no-cache')
-                .query({id: customerId})
                 .then(function (response) {
                     expect(response).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
                     expect(response).to.be.json;
@@ -76,10 +75,9 @@ describe('magento getCustomerById', function() {
 
         it('returns 500 error for a non existent customer', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'getCustomerById')
+                .get(env.customersPackage + `/does-not-exist`)
                 .set('Cache-Control', 'no-cache')
                 .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
-                .query({id: 'does-not-exist'})
                 .then(function(response) {
                     expect(response).to.have.status(HttpStatus.INTERNAL_SERVER_ERROR);
                     expect(response).to.be.json;
@@ -89,10 +87,9 @@ describe('magento getCustomerById', function() {
 
         it('succesfully returns a customer', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.customersPackage + 'getCustomerById')
+                .get(env.customersPackage + `/${customerId}`)
                 .set('Cache-Control', 'no-cache')
                 .set('cookie', `${CCS_MAGENTO_CUSTOMER_TOKEN}=${accessToken};`)
-                .query({id: customerId})
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);

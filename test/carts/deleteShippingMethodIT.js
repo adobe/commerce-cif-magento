@@ -37,7 +37,7 @@ describe('Magento deleteShippingMethod', function () {
 
         it('returns 501 error', function () {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteShippingMethod')
+                .delete(env.cartsPackage + '/does-not-exist/shippingmethod')
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_IMPLEMENTED);
                     expect(res).to.be.json;

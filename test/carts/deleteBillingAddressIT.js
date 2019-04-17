@@ -14,18 +14,14 @@
 
 'use strict';
 
-describe('magento deleteBillingAddress', function () {
+describe('Magento deleteBillingAddress', function () {
 
     describe('Integration tests', function () {
 
         const addressTests = require('../lib/addressITHelper').tests(this, 'billing');
 
-        it('returns 400 for deleting billing address of not provided cart', function () {
-            return addressTests.missingCart(addressTests.deleteAddressPath);
-        });
-
         it('returns 404 for deleting billing address of non existing cart', function () {
-            return addressTests.nonExistingCart(addressTests.deleteAddressPath);
+            return addressTests.deleteNonExistingCart();
         });
 
         it('removes billing address', function () {

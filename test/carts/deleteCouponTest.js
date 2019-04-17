@@ -33,7 +33,7 @@ describe('magento deleteCoupon', () => {
         //build the helper in the context of '.this' suite
         setup(this, __dirname, 'deleteCoupon');
 
-        specsBuilder('code', 'anycoupon').forEach( spec => {
+        specsBuilder('couponId', 'anycoupon').forEach( spec => {
         it(`returns the ${spec.name} cart without the removed coupon when called with valid cart id and any coupon code`, () => {
                 const expectedArgs = [
                     requestConfig(encodeURI(`http://${config.MAGENTO_HOST}/rest/V1/${spec.baseEndpoint}/coupons`), 'DELETE', spec.token),
@@ -68,14 +68,14 @@ describe('magento deleteCoupon', () => {
             }
             return this.prepareReject(null).execute(args).then(result => {
                 assert.strictEqual(result.response.error.name, 'MissingPropertyError');
-                assert.strictEqual(result.response.error.message, "Parameter 'code' is missing.");
+                assert.strictEqual(result.response.error.message, "Parameter 'couponId' is missing.");
             });
         });
         
         it('returns 404 for a non-existing cart', () => {
             let args = {
                 id: 'dummy-id',
-                code: 'anycoupon',
+                couponId: 'anycoupon',
             }
             return this.prepareReject(samplecart404)
                     .execute(args)
@@ -89,7 +89,7 @@ describe('magento deleteCoupon', () => {
         it('returns 404 for empty cart', () => {
             let args = {
                 id: 'dummy-id',
-                code: 'anycoupon',
+                couponId: 'anycoupon',
             }
             return this.prepareReject(samplecart404noproduct)
                 .execute(args)

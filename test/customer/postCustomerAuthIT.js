@@ -35,9 +35,9 @@ describe('magento postCustomerAuth', function() {
 
         it('returns HTTP 501 not implemented error for guest authentication', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.customersPackage + 'postCustomerAuth')
+                .post(env.customersPackage + '/auth')
                 .set('Cache-Control', 'no-cache')
-                .query({
+                .send({
                     type: 'guest'
                 })
                 .then(function (res) {
@@ -49,9 +49,9 @@ describe('magento postCustomerAuth', function() {
 
         it('successful authentication with credentials', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.customersPackage + 'postCustomerAuth')
+                .post(env.customersPackage + '/auth')
                 .set('Cache-Control', 'no-cache')
-                .query({
+                .send({
                     type: 'credentials',
                     email: env.magentoCustomerName,
                     password: env.magentoCustomerPwd
@@ -66,9 +66,9 @@ describe('magento postCustomerAuth', function() {
 
         it('return HTTP 401 failed authentication with wrong credentials', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.customersPackage + 'postCustomerAuth')
+                .post(env.customersPackage + '/auth')
                 .set('Cache-Control', 'no-cache')
-                .query({
+                .send({
                     type: 'credentials',
                     email: env.magentoCustomerName,
                     password: 'wrongpassword'

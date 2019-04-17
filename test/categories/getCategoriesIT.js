@@ -35,13 +35,12 @@ describe('magento getCategories', function() {
         this.timeout(env.timeout);
 
         let MEN_CATEGORY_ID = null;
-        let MEN_SHIRTS_CATEGORY_ID = null;
-        let MEN_SHORTS_CATEGORY_SLUG = null;
+        let MEN_CATEGORY_SLUG = null;
         let accessToken;
 
         before(function () {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree'
@@ -50,15 +49,13 @@ describe('magento getCategories', function() {
                     expect(res).to.have.status(HttpStatus.OK);
 
                     const menCategory = res.body.results.find(o => o.name === categoriesConfig.MEN.name);
-                    const menShortsCategory = menCategory.children.find(c => c.name === 'Shorts');
-                    MEN_CATEGORY_ID = parseInt(menCategory.id);
-                    MEN_SHIRTS_CATEGORY_ID = String(menShortsCategory.id);
-                    MEN_SHORTS_CATEGORY_SLUG = menShortsCategory.slug;
+                    MEN_CATEGORY_ID = menCategory.id;
+                    MEN_CATEGORY_SLUG = menCategory.slug;
 
                     // doing a customer login to also test that the customer token header
                     // will not override the integration token
                     return chai.request(env.openwhiskEndpoint)
-                        .get(env.customersPackage + 'postCustomerAuth')
+                        .post(env.customersPackage + '/auth')
                         .set('Cache-Control', 'no-cache')
                         .query({
                             type: 'credentials',
@@ -75,7 +72,7 @@ describe('magento getCategories', function() {
 
         it('returns all categories in tree structure', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .query({
@@ -101,7 +98,7 @@ describe('magento getCategories', function() {
 
         it('returns all categories in flat structure', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'flat'
@@ -124,11 +121,8 @@ describe('magento getCategories', function() {
         it('returns a single category by ID', function() {
             const categoryId = MEN_CATEGORY_ID;
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategoryById')
+                .get(env.categoriesPackage + `/${categoryId}`)
                 .set('Cache-Control', 'no-cache')
-                .query({
-                    id: categoryId
-                })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
@@ -145,11 +139,8 @@ describe('magento getCategories', function() {
 
         it('returns a single category by slug', () => {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategoryBySlug')
+                .get(env.categoriesPackage + `/slug/${MEN_CATEGORY_SLUG}`)
                 .set('Cache-Control', 'no-cache')
-                .query({
-                    slug: MEN_SHORTS_CATEGORY_SLUG
-                })
                 .then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
@@ -158,17 +149,15 @@ describe('magento getCategories', function() {
                     const category = res.body;
                     requiredFields.verifyCategory(category);
                     expect(category).to.have.own.property('id');
-                    expect(category.id).to.equal(MEN_SHIRTS_CATEGORY_ID);
+                    expect(category.id).to.equal(MEN_CATEGORY_ID);
                     expect(category).to.have.own.property('slug');
-                    expect(category.slug).to.equal(MEN_SHORTS_CATEGORY_SLUG);
-                    expect(category).to.have.own.property('parents');
-                    expect(category.parents).to.have.lengthOf(1);
+                    expect(category.slug).to.equal(MEN_CATEGORY_SLUG);
                 });
         });
 
         it('returns all categories in a tree structure with only root nodes', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
@@ -192,7 +181,7 @@ describe('magento getCategories', function() {
         //magento sorting is not working - skip for now.
         it.skip('returns all categories in tree structure sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
@@ -215,7 +204,7 @@ describe('magento getCategories', function() {
         //magento sorting is not working - skip for now.
         it.skip('returns all categories in tree structure with children sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
@@ -238,7 +227,7 @@ describe('magento getCategories', function() {
         //magento sorting is not working - skip for now.
         it.skip('returns all categories in flat structure sorted by their names', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'flat',
@@ -261,7 +250,7 @@ describe('magento getCategories', function() {
         //magento pagination is not working - skip for now.
         it.skip('returns a subset of categories in tree structure as defined by paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'tree',
@@ -285,7 +274,7 @@ describe('magento getCategories', function() {
         //magento pagination is not working - skip for now.
         it.skip('returns a subset of categories in flat structure as defined by paging parameters', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({
                     type: 'flat',
@@ -308,7 +297,7 @@ describe('magento getCategories', function() {
 
         it('returns a 400 error for invalid paging parameters', function () {
             return chai.request(env.openwhiskEndpoint)
-                .get(`${env.categoriesPackage}getCategories`)
+                .get(env.categoriesPackage)
                 .set('Cache-Control', 'no-cache')
                 .query({ limit: -7 })
                 .then(function(res) {
@@ -320,9 +309,8 @@ describe('magento getCategories', function() {
 
         it('returns a 404 error for a non existent category by id', function () {
             return chai.request(env.openwhiskEndpoint)
-                .get(`${env.categoriesPackage}getCategoryById`)
+                .get(env.categoriesPackage + `/999999`)
                 .set('Cache-Control', 'no-cache')
-                .query({ id: '999999999999999' })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;
@@ -332,9 +320,8 @@ describe('magento getCategories', function() {
 
         it('returns a 404 error for a non existent category by slug', function () {
             return chai.request(env.openwhiskEndpoint)
-                .get(`${env.categoriesPackage}getCategoryBySlug`)
+                .get(env.categoriesPackage + `/slug/does-not-exist`)
                 .set('Cache-Control', 'no-cache')
-                .query({ slug: 'does/not/exist' })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
                     expect(res).to.be.json;
@@ -344,7 +331,7 @@ describe('magento getCategories', function() {
 
         it('returns the Vary header', function() {
             return chai.request(env.openwhiskEndpoint)
-                .get(env.categoriesPackage + 'getCategories')
+                .get(env.categoriesPackage)
                 .set('Authorization', `Bearer ${accessToken}`)
                 .then(function (res) {
                     expect(res).to.be.json;

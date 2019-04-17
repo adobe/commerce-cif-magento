@@ -8,12 +8,16 @@
   "devDependencies": {
     "@cruglobal/serverless-merge-config": "1.1.0",
     "serverless": "1.36.0",
-    "serverless-openwhisk": "0.16.2"
+    "serverless-openwhisk": "0.16.2",
+    "@adobe/commerce-cif-model": "1.4.0",
+    "minimist": "1.2.0",
+    "traverse": "0.6.6"
   },
   "scripts": {
     "postinstall": "node ./postinstall.js",
     "fix-serverless-permission": "chmod +x $(npm bin)/serverless",
     "deploy": "serverless deploy",
-    "clean": "serverless remove"
+    "clean": "serverless remove",
+    "deploy-rest-api": "node ./deployRestApi.js"
   }
 }

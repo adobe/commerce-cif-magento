@@ -44,8 +44,8 @@ describe('magento postCartEntry', function() {
         /** Create cart. */
         before(function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCart')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     currency: 'USD',
                     quantity: 3,
                     productVariantId: productVariantId
@@ -64,21 +64,14 @@ describe('magento postCartEntry', function() {
         /** Delete cart entry. */
         after(function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'deleteCartEntry')
-                .query({
-                    id: cartId,
-                    cartEntryId: cartEntryId
-                }).then(res => {
+                .delete(env.cartsPackage + `/${cartId}/entries/${cartEntryId}`)
+                .then(res => {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
                     expect(res.body.entries).to.have.lengthOf(1);
 
                     return chai.request(env.openwhiskEndpoint)
-                        .post(env.cartsPackage + 'deleteCartEntry')
-                        .query({
-                            id: cartId,
-                            cartEntryId: cartEntryIdSecond
-                        });
+                        .delete(env.cartsPackage + `/${cartId}/entries/${cartEntryIdSecond}`);
                 }).then(function (res) {
                     expect(res).to.be.json;
                     expect(res).to.have.status(HttpStatus.OK);
@@ -88,7 +81,7 @@ describe('magento postCartEntry', function() {
 
         it('creates an empty cart', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
+                .post(env.cartsPackage)
                 .query({
                     currency: 'EUR'
                 })
@@ -109,10 +102,9 @@ describe('magento postCartEntry', function() {
 
         it('adds a product to an existing cart', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage + `/${cartId}/entries`)
+                .send({
                     quantity: 2,
-                    id: cartId,
                     productVariantId: productVariantIdSecond
                 })
                 .then(function (res) {
@@ -130,7 +122,7 @@ describe('magento postCartEntry', function() {
                     cartEntryIdSecond = res.body.entries[1].id;
                     // Verify that product was added
                     let addedEntry;
-                    for(let entry of res.body.entries) {
+                    for (let entry of res.body.entries) {
                         if (entry.productVariant.sku == productVariantIdSecond) {
                             addedEntry = entry;
                         }
@@ -141,8 +133,8 @@ describe('magento postCartEntry', function() {
 
         it('adds a product to a new cart', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     currency: 'USD',
                     quantity: 2,
                     productVariantId: productVariantId
@@ -169,8 +161,8 @@ describe('magento postCartEntry', function() {
 
         it('returns a 400 error for an invalid quantity', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     quantity: -12,
                     id: cartId,
                     productVariantId: productVariantIdSecond
@@ -184,11 +176,11 @@ describe('magento postCartEntry', function() {
 
         it('returns a 404 error for an invalid product variant id', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage)
+                .send({
                     quantity: 1,
                     id: cartId,
-                    productVariantId: 'does-not-exists'
+                    productVariantId: 'does-not-exist'
                 })
                 .then(function(res) {
                     expect(res).to.have.status(HttpStatus.NOT_FOUND);
@@ -199,10 +191,9 @@ describe('magento postCartEntry', function() {
 
         it('returns a 404 error for adding a product to a non existent cart', function() {
             return chai.request(env.openwhiskEndpoint)
-                .post(env.cartsPackage + 'postCartEntry')
-                .query({
+                .post(env.cartsPackage + '/does-not-exist/entries')
+                .send({
                     quantity: 1,
-                    id: 'does-not-exist',
                     productVariantId: productVariantId
                 })
                 .then(function(res) {
