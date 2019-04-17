@@ -78,8 +78,8 @@ class ProductMapper {
      */
     _mapProductData(p, product) {
 
-        if (product.description) {
-            p.description = product.description;
+        if (product.description && product.description.html) {
+            p.description = product.description.html;
         }
 
         if (product.created_at) {
@@ -90,9 +90,9 @@ class ProductMapper {
             p.lastModifiedAt = formatDate(product.updated_at);
         }
         
-        if (product.image) {
+        if (product.image && product.image.url) {
             p.assets = [
-                this._mapAsset(product.image)
+                this._mapAsset(product.image.url)
             ];
         }
         

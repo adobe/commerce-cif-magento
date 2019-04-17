@@ -175,7 +175,7 @@ describe('Magento ProductMapper', () => {
                 assert.strictEqual(product.id, magentoProduct.sku);
                 assert.strictEqual(product.masterVariantId, magentoFirstVariant.sku);
                 assert.strictEqual(product.name, magentoProduct.name);
-                assert.strictEqual(product.description, magentoFirstVariant.description);
+                assert.strictEqual(product.description, magentoFirstVariant.description.html);
                 assert.strictEqual(product.createdAt, formatDate(magentoProduct.created_at));
                 assert.strictEqual(product.lastModifiedAt, formatDate(magentoProduct.updated_at));
                 assert.lengthOf(product.variants, magentoProduct.variants.length);
