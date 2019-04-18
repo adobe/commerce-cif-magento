@@ -28,8 +28,7 @@ const formatDate = require('@adobe/commerce-cif-magento-common/utils').formatDat
  */
 class ProductMapper {
 
-    constructor(imageUrlPrefix, attributes) {
-        this.imageUrlPrefix = imageUrlPrefix;
+    constructor(attributes) {
         this.attributes = attributes;
     }
 
@@ -265,7 +264,7 @@ class ProductMapper {
     _mapAsset(imageUrl) {
         let asset = new Asset.Builder()
             .withId(imageUrl)
-            .withUrl((this.imageUrlPrefix || '') + imageUrl)
+            .withUrl(imageUrl)
             .build();
         return asset;
     }

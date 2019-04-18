@@ -24,9 +24,8 @@ describe('Magento ProductMapper', () => {
 
     let mapper = utils.getPathForAction(__dirname, 'ProductMapper');
     let ProductMapper = require(mapper);
-    let imageUrlPrefix = 'http://server/pub/media/catalog/product';
     let attributes = ["color", "size", "features", "summary"];
-    let productMapper = new ProductMapper(imageUrlPrefix, attributes);
+    let productMapper = new ProductMapper(attributes);
     let formatDate = require(mapper.replace('ProductMapper', 'node_modules/@adobe/commerce-cif-magento-common/utils')).formatDate;
 
     describe('Unit tests', () => {
@@ -154,7 +153,6 @@ describe('Magento ProductMapper', () => {
 
             product.assets.forEach(asset => {
                 assert.hasAnyKeys(asset, ['id', 'url']);
-                assert.isTrue(asset.url.startsWith(imageUrlPrefix));
             });
         });
 
