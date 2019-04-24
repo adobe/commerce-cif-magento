@@ -1,6 +1,6 @@
 {
   "name": "@adobe/commerce-cif-magento-product",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Adobe Commerce Integration Framework (CIF REST) Magento Integration Product Project",
   "author": "Adobe Systems Inc.",
   "license": "Apache-2.0",
