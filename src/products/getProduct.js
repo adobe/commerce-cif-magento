@@ -70,8 +70,7 @@ function getProduct(args, param, filterKey) {
             });
         }
 
-        const imageUrlPrefix = `${args.MAGENTO_SCHEMA}://${args.MAGENTO_HOST}/${args.MAGENTO_MEDIA_PATH}`;
-        const productMapper = new ProductMapper(imageUrlPrefix, args.GRAPHQL_PRODUCT_ATTRIBUTES);
+        const productMapper = new ProductMapper(args.GRAPHQL_PRODUCT_ATTRIBUTES);
 
         return client._handleSuccess(productMapper.mapGraphQlResponseOfSingleProduct(response.body), {}, response.statusCode);
     }).catch((error) => {

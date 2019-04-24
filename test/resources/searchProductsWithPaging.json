@@ -30,7 +30,7 @@
             }
           },
           "image": {
-            "url": "/p/o/portland.jpg"
+            "url": "https://hostname/media/p/o/portland.jpg"
           },
           "configurable_options": [
             {
@@ -81,7 +81,7 @@
                   }
                 },
                 "image": {
-                  "url": "/p/o/portland.jpg"
+                  "url": "https://hostname/media/p/o/portland.jpg"
                 },
                 "color": 5,
                 "size": 15
@@ -111,7 +111,7 @@
                   }
                 },
                 "image": {
-                  "url": "/p/o/portland.jpg"
+                  "url": "https://hostname/media/p/o/portland.jpg"
                 },
                 "color": 5,
                 "size": 16
@@ -141,7 +141,7 @@
                   }
                 },
                 "image": {
-                  "url": "/p/o/portland.jpg"
+                  "url": "https://hostname/media/p/o/portland.jpg"
                 },
                 "color": 5,
                 "size": 13
@@ -171,7 +171,7 @@
                   }
                 },
                 "image": {
-                  "url": "/p/o/portland.jpg"
+                  "url": "https://hostname/media/p/o/portland.jpg"
                 },
                 "color": 5,
                 "size": 14
@@ -202,7 +202,7 @@
             }
           },
           "image": {
-            "url": "/s/l/slopeside.jpg"
+            "url": "https://hostname/media/s/l/slopeside.jpg"
           },
           "configurable_options": [
             {
@@ -257,7 +257,7 @@
                   }
                 },
                 "image": {
-                  "url": "/s/l/slopeside.jpg"
+                  "url": "https://hostname/media/s/l/slopeside.jpg"
                 },
                 "color": 5,
                 "size": 17
@@ -287,7 +287,7 @@
                   }
                 },
                 "image": {
-                  "url": "/s/l/slopeside.jpg"
+                  "url": "https://hostname/media/s/l/slopeside.jpg"
                 },
                 "color": 5,
                 "size": 15
@@ -317,7 +317,7 @@
                   }
                 },
                 "image": {
-                  "url": "/s/l/slopeside.jpg"
+                  "url": "https://hostname/media/s/l/slopeside.jpg"
                 },
                 "color": 5,
                 "size": 16
@@ -347,7 +347,7 @@
                   }
                 },
                 "image": {
-                  "url": "/s/l/slopeside.jpg"
+                  "url": "https://hostname/media/s/l/slopeside.jpg"
                 },
                 "color": 5,
                 "size": 13
@@ -377,7 +377,7 @@
                   }
                 },
                 "image": {
-                  "url": "/s/l/slopeside.jpg"
+                  "url": "https://hostname/media/s/l/slopeside.jpg"
                 },
                 "color": 5,
                 "size": 14
