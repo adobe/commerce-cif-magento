@@ -34,7 +34,7 @@
             }
           },
           "image": {
-            "url": "/e/l/el_gordo_green.jpg"
+            "url": "https://hostname/media/e/l/el_gordo_green.jpg"
           },
           "options_container": "container2",
           "configurable_options": [
@@ -110,7 +110,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_purple.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_purple.jpg"
                 },
                 "color": 42,
                 "size": 9,
@@ -142,7 +142,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_purple.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_purple.jpg"
                 },
                 "color": 42,
                 "size": 6,
@@ -174,7 +174,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_purple.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_purple.jpg"
                 },
                 "color": 42,
                 "size": 7,
@@ -206,7 +206,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_purple.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_purple.jpg"
                 },
                 "color": 42,
                 "size": 5,
@@ -238,7 +238,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_purple.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_purple.jpg"
                 },
                 "color": 42,
                 "size": 8,
@@ -270,7 +270,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_green.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_green.jpg"
                 },
                 "color": 38,
                 "size": 9,
@@ -302,7 +302,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_green.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_green.jpg"
                 },
                 "color": 38,
                 "size": 6,
@@ -334,7 +334,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_green.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_green.jpg"
                 },
                 "color": 38,
                 "size": 7,
@@ -366,7 +366,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_green.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_green.jpg"
                 },
                 "color": 38,
                 "size": 5,
@@ -398,7 +398,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_green.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_green.jpg"
                 },
                 "color": 38,
                 "size": 8,
@@ -430,7 +430,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_red.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_red.jpg"
                 },
                 "color": 39,
                 "size": 9,
@@ -462,7 +462,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_red.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_red.jpg"
                 },
                 "color": 39,
                 "size": 6,
@@ -494,7 +494,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_red.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_red.jpg"
                 },
                 "color": 39,
                 "size": 7,
@@ -526,7 +526,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_red.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_red.jpg"
                 },
                 "color": 39,
                 "size": 5,
@@ -558,7 +558,7 @@
                   }
                 },
                 "image": {
-                  "url": "/e/l/el_gordo_red.jpg"
+                  "url": "https://hostname/media/e/l/el_gordo_red.jpg"
                 },
                 "color": 39,
                 "size": 8,

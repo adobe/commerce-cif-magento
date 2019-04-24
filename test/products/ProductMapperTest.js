@@ -153,6 +153,10 @@ describe('Magento ProductMapper', () => {
 
             product.assets.forEach(asset => {
                 assert.hasAnyKeys(asset, ['id', 'url']);
+                // Make sure the asset url starts with 'https://' and only contains this once
+                assert.isTrue(asset.url.startsWith('https://'));
+                let count = (asset.url.match(/https:\/\//g) || []).length;
+                assert.strictEqual(1, count);
             });
         });
 

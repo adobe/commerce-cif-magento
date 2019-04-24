@@ -49,6 +49,12 @@ describe('magento getProductById', function() {
                     expect(res.body.id).to.equal(productId);
                     expect(res.body).to.have.own.property('categories');
                     expect(res.body).to.have.own.property('createdAt');
+                   
+                    // Make sure the asset url starts with 'https://' and only contains this once
+                    let asset = res.body.assets[0];
+                    expect(asset.url.startsWith('https://')).to.be.true;
+                    let count = (asset.url.match(/https:\/\//g) || []).length;
+                    expect(count).to.equal(1);
                 });
         });
 

@@ -77,6 +77,12 @@ describe('magento getCart', function() {
                     expect(entry.quantity).to.equal(2);
                     expect(entry.productVariant).to.have.own.property('id');
                     expect(entry.productVariant.sku).to.equal(productVariantId);
+
+                    // Make sure the asset url starts with 'https://' and only contains this once
+                    let asset = entry.productVariant.assets[0];
+                    expect(asset.url.startsWith('https://')).to.be.true;
+                    let count = (asset.url.match(/https:\/\//g) || []).length;
+                    expect(count).to.equal(1);
                 });
         });
         

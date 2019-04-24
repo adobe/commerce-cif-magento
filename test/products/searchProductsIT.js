@@ -147,6 +147,12 @@ describe('magento searchProducts', function() {
                     //only product variant contains variants attributes
                     expect(product.variants[0].attributes.find(o => {return o.id === 'color'})).to.be.an('object');
                     expect(product.variants[0].attributes.find(o => {return o.id === 'size'})).to.be.an('object');
+
+                    // Make sure the asset url starts with 'https://' and only contains this once
+                    let asset = product.variants[0].assets[0];
+                    expect(asset.url.startsWith('https://')).to.be.true;
+                    let count = (asset.url.match(/https:\/\//g) || []).length;
+                    expect(count).to.equal(1);
                 });
         });
 
