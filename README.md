@@ -3,6 +3,14 @@
 
 # Commerce Integration Framework (CIF REST) on Cloud for Magento
 
+---
+**This project is feature complete and for demo purposes only.**
+
+For production projects, use the **new** way of integrating Magento with AEM:
+[AEM Commerce connector for Magento and GraphQL](https://github.com/adobe/commerce-cif-connector).
+
+---
+
 ## Introduction
 
 The CIF REST services architecture is based on [Apache OpenWhisk](https://openwhisk.apache.org) & [Adobe I/O Runtime](https://www.adobe.io/apis/cloudplatform/runtime.html). The main building blocks of the new commerce services are serverless functions (OpenWhisk actions). These actions run on Adobe I/O Runtime inside an isolated container, stateless and serverless interacting with the commerce backend system or other endpoints via their APIs. 
