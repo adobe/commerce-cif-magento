@@ -15,6 +15,7 @@ provider:
 custom:
   npm-version: ${file(package.json):name}@${file(package.json):version}
   ow-package: ${opt:ow-package, self:custom.npm-version}
+  concurrency: 200
 
 plugins:
   - serverless-openwhisk
@@ -27,4 +28,5 @@ functions:
   webActionTransformer:
     name: ${self:custom.ow-package}/webActionTransformer
     handler: "@adobe/commerce-cif-web-action-transformer@1.0.2/index.main"
+    concurrency: ${self:custom.concurrency}
     ccif_dependency: "@adobe/commerce-cif-web-action-transformer@1.0.2"

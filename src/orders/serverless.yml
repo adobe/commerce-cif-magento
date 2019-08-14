@@ -15,6 +15,7 @@ provider:
 custom:
   npm-version: ${file(package.json):name}@${file(package.json):version}
   ow-package: ${opt:ow-package, self:custom.npm-version}
+  concurrency: 200
 
 plugins:
   - serverless-openwhisk
@@ -27,3 +28,4 @@ functions:
   postOrderService:
     name: ${self:custom.ow-package}/postOrderService
     handler: postOrder.main
+    concurrency: ${self:custom.concurrency}
