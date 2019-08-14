@@ -24,6 +24,9 @@ custom:
   customers-actions: /${self:custom.customer-namespace}/commerce-cif-magento-customer@latest
   products-actions: /${self:custom.customer-namespace}/commerce-cif-magento-product@latest
 
+  # Default concurrency level for all CIF actions
+  concurrency: 200
+
 plugins:
   - '@cruglobal/serverless-merge-config' # provides the $<<: operator
   - serverless-openwhisk
@@ -78,6 +81,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/getCartService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -86,6 +90,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/postCartService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -94,6 +99,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/postCartEntryService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -102,6 +108,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/putCartEntryService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -110,6 +117,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/deleteCartEntryService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -118,6 +126,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/postBillingAddressService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -126,6 +135,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/deleteBillingAddressService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -134,6 +144,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/postShippingAddressService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -142,6 +153,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/deleteShippingAddressService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -150,6 +162,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/postShippingMethodService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -158,6 +171,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/deleteShippingMethodService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -166,54 +180,61 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/getShippingMethodsService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
   getPaymentMethods:
-      name: ${self:custom.customer-package}/getPaymentMethods
-      sequence:
-        - ${self:custom.carts-actions}/getPaymentMethodsService
-        - ${self:custom.common-actions}/webActionTransformer
-      annotations:
-        web-export: true
+    name: ${self:custom.customer-package}/getPaymentMethods
+    sequence:
+      - ${self:custom.carts-actions}/getPaymentMethodsService
+      - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
+    annotations:
+      web-export: true
 
   postPayment:
     name: ${self:custom.customer-package}/postPayment
     sequence:
       - ${self:custom.carts-actions}/postPaymentService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
   postCartPayment:
-      name: ${self:custom.customer-package}/postCartPayment
-      sequence:
-        - ${self:custom.carts-actions}/postCartPaymentService
-        - ${self:custom.common-actions}/webActionTransformer
-      annotations:
-        web-export: true
+    name: ${self:custom.customer-package}/postCartPayment
+    sequence:
+      - ${self:custom.carts-actions}/postCartPaymentService
+      - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
+    annotations:
+      web-export: true
 
   deletePayment:
     name: ${self:custom.customer-package}/deletePayment
     sequence:
       - ${self:custom.carts-actions}/deletePaymentService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
   deleteCartPayment:
-      name: ${self:custom.customer-package}/deleteCartPayment
-      sequence:
-        - ${self:custom.carts-actions}/deleteCartPaymentService
-        - ${self:custom.common-actions}/webActionTransformer
-      annotations:
-        web-export: true
+    name: ${self:custom.customer-package}/deleteCartPayment
+    sequence:
+      - ${self:custom.carts-actions}/deleteCartPaymentService
+      - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
+    annotations:
+      web-export: true
 
   postCoupon:
     name: ${self:custom.customer-package}/postCoupon
     sequence:
       - ${self:custom.carts-actions}/postCouponService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -222,6 +243,7 @@ functions:
     sequence:
       - ${self:custom.carts-actions}/deleteCouponService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -230,6 +252,7 @@ functions:
     sequence:
       - ${self:custom.orders-actions}/postOrderService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -238,6 +261,7 @@ functions:
     sequence:
       - ${self:custom.categories-actions}/getCategoriesService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -246,6 +270,7 @@ functions:
     sequence:
       - ${self:custom.categories-actions}/getCategoriesService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -254,6 +279,7 @@ functions:
     sequence:
       - ${self:custom.categories-actions}/getCategoriesService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -262,6 +288,7 @@ functions:
     sequence:
       - ${self:custom.customers-actions}/getCustomerByIdService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -270,6 +297,7 @@ functions:
     sequence:
       - ${self:custom.customers-actions}/postCustomerLoginService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -278,6 +306,7 @@ functions:
     sequence:
       - ${self:custom.customers-actions}/postCustomerAuthService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -286,6 +315,7 @@ functions:
     sequence:
       - ${self:custom.customers-actions}/getCustomerService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -294,6 +324,7 @@ functions:
     sequence:
       - ${self:custom.products-actions}/getProductByIdService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -302,6 +333,7 @@ functions:
     sequence:
       - ${self:custom.products-actions}/getProductBySlugService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
 
@@ -310,5 +342,6 @@ functions:
     sequence:
       - ${self:custom.products-actions}/searchProductsService
       - ${self:custom.common-actions}/webActionTransformer
+    concurrency: ${self:custom.concurrency}
     annotations:
       web-export: true
