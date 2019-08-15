@@ -18,7 +18,7 @@
     "eslint-plugin-header": "2.0",
     "js-yaml": "3.9.0",
     "serverless": "1.29.0",
-    "serverless-openwhisk": "0.13.0",
+    "serverless-openwhisk": "0.18.4",
     "serverless-webpack": "4.3.0",
     "webpack": "4.0.1"
   },
