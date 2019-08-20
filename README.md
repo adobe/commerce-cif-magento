@@ -1,7 +1,7 @@
 [![CircleCI](https://circleci.com/gh/adobe/commerce-cif-magento.svg?style=svg)](https://circleci.com/gh/adobe/commerce-cif-magento)
 [![codecov](https://codecov.io/gh/adobe/commerce-cif-magento/branch/master/graph/badge.svg)](https://codecov.io/gh/adobe/commerce-cif-magento)
 
-# Commerce Integration Framework (CIF REST) on Cloud for Magento
+# Commerce Integration Framework (CIF REST) on Cloud for Magento (NOTE: Replaced with Github; CIF REST API and data model not supported by Adobe anymore)
 
 ---
 **This project is feature complete and for demo purposes only.**
